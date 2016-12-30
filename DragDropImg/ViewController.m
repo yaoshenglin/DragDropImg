@@ -21,8 +21,13 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
+    [self initCapacity];
     // Do any additional setup after loading the view.
+}
+
+- (void)initCapacity
+{
+    
 }
 
 - (void)dropComplete:(DragDropImageView *)dragImgView
@@ -33,10 +38,12 @@
     if (dragImgView == _dragImgView1) {
         _imgInfo1.stringValue = content;
         path1 = dragImgView.path;
+        _txtName1.stringValue = path1.lastPathComponent;
     }
     else if (dragImgView == _dragImgView2) {
         _imgInfo2.stringValue = content;
         path2 = dragImgView.path;
+        _txtName2.stringValue = path2.lastPathComponent;
     }
 }
 

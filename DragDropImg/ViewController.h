@@ -15,6 +15,8 @@
 @property (weak) IBOutlet DragDropImageView *dragImgView2;
 @property (weak) IBOutlet NSTextField *imgInfo1;
 @property (weak) IBOutlet NSTextField *imgInfo2;
+@property (weak) IBOutlet NSTextField *txtName1;
+@property (weak) IBOutlet NSTextField *txtName2;
 
 @end
 

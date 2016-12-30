@@ -23,7 +23,7 @@ NSString *kPrivateDragUTI = @"com.yourcompany.cocoadraganddrop";
     /*------------------------------------------------------
         Init method called for Interface Builder objects
     --------------------------------------------------------*/
-    self=[super initWithCoder:coder];
+    self = [super initWithCoder:coder];
     if ( self ) {
             //register for all the image types we can display
         [self registerForDraggedTypes:[NSImage imageTypes]];
@@ -43,40 +43,36 @@ NSString *kPrivateDragUTI = @"com.yourcompany.cocoadraganddrop";
         method called whenever a drag enters our drop zone
      --------------------------------------------------------*/
     
-            // Check if the pasteboard contains image data and source/user wants it copied
-    if ( [NSImage canInitWithPasteboard:[sender draggingPasteboard]] &&
-             [sender draggingSourceOperationMask] &
+    // Check if the pasteboard contains image data and source/user wants it copied
+    if ( [NSImage canInitWithPasteboard:[sender draggingPasteboard]] && [sender draggingSourceOperationMask] &
              NSDragOperationCopy ) {
-            
-            //highlight our drop zone
-        highlight=YES;
+        
+        //highlight our drop zone
+        highlight = YES;
             
         [self setNeedsDisplay: YES];
     
-            /* When an image from one window is dragged over another, we want to resize the dragging item to
-             * preview the size of the image as it would appear if the user dropped it in. */
-        [sender enumerateDraggingItemsWithOptions:NSDraggingItemEnumerationConcurrent 
-            forView:self
-            classes:[NSArray arrayWithObject:[NSPasteboardItem class]] 
-            searchOptions:@{}
-            usingBlock:^(NSDraggingItem *draggingItem, NSInteger idx, BOOL *stop) {
+        
+        /* When an image from one window is dragged over another, we want to resize the dragging item to
+         * preview the size of the image as it would appear if the user dropped it in. */
+        [sender enumerateDraggingItemsWithOptions:NSDraggingItemEnumerationConcurrent forView:self classes:@[[NSPasteboardItem class]] searchOptions:@{} usingBlock:^(NSDraggingItem *draggingItem, NSInteger idx, BOOL *stop) {
                 
-                    /* Only resize a fragging item if it originated from one of our windows.  To do this,
-                     * we declare a custom UTI that will only be assigned to dragging items we created.  Here
-                     * we check if the dragging item can represent our custom UTI.  If it can't we stop. */
-                if ( ![[[draggingItem item] types] containsObject:kPrivateDragUTI] ) {
-                    
-                    *stop = YES;
-                    
-                } else {
-                        /* In order for the dragging item to actually resize, we have to reset its contents.
-                         * The frame is going to be the destination view's bounds.  (Coordinates are local 
-                         * to the destination view here).
-                         * For the contents, we'll grab the old contents and use those again.  If you wanted
-                         * to perform other modifications in addition to the resize you could do that here. */
-                    [draggingItem setDraggingFrame:self.bounds contents:[[[draggingItem imageComponents] objectAtIndex:0] contents]];
-                }
-            }];
+            /* Only resize a fragging item if it originated from one of our windows.  To do this,
+             * we declare a custom UTI that will only be assigned to dragging items we created.  Here
+             * we check if the dragging item can represent our custom UTI.  If it can't we stop. */
+            if ( ![[[draggingItem item] types] containsObject:kPrivateDragUTI] ) {
+                
+                *stop = YES;
+                
+            } else {
+                /* In order for the dragging item to actually resize, we have to reset its contents.
+                 * The frame is going to be the destination view's bounds.  (Coordinates are local
+                 * to the destination view here).
+                 * For the contents, we'll grab the old contents and use those again.  If you wanted
+                 * to perform other modifications in addition to the resize you could do that here. */
+                [draggingItem setDraggingFrame:self.bounds contents:[[[draggingItem imageComponents] objectAtIndex:0] contents]];
+            }
+        }];
         
         //accept data as a copy operation
         return NSDragOperationCopy;
@@ -88,10 +84,10 @@ NSString *kPrivateDragUTI = @"com.yourcompany.cocoadraganddrop";
 - (void)draggingExited:(id <NSDraggingInfo>)sender
 {
     /*------------------------------------------------------
-       method called whenever a drag exits our drop zone
-    --------------------------------------------------------*/
-        //remove highlight of the drop zone
-    highlight=NO;
+     method called whenever a drag exits our drop zone
+     --------------------------------------------------------*/
+    //remove highlight of the drop zone
+    highlight = NO;
     
     [self setNeedsDisplay: YES];
 }
@@ -99,13 +95,13 @@ NSString *kPrivateDragUTI = @"com.yourcompany.cocoadraganddrop";
 -(void)drawRect:(NSRect)rect
 {
     /*------------------------------------------------------
-        draw method is overridden to do drop highlighing
-    --------------------------------------------------------*/
-        //do the usual draw operation to display the image
+     draw method is overridden to do drop highlighing
+     --------------------------------------------------------*/
+    //do the usual draw operation to display the image
     [super drawRect:rect];
     
     if ( highlight ) {
-            //highlight by overlaying a gray border
+        //highlight by overlaying a gray border
         [[NSColor grayColor] set];
         [NSBezierPath setDefaultLineWidth: 5];
         [NSBezierPath strokeRect: rect];
@@ -115,26 +111,26 @@ NSString *kPrivateDragUTI = @"com.yourcompany.cocoadraganddrop";
 - (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)sender
 {
     /*------------------------------------------------------
-        method to determine if we can accept the drop
-    --------------------------------------------------------*/
-        //finished with the drag so remove any highlighting
-    highlight=NO;
+     method to determine if we can accept the drop
+     --------------------------------------------------------*/
+    //finished with the drag so remove any highlighting
+    highlight = NO;
     
     [self setNeedsDisplay: YES];
     
-        //check to see if we can accept the data
+    //check to see if we can accept the data
     return [NSImage canInitWithPasteboard: [sender draggingPasteboard]];
-} 
+}
 
 - (BOOL)performDragOperation:(id <NSDraggingInfo>)sender
 {
     /*------------------------------------------------------
-        method that should handle the drop data
-    --------------------------------------------------------*/
+     method that should handle the drop data
+     --------------------------------------------------------*/
     if ([sender draggingSource] != self ) {
         NSURL* fileURL;
-
-            //set the image using the best representation we can get from the pasteboard
+        
+        //set the image using the best representation we can get from the pasteboard
         if([NSImage canInitWithPasteboard: [sender draggingPasteboard]]) {
             NSImage *newImage = [[NSImage alloc] initWithPasteboard: [sender draggingPasteboard]];
             [self setImage:newImage];
@@ -146,8 +142,8 @@ NSString *kPrivateDragUTI = @"com.yourcompany.cocoadraganddrop";
 //            [newImage release];
         }
         
-            //if the drag comes from a file, set the window title to the filename
-        fileURL=[NSURL URLFromPasteboard: [sender draggingPasteboard]];
+        //if the drag comes from a file, set the window title to the filename
+        fileURL = [NSURL URLFromPasteboard: [sender draggingPasteboard]];
         self.path = fileURL.path;
         [[self window] setTitle: fileURL!=NULL ? [fileURL lastPathComponent] : @"(no name)"];
         if ([self.delegate respondsToSelector:@selector(dropComplete:)]) {
@@ -161,13 +157,13 @@ NSString *kPrivateDragUTI = @"com.yourcompany.cocoadraganddrop";
 - (NSRect)windowWillUseStandardFrame:(NSWindow *)window defaultFrame:(NSRect)newFrame;
 {
     /*------------------------------------------------------
-       delegate operation to set the standard window frame
-    --------------------------------------------------------*/
-        //get window frame size
-    NSRect ContentRect=self.window.frame;
+     delegate operation to set the standard window frame
+     --------------------------------------------------------*/
+    //get window frame size
+    NSRect ContentRect = self.window.frame;
     
-        //set it to the image frame size
-    ContentRect.size=[[self image] size];
+    //set it to the image frame size
+    ContentRect.size = self.image.size;
     
     return [NSWindow frameRectForContentRect:ContentRect styleMask: [window styleMask]];
 };
@@ -192,9 +188,10 @@ NSString *kPrivateDragUTI = @"com.yourcompany.cocoadraganddrop";
 - (void)dragImage:(NSImage *)anImage at:(NSPoint)viewLocation offset:(NSSize)initialOffset event:(NSEvent *)event pasteboard:(NSPasteboard *)pboard source:(id)sourceObj slideBack:(BOOL)slideFlag
 {
     //create a new image for our semi-transparent drag image
-    NSImage* dragImage=[[NSImage alloc] initWithSize:[[self image] size]]; 
-
-    
+    NSImage *dragImage = [[NSImage alloc] initWithSize:self.image.size];
+    if (CGSizeEqualToSize(self.image.size, CGSizeZero)) {
+        return;
+    }
     
     [dragImage lockFocus];//draw inside of our dragImage
     //draw our original image as 50% transparent
@@ -203,12 +200,12 @@ NSString *kPrivateDragUTI = @"com.yourcompany.cocoadraganddrop";
     [dragImage setScalesWhenResized:NO];//we want the image to resize
     // Old code that scales drag proxy to view size
     // [dragImage setSize:[self bounds].size];//change to the size we are displaying
-
+    
     // Find size of scaled image inside the view
     
     NSSize scaledImageSize; // Size (width,height) of the scaled image in the view
     float scale; // multiplier for the scaled image
-
+    
     float imageRatio = dragImage.size.width / dragImage.size.height;
     
     float viewRatio = [self bounds].size.width / [self bounds].size.height;
@@ -250,7 +247,7 @@ NSString *kPrivateDragUTI = @"com.yourcompany.cocoadraganddrop";
         
         bitmapData = [bitmapRep TIFFRepresentation];
     }
-
+    
     NSString *filename = self.path.lastPathComponent ?: @"test.png";
     [bitmapData writeToFile:[[dropDestination path] stringByAppendingPathComponent:filename]  atomically:YES];
     return [NSArray arrayWithObjects:filename, nil];
@@ -276,29 +273,30 @@ NSString *kPrivateDragUTI = @"com.yourcompany.cocoadraganddrop";
 - (BOOL)acceptsFirstMouse:(NSEvent *)event 
 {
     /*------------------------------------------------------
-        accept activation click as click in window
-    --------------------------------------------------------*/
-        //so source doesn't have to be the active window
+     accept activation click as click in window
+     --------------------------------------------------------*/
+    //so source doesn't have to be the active window
     return YES;
 }
 
 - (void)pasteboard:(NSPasteboard *)sender item:(NSPasteboardItem *)item provideDataForType:(NSString *)type
 {
     /*------------------------------------------------------
-       	method called by pasteboard to support promised 
-        drag types.
-    --------------------------------------------------------*/
-        //sender has accepted the drag and now we need to send the data for the type we promised
+     method called by pasteboard to support promised
+     drag types.
+     --------------------------------------------------------*/
+    //sender has accepted the drag and now we need to send the data for the type we promised
     if ( [type compare: NSPasteboardTypeTIFF] == NSOrderedSame ) {
         
-            //set data for TIFF type on the pasteboard as requested
+        //set data for TIFF type on the pasteboard as requested
         [sender setData:[[self image] TIFFRepresentation] forType:NSPasteboardTypeTIFF];
         
     } else if ( [type compare: NSPasteboardTypePDF] == NSOrderedSame ) {
         
-            //set data for PDF type on the pasteboard as requested
+        //set data for PDF type on the pasteboard as requested
         [sender setData:[self dataWithPDFInsideRect:[self bounds]] forType:NSPasteboardTypePDF];
     }
     
 }
+
 @end
