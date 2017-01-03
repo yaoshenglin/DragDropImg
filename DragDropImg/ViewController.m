@@ -14,6 +14,8 @@
     NSString *path2;
 }
 
+@property (nonatomic, retain) NSData *oldData;
+
 @end
 
 @implementation ViewController
@@ -27,7 +29,14 @@
 
 - (void)initCapacity
 {
-    
+    self.oldData = nil;
+}
+
+- (void)setOldData:(NSData *)oldData
+{
+    NSButton *button = [self.view viewWithTag:2];
+    button.enabled = oldData ? YES : NO;
+    _oldData = oldData;
 }
 
 - (void)dropComplete:(DragDropImageView *)dragImgView
@@ -44,12 +53,15 @@
         _imgInfo2.stringValue = content;
         path2 = dragImgView.path;
         _txtName2.stringValue = path2.lastPathComponent;
+        
+        self.oldData = nil;
     }
 }
 
 - (IBAction)ReplaceImgEvents:(NSButton *)sender
 {
     if (path1.length > 0 && path2.length > 0) {
+        self.oldData = [NSData dataWithContentsOfFile:path2];
         NSData *data = [NSData dataWithContentsOfFile:path1];
         BOOL result = [data writeToFile:path2 atomically:YES];
         if (!result) {
@@ -59,6 +71,7 @@
             alert.messageText = @"替换失败";
             [alert addButtonWithTitle:@"确定"];
             [alert runModal];
+            self.oldData = nil;
         }else{
             _dragImgView2.image = [[NSImage alloc] initWithData:data];
             CGSize imgSize = _dragImgView2.image.size;
@@ -66,6 +79,22 @@
             _imgInfo2.stringValue = content;
         }
     }
+}
+
+- (IBAction)backReplaceEvents:(NSButton *)sender
+{
+    if (self.oldData == nil) {
+        return;
+    }
+    
+    [self.oldData writeToFile:path2 atomically:YES];
+    
+    _dragImgView2.image = [[NSImage alloc] initWithData:self.oldData];
+    CGSize imgSize = _dragImgView2.image.size;
+    NSString *content = [NSString stringWithFormat:@"%.1f X %.1f",imgSize.width,imgSize.height];
+    _imgInfo2.stringValue = content;
+    
+    self.oldData = nil;
 }
 
 - (void)setRepresentedObject:(id)representedObject

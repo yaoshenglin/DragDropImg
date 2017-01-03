@@ -687,7 +687,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eP7-nX-o5R">
+                            <button verticalHuggingPriority="750" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="eP7-nX-o5R">
                                 <rect key="frame" x="45" y="230" width="80" height="32"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="68" id="mWW-Sl-LBg"/>
@@ -763,6 +763,17 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="whR-eG-cLF">
+                                <rect key="frame" x="164" y="230" width="80" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="push" title="还原替换" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="SH0-Gg-oKF">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="backReplaceEvents:" target="XfG-lQ-9wD" id="CbQ-IF-J7w"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstItem="9BC-Ff-VUc" firstAttribute="top" secondItem="Y9b-27-MiH" secondAttribute="bottom" constant="15" id="4bF-iV-PB6"/>
