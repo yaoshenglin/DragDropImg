@@ -7,11 +7,14 @@
 //
 
 #import "ViewController.h"
+#import "Tools.h"
 
 @interface ViewController ()
 {
     NSString *path1;
     NSString *path2;
+    
+    NSView *hintView;
 }
 
 @property (nonatomic, retain) NSData *oldData;
@@ -19,6 +22,16 @@
 @end
 
 @implementation ViewController
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        //custom initialization
+    }
+    return self;
+}
 
 - (void)viewDidLoad
 {
@@ -30,6 +43,16 @@
 - (void)initCapacity
 {
     self.oldData = nil;
+    
+    CGFloat w = 30;
+    NSRect rect = _dragImgView2.frame;
+    hintView = [[NSView alloc] initWithFrame:NSMakeRect(CGRectGetMaxX(rect)+20, 0, w, w)];
+    hintView.wantsLayer = YES;
+    [hintView setFrameOrigin:NSMakePoint(CGRectGetMaxX(rect)+20, CGRectGetMidY(rect)-w/2)];
+    hintView.layer.backgroundColor = [NSColor redColor].CGColor;
+    [self.view addSubview:hintView];
+    
+    hintView.layer.cornerRadius = CGRectGetWidth(hintView.frame)/2;
 }
 
 - (void)setOldData:(NSData *)oldData
@@ -41,6 +64,7 @@
 
 - (void)dropComplete:(DragDropImageView *)dragImgView
 {
+    //拖动图片事件
     NSLog(@"%@",dragImgView.path);
     CGSize imgSize = dragImgView.image.size;
     NSString *content = [NSString stringWithFormat:@"%.1f X %.1f",imgSize.width,imgSize.height];
@@ -56,10 +80,17 @@
         
         self.oldData = nil;
     }
+    
+    if ([_txtName1.stringValue isEqualToString:_txtName2.stringValue]) {
+        hintView.layer.backgroundColor = [NSColor greenColor].CGColor;
+    }else{
+        hintView.layer.backgroundColor = [NSColor redColor].CGColor;
+    }
 }
 
 - (IBAction)ReplaceImgEvents:(NSButton *)sender
 {
+    //替换图片
     if (path1.length > 0 && path2.length > 0) {
         self.oldData = [NSData dataWithContentsOfFile:path2];
         NSData *data = [NSData dataWithContentsOfFile:path1];
@@ -83,6 +114,7 @@
 
 - (IBAction)backReplaceEvents:(NSButton *)sender
 {
+    //还原图片
     if (self.oldData == nil) {
         return;
     }
@@ -95,6 +127,29 @@
     _imgInfo2.stringValue = content;
     
     self.oldData = nil;
+}
+
+#pragma mark
+//- (void)viewWillLayout
+//{
+//    [super viewWillLayout];
+//    
+//    NSRect rect = _dragImgView2.frame;
+//    CGFloat w = CGRectGetWidth(rect);
+//    [hintView setFrameOrigin:NSMakePoint(CGRectGetMaxX(rect)+20, CGRectGetMidY(rect)-w/2)];
+//}
+
+- (void)viewDidLayout
+{
+    [super viewDidLayout];
+    
+    NSRect rect = _dragImgView2.frame;
+    CGFloat w = CGRectGetWidth(hintView.frame);
+    hintView.frame = CGRectMake(CGRectGetMaxX(rect)+20, CGRectGetMidY(rect)-w/2, w, w);
+    
+    w = self.view.frame.size.width;
+    [_txtName1 setOriginX:45 width:w/2-80];
+    [_txtName2 setOriginX:w/2+45 width:w/2-80];
 }
 
 - (void)setRepresentedObject:(id)representedObject

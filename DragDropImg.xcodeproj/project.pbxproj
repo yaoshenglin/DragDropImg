@@ -13,6 +13,7 @@
 		144579331E14F0B30066A9DB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 144579321E14F0B30066A9DB /* Assets.xcassets */; };
 		144579361E14F0B30066A9DB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 144579341E14F0B30066A9DB /* Main.storyboard */; };
 		1445793F1E14F1A90066A9DB /* DragDropImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1445793E1E14F1A90066A9DB /* DragDropImageView.m */; };
+		14D20EF51F678EF80061EBAA /* Tools.m in Sources */ = {isa = PBXBuildFile; fileRef = 14D20EF41F678EF80061EBAA /* Tools.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +28,8 @@
 		144579371E14F0B30066A9DB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1445793D1E14F1A90066A9DB /* DragDropImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragDropImageView.h; sourceTree = "<group>"; };
 		1445793E1E14F1A90066A9DB /* DragDropImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DragDropImageView.m; sourceTree = "<group>"; };
+		14D20EF31F678EF80061EBAA /* Tools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tools.h; sourceTree = "<group>"; };
+		14D20EF41F678EF80061EBAA /* Tools.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tools.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +68,8 @@
 				144579301E14F0B30066A9DB /* ViewController.m */,
 				1445793D1E14F1A90066A9DB /* DragDropImageView.h */,
 				1445793E1E14F1A90066A9DB /* DragDropImageView.m */,
+				14D20EF31F678EF80061EBAA /* Tools.h */,
+				14D20EF41F678EF80061EBAA /* Tools.m */,
 				1445792C1E14F0B30066A9DB /* Supporting Files */,
 			);
 			path = DragDropImg;
@@ -107,7 +112,7 @@
 		1445791E1E14F0B30066A9DB /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0810;
+				LastUpgradeCheck = 0830;
 				ORGANIZATIONNAME = xy;
 				TargetAttributes = {
 					144579251E14F0B30066A9DB = {
@@ -153,6 +158,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				144579311E14F0B30066A9DB /* ViewController.m in Sources */,
+				14D20EF51F678EF80061EBAA /* Tools.m in Sources */,
 				1445792E1E14F0B30066A9DB /* main.m in Sources */,
 				1445792B1E14F0B30066A9DB /* AppDelegate.m in Sources */,
 				1445793F1E14F1A90066A9DB /* DragDropImageView.m in Sources */,
@@ -191,6 +197,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -238,6 +245,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
