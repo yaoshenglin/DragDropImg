@@ -81,7 +81,7 @@
         self.oldData = nil;
     }
     
-    if ([_txtName1.stringValue isEqualToString:_txtName2.stringValue]) {
+    if ([_txtName1.stringValue isEqualToString:_txtName2.stringValue] && NSEqualSizes(_dragImgView1.image.size, _dragImgView2.image.size)) {
         hintView.layer.backgroundColor = [NSColor greenColor].CGColor;
     }else{
         hintView.layer.backgroundColor = [NSColor redColor].CGColor;
@@ -90,8 +90,37 @@
 
 - (IBAction)ReplaceImgEvents:(NSButton *)sender
 {
+    if (hintView.layer.backgroundColor != [NSColor greenColor].CGColor) {
+        __weak typeof(self) wSelf = self;
+        NSAlert *alert = [[NSAlert alloc] init];
+        alert.messageText = @"图片有差异，继续替换";
+        //alert.informativeText = @"push结果";
+        alert.alertStyle = NSAlertStyleInformational;
+        [alert addButtonWithTitle:@"取消"];
+        [alert addButtonWithTitle:@"确定"];
+        NSWindow *window = [NSApplication sharedApplication].windows.firstObject;
+        [alert beginSheetModalForWindow:window completionHandler:^(NSModalResponse returnCode) {
+            if (returnCode == NSAlertSecondButtonReturn) {
+                //响应第一个按钮被按下
+                [wSelf replaceImgOperation];
+            }
+        }];
+        return;
+    }
     //替换图片
     if (path1.length > 0 && path2.length > 0) {
+        sender.enabled = NO;
+        [self replaceImgOperation];
+        
+        sender.enabled = YES;
+    }
+}
+
+- (void)replaceImgOperation
+{
+    //替换图片
+    if (path1.length > 0 && path2.length > 0) {
+        self.view.acceptsTouchEvents = NO;
         self.oldData = [NSData dataWithContentsOfFile:path2];
         NSData *data = [NSData dataWithContentsOfFile:path1];
         BOOL result = [data writeToFile:path2 atomically:YES];
@@ -109,6 +138,8 @@
             NSString *content = [NSString stringWithFormat:@"%.1f X %.1f",imgSize.width,imgSize.height];
             _imgInfo2.stringValue = content;
         }
+        
+        self.view.acceptsTouchEvents = YES;
     }
 }
 
@@ -119,6 +150,8 @@
         return;
     }
     
+    sender.enabled = NO;
+    self.view.acceptsTouchEvents = NO;
     [self.oldData writeToFile:path2 atomically:YES];
     
     _dragImgView2.image = [[NSImage alloc] initWithData:self.oldData];
@@ -127,6 +160,9 @@
     _imgInfo2.stringValue = content;
     
     self.oldData = nil;
+    
+    sender.enabled = YES;
+    self.view.acceptsTouchEvents = YES;
 }
 
 #pragma mark
