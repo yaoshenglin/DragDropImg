@@ -230,4 +230,77 @@
     return [NSColor colorWithRed:red green:green blue:blue alpha:alpha];
 }
 
++ (NSImage*) imageToTransparent:(NSImage *) image
+
+{
+    NSBitmapImageRep *rep = (NSBitmapImageRep *)image.representations.firstObject;
+    //int scale = rep.pixelsWide / image.size.width;//缩放值
+    CGSize size = image.size;
+    // 分配内存
+    
+    CGFloat imageWidth = rep.pixelsWide;
+    CGFloat imageHeight = rep.pixelsHigh;
+    
+    size_t perComponent = rep.bitsPerSample;
+    size_t bytesPerRow = rep.bytesPerRow;
+    
+    uint32_t *rgbImageBuf = (uint32_t*)malloc(rep.pixelsWide * rep.pixelsHigh * 4);
+    
+    
+    
+    // 创建context
+    CGImageRef cgImage = rep.CGImage;
+    
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();//色彩空间
+    CGContextRef context = CGBitmapContextCreate(rgbImageBuf, imageWidth, imageHeight, perComponent, bytesPerRow, colorSpace, kCGBitmapByteOrder32Little | kCGImageAlphaNoneSkipLast);
+    CGContextDrawImage(context, CGRectMake(0, 0, imageWidth, imageHeight), cgImage);//绘画图像区域
+    
+    
+    
+    // 遍历像素
+    
+    uint32_t* pCurPtr = rgbImageBuf;
+    for (int i=0; i<rep.pixelsWide; i++) {
+        for (int y = 0; y<rep.pixelsHigh; y++) {
+            //将像素点转成子节数组来表示---第一个表示透明度即ARGB这种表示方式。ptr[0]:透明度,ptr[1]:B,ptr[2]:G,ptr[3]:R
+            
+            //分别取出RGB值后。进行判断需不需要设成透明。
+            
+            uint8_t* ptr = (uint8_t*)pCurPtr;//1abc9b
+            
+            if ((ptr[1] == 0x9C || ptr[1] == 0x9B) && ptr[2] == 0xBC && (ptr[3] == 0x1A || ptr[3] == 0x1B))
+            {
+                //替换颜色
+                ptr[1] = 0xE9;
+                ptr[2] = 0xA0;
+                ptr[3] = 0x00;
+                
+            }
+            
+            pCurPtr++;
+        }
+    }
+    
+    //字体在iOS7中被废除了,移入CoreText框架中,以后再详细讨论.
+    NSDictionary *attrs = @{NSFontAttributeName:[NSFont systemFontOfSize:17],NSForegroundColorAttributeName:[NSColor blackColor]};
+    [@"这是一个飞船" drawAtPoint:CGPointMake(50, 60) withAttributes:attrs];
+    
+    // 将内存转成image
+    size_t bitsPerPixel = rep.bitsPerPixel;
+    CGDataProviderRef dataProvider = CGDataProviderCreateWithData(NULL, rgbImageBuf, bytesPerRow * imageHeight, nil);
+    CGImageRef imageRef = CGImageCreate(imageWidth, imageHeight,perComponent, bitsPerPixel, bytesPerRow, colorSpace, kCGImageAlphaLast |kCGBitmapByteOrder32Little, dataProvider,  NULL, true,kCGRenderingIntentDefault);
+    
+    
+    NSImage *resultImage = [[NSImage alloc] initWithCGImage:imageRef size:size];
+    
+    // 释放
+    CGImageRelease(imageRef);
+    CGContextRelease(context);
+    CGColorSpaceRelease(colorSpace);
+    CGDataProviderRelease(dataProvider);
+    
+    return resultImage;
+    
+}
+
 @end

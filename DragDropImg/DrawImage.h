@@ -23,4 +23,6 @@
 //将NSImage转换为CIImage
 + (CIImage *)nsImageToCIImage:(NSImage *)image;
 
++ (NSImage*) imageToTransparent:(NSImage *) image;
+
 @end

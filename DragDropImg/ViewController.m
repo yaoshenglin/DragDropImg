@@ -55,13 +55,18 @@
     
     hintView.layer.cornerRadius = CGRectGetWidth(hintView.frame)/2;
     
+    [self.view.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    NSImageView *imgView = [[NSImageView alloc] initWithFrame:self.view.bounds];
+    imgView.tag = 3;
+    [self.view addSubview:imgView];
+    
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
-        NSImage *image = [NSImage imageNamed:@"IMG_6212.PNG"];
-        image = [image replaceColorWith:[NSColor blueColor]];
+        NSImage *image = [[NSImage alloc] initWithContentsOfFile:@"/Volumes/Apple/OS工程/DragDropImg/DragDropImg/Resource/配置iFace@2x.png"];
+        image = [NSImage imageToTransparent:image];
         
         dispatch_queue_t queue = dispatch_get_main_queue();
         dispatch_async(queue, ^{
-            _dragImgView1.image = image;
+            imgView.image = image;
         });
     });
     
@@ -201,6 +206,12 @@
     w = self.view.frame.size.width;
     [_txtName1 setOriginX:45 width:w/2-80];
     [_txtName2 setOriginX:w/2+45 width:w/2-80];
+    
+    for (NSImageView *imgView in self.view.subviews) {
+        if (imgView.tag == 3 && [imgView isKindOfClass:[NSImageView class]]) {
+            imgView.frame = self.view.bounds;
+        }
+    }
 }
 
 - (void)setRepresentedObject:(id)representedObject
