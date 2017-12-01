@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "Tools.h"
+#import "DrawImage.h"
 
 @interface ViewController ()
 {
@@ -53,6 +54,20 @@
     [self.view addSubview:hintView];
     
     hintView.layer.cornerRadius = CGRectGetWidth(hintView.frame)/2;
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
+        NSImage *image = [NSImage imageNamed:@"IMG_6212.PNG"];
+        image = [image replaceColorWith:[NSColor blueColor]];
+        
+        dispatch_queue_t queue = dispatch_get_main_queue();
+        dispatch_async(queue, ^{
+            _dragImgView1.image = image;
+        });
+    });
+    
+    
+//    DrawImage *drawView = [[DrawImage alloc] initWithFrame:_dragImgView1.bounds];
+//    [_dragImgView1 addSubview:drawView];
 }
 
 - (void)setOldData:(NSData *)oldData

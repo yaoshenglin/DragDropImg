@@ -65,6 +65,8 @@
 
 + (NSImage *)imageWithSize:(CGSize)size borderColor:(NSColor *)color borderWidth:(CGFloat)borderWidth;
 
+CGContextRef MyCreateBitmapContext (int pixelsWide, int pixelsHigh);
+
 + (float)distanceFromPoint:(CGPoint)start toPoint:(CGPoint)end;
 #pragma mark 获取UIView上某个点的颜色
 - (NSColor *)colorOfPoint:(CGPoint)point;
