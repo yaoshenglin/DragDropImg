@@ -55,24 +55,33 @@
     
     hintView.layer.cornerRadius = CGRectGetWidth(hintView.frame)/2;
     
-    [self.view.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-    NSImageView *imgView = [[NSImageView alloc] initWithFrame:self.view.bounds];
-    imgView.tag = 3;
-    [self.view addSubview:imgView];
+//    [self.view.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+//    NSImageView *imgView = [[NSImageView alloc] initWithFrame:self.view.bounds];
+//    imgView.tag = 3;
+//    imgView.imageScaling = NSImageScaleProportionallyDown;
+//    imgView.allowsCutCopyPaste = YES;
+//    [self.view addSubview:imgView];
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
-        NSImage *image = [[NSImage alloc] initWithContentsOfFile:@"/Volumes/Apple/OS工程/DragDropImg/DragDropImg/Resource/配置iFace@2x.png"];
-        image = [NSImage imageToTransparent:image];
-        
-        dispatch_queue_t queue = dispatch_get_main_queue();
-        dispatch_async(queue, ^{
-            imgView.image = image;
-        });
-    });
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
+//        NSImage *image = [[NSImage alloc] initWithContentsOfFile:@"/Volumes/Apple/OS工程/DragDropImg/DragDropImg/Resource/配置iFace@2x.png"];
+//        NSColor *color = [NSColor colorWithRed:0x00/255.0 green:0xA0/255.0 blue:0xE9/255.0 alpha:1];
+//        image = [NSImage imageToTransparent:image withColor:color];
+//        
+//        dispatch_queue_t queue = dispatch_get_main_queue();
+//        dispatch_async(queue, ^{
+//            imgView.image = image;
+//        });
+//    });
     
     
-//    DrawImage *drawView = [[DrawImage alloc] initWithFrame:_dragImgView1.bounds];
-//    [_dragImgView1 addSubview:drawView];
+    DrawImage *drawView = [[DrawImage alloc] initWithFrame:self.view.bounds];
+    drawView.layerContentsPlacement = NSViewLayerContentsPlacementCenter;
+    [self.view addSubview:drawView];
+    
+    drawView.translatesAutoresizingMaskIntoConstraints = NO;
+    NSDictionary *viewsDic = NSDictionaryOfVariableBindings(drawView);
+    [self.view addConstraintsWithFormat:@"|[drawView]|" views:viewsDic];
+    [self.view addConstraintsWithFormat:@"V:|[drawView]|" views:viewsDic];
 }
 
 - (void)setOldData:(NSData *)oldData
@@ -211,6 +220,10 @@
         if (imgView.tag == 3 && [imgView isKindOfClass:[NSImageView class]]) {
             imgView.frame = self.view.bounds;
         }
+        
+//        if ([imgView isKindOfClass:[DrawImage class]]) {
+//            imgView.frame = self.view.bounds;
+//        }
     }
 }
 

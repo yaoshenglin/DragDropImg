@@ -15,14 +15,11 @@
 
 @interface NSImage (NSObject)
 
-- (NSImage *)replaceColorWith:(NSColor *)color;
-
-+ (NSImage *)imageFromCGImageRef:(CGImageRef)imageRef;
 //将NSImage *转换为CGImageRef
 + (CGImageRef)nsImageToCGImageRef:(NSImage *)image;
 //将NSImage转换为CIImage
 + (CIImage *)nsImageToCIImage:(NSImage *)image;
 
-+ (NSImage*) imageToTransparent:(NSImage *) image;
++ (NSImage*) imageToTransparent:(NSImage *) image withColor:(NSColor *)color;
 
 @end

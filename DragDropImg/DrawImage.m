@@ -16,132 +16,76 @@
 {
     [super drawRect:dirtyRect];
     
-    CGContextRef myContext = [[NSGraphicsContext currentContext] graphicsPort]; // 1
-    // ********** Your drawing code here **********                             // 2
-    CGContextSetRGBFillColor (myContext, 1, 0, 0, 1);                           // 3
-    CGContextFillRect (myContext, CGRectMake (0, 0, 200, 100 ));                // 4
-    CGContextSetRGBFillColor (myContext, 0, 0, 1, .5);                          // 5
-    CGContextFillRect (myContext, CGRectMake (0, 0, 100, 200));                 // 6
-    
     NSImage *image = [NSImage imageNamed:@"msg1@2x.png"];
-    CGImageRef imageRef = [self.class nsImageToCGImageRef:image];
-    CGContextDrawImage(myContext, NSMakeRect(0, 0, 50, 50), imageRef);
+    NSImageView *imgView = [[NSImageView alloc] initWithFrame:dirtyRect];
+    imgView.tag = 3;
+    imgView.image = image;
+    imgView.imageScaling = NSImageScaleProportionallyDown;
+    imgView.allowsCutCopyPaste = YES;
+    [self addSubview:imgView];
+    imgView.layer.borderWidth = 3;
+    imgView.layer.borderColor = [NSColor redColor].CGColor;
     
-    CGContextClosePath(myContext);
-    CGContextRelease (myContext);
+    imgView.translatesAutoresizingMaskIntoConstraints = NO;
+    NSDictionary *viewsDic = NSDictionaryOfVariableBindings(imgView);
+    [self addConstraintsWithFormat:@"|[imgView]|" views:viewsDic];
+    [self addConstraintsWithFormat:@"V:|[imgView]|" views:viewsDic];
+
+    
+    CGContextRef context = [[NSGraphicsContext currentContext] CGContext]; // 1
+    
+    //字体在CoreGraphics中被废除了,移入CoreText框架中,以后再详细讨论.
+    //char *aChar = "Helvetica-Bold";
+    NSMutableAttributedString *mabstring = [[NSMutableAttributedString alloc] initWithString:@"This is a test of characterAttribute. 中文字符"];
+    [mabstring beginEditing];
+    //设置字体属性
+    CTFontRef font = CTFontCreateWithName(CFSTR("CourierNewPS-ItalicMT"), 50, NULL);
+    [mabstring addAttribute:(id)kCTFontAttributeName value:(__bridge id)font range:NSMakeRange(0, 4)];
+    //红色
+    NSDictionary *attributes = @{NSForegroundColorAttributeName:[NSColor redColor],
+                                 NSKernAttributeName: @(0.5f),
+                                 NSStrokeWidthAttributeName: @(-5),
+                                 NSFontAttributeName: [NSFont fontWithName:@"Georgia" size:37],
+                                 NSWritingDirectionAttributeName: @[@(NSWritingDirectionLeftToRight | NSTextWritingDirectionOverride)]};
+    [mabstring addAttributes:attributes range:NSMakeRange(4, mabstring.length-4)];
+    
+    [mabstring endEditing];
+    
+    //调整坐标系
+    //CGContextTranslateCTM(context, 0, imageHeight);//x，y偏移值
+    //CGContextScaleCTM(context, 1, -1.0);//缩放大小
+    //CGContextRotateCTM(context, M_PI/4);//整体偏移角度
+    
+    CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)mabstring);
+    CGMutablePathRef Path = CGPathCreateMutable();
+    CGPathAddRect(Path, NULL ,CGRectMake(15 , 0 ,dirtyRect.size.width-10 , dirtyRect.size.height-10));
+    //CGContextSetTextMatrix(context , CGAffineTransformIdentity);
+    //保存现在得上下文图形状态。不管后续对context上绘制什么都不会影响真正得屏幕。
+    //CGContextSaveGState(context);
+    //CGContextSetTextMatrix (context, CGAffineTransformMakeTranslation(-1, -1));
+    //CGContextSetTextMatrix (context, CGAffineTransformMakeRotation(M_PI)); // 纯文字偏移角度
+    CTFrameRef frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0, 0), Path, NULL);
+    CTFrameDraw(frame,context);
+    CGPathRelease(Path);
+    CFRelease(framesetter);
+    
+//    CGImageRef clippedImageRef = CGBitmapContextCreateImage(context);
+//    NSImage *clippedImage = [[NSImage alloc] initWithCGImage:clippedImageRef size:dirtyRect.size];
+//    CGImageRelease(clippedImageRef);
+//    NSLog(@"%@",clippedImage);
+    
+    //CGContextClosePath(context);
+    //CGContextRelease (context);
 }
+
+//- (void)layoutSubtreeIfNeeded
+//{
+//    [super layoutSubtreeIfNeeded];
+//}
 
 @end
 
 @implementation NSImage (NSObject)
-
-- (NSImage *)replaceColorWith:(NSColor *)color
-{
-    CGSize size = CGSizeMake(self.size.width, self.size.height);
-    CGRect bounds = CGRectMake(0, 0, size.width, size.height);
-    
-    NSImage *image = [[NSImage alloc] initWithSize:size];
-    [image lockFocus];
-    
-    CGImageRef imageRef = [NSImage nsImageToCGImageRef:self]; //
-    CGContextRef myContext = [[NSGraphicsContext currentContext] graphicsPort];
-    CGContextDrawImage(myContext, *(CGRect*)&bounds, imageRef);
-    
-    CGContextBeginPath(myContext);
-    CGRect mediaBox = CGRectMake (0, 0, size.width, size.height);
-    CFStringRef myKeys[1];
-    CFTypeRef myValues[1];
-    myKeys[0] = kCGPDFContextMediaBox;
-    myValues[0] = (CFTypeRef) CFDataCreate(NULL,(const UInt8 *)&mediaBox, sizeof (CGRect));
-    CFDictionaryRef pageDictionary = CFDictionaryCreate(NULL, (const void **) myKeys,
-                                                        (const void **) myValues, 1,
-                                                        &kCFTypeDictionaryKeyCallBacks,
-                                                        & kCFTypeDictionaryValueCallBacks);
-    CGPDFContextBeginPage(myContext, pageDictionary);
-    //CGContextSetRGBFillColor (myContext, 1, 0, 0, 1);
-    
-    CGFloat degree = 1.0;
-    for (CGFloat x = 0.5; x < size.width; ) {
-        for (CGFloat y = 0.5; y < size.height; ) {
-            NSColor *theColor = [NSImage colorBy:self atPixel:CGPointMake(x, y)];
-            const CGFloat *cs = CGColorGetComponents(theColor.CGColor);
-            size_t index = CGColorGetNumberOfComponents(theColor.CGColor);
-            BOOL isNeedFill = YES;
-            if (index==2) {
-                NSLog(@"%f,%f",cs[0],cs[1]);
-            }
-            if (index==3) {
-                NSLog(@"%f,%f",cs[0],cs[1]);
-            }
-            if (index==4) {
-                //NSLog(@"%f,%f,%f,%f",cs[0],cs[1],cs[2],cs[3]);
-                if (cs[3] == 0 || (cs[0] == cs[1] && cs[1] == cs[2])) {
-                    isNeedFill = NO;
-                }
-                else if (cs[0] > 0.9 && cs[1] > 0.9 && cs[2] > 0.9){
-                    isNeedFill = NO;
-                }else{
-                    //NSLog(@"%f,%f,%f,%f",cs[0],cs[1],cs[2],cs[3]);
-                }
-            }
-            if (isNeedFill) {
-                CGRect rect = CGRectMake(x-degree, y-degree, x, y);
-                [color setFill];
-                NSRectFill(rect);
-            }
-            
-            y = y + degree;
-        }
-        
-        x = x + degree;
-        [NSThread sleepForTimeInterval:0.1];
-    }
-    
-//    color = [NSColor colorWithRed:1 green:1 blue:1 alpha:0];
-//    [color setFill];
-//    NSRectFill(CGRectMake(0, 0, size.width, size.height));
-    
-//    [color setFill];
-//    NSRectFill(bounds);
-//    CGContextSetBlendMode(myContext, kCGBlendModeLighten);
-//    CGContextSetBlendMode(myContext, kCGBlendModeDestinationIn);
-//    CGContextSaveGState(myContext);
-    
-    CGContextSaveGState(myContext);
-    [image unlockFocus];
-    
-    CGContextClosePath(myContext);
-    CGPDFContextEndPage(myContext);
-    
-    // ********** Your drawing code here **********
-    CGImageRelease(imageRef);
-//    CGContextRelease (myContext);
-    
-    return image;
-}
-
-//将CGImageRef转换为NSImage *
-+ (NSImage *)imageFromCGImageRef:(CGImageRef)imageRef
-{
-    NSRect imageRect = NSMakeRect(0.0, 0.0, 0.0, 0.0);
-    
-    // Get the image dimensions.
-    imageRect.size.height = CGImageGetHeight(imageRef);
-    imageRect.size.width = CGImageGetWidth(imageRef);
-    
-    // Create a new image to receive the Quartz image data.
-    NSImage *image = [[NSImage alloc] initWithSize:imageRect.size];
-    [image lockFocus];
-    
-    // Get the Quartz context and draw.
-    CGContextRef imageContext = [[NSGraphicsContext currentContext] graphicsPort];
-    CGContextDrawImage(imageContext, *(CGRect*)&imageRect, imageRef);
-    CGContextSetBlendMode(imageContext, kCGBlendModeLighten);
-    [image unlockFocus];
-    CGContextRelease (imageContext);
-    
-    return image;
-}
 
 //将NSImage *转换为CGImageRef
 + (CGImageRef)nsImageToCGImageRef:(NSImage *)image
@@ -189,49 +133,7 @@
     return result;
 }
 
-+ (NSColor *)colorBy:(NSImage *)image atPixel:(CGPoint)point
-{
-    // Cancel if point is outside image coordinates
-    CGSize size = image.size;
-    if (!CGRectContainsPoint(CGRectMake(0.0f, 0.0f, size.width, size.height), point)) {
-        return nil;
-    }
-    
-    NSInteger pointX = trunc(point.x);
-    NSInteger pointY = trunc(point.y);
-    CGImageRef cgImage = [NSImage nsImageToCGImageRef:image];
-    NSUInteger width = size.width;
-    NSUInteger height = size.height;
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    int bytesPerPixel = 4;
-    int bytesPerRow = bytesPerPixel * 1;
-    NSUInteger bitsPerComponent = 8;
-    unsigned char pixelData[4] = { 0, 0, 0, 0 };
-    CGContextRef context = CGBitmapContextCreate(pixelData,
-                                                 1,
-                                                 1,
-                                                 bitsPerComponent,
-                                                 bytesPerRow,
-                                                 colorSpace,
-                                                 kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
-    CGColorSpaceRelease(colorSpace);
-    CGContextSetBlendMode(context, kCGBlendModeCopy);
-    
-    // Draw the pixel we are interested in onto the bitmap context
-    CGContextTranslateCTM(context, -pointX, pointY-(CGFloat)height);
-    CGContextDrawImage(context, CGRectMake(0.0f, 0.0f, (CGFloat)width, (CGFloat)height), cgImage);
-    CGContextRelease(context);
-    CGImageRelease(cgImage);
-    // Convert color values [0..255] to floats [0.0..1.0]
-    CGFloat red = (CGFloat)pixelData[0] / 255.0f;
-    CGFloat green = (CGFloat)pixelData[1] / 255.0f;
-    CGFloat blue = (CGFloat)pixelData[2] / 255.0f;
-    CGFloat alpha = (CGFloat)pixelData[3] / 255.0f;
-    return [NSColor colorWithRed:red green:green blue:blue alpha:alpha];
-}
-
-+ (NSImage*) imageToTransparent:(NSImage *) image
-
++ (NSImage *) imageToTransparent:(NSImage *) image withColor:(NSColor *)color
 {
     NSBitmapImageRep *rep = (NSBitmapImageRep *)image.representations.firstObject;
     //int scale = rep.pixelsWide / image.size.width;//缩放值
@@ -249,13 +151,10 @@
     
     
     // 创建context
-    CGImageRef cgImage = rep.CGImage;
-    
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();//色彩空间
     CGContextRef context = CGBitmapContextCreate(rgbImageBuf, imageWidth, imageHeight, perComponent, bytesPerRow, colorSpace, kCGBitmapByteOrder32Little | kCGImageAlphaNoneSkipLast);
-    CGContextDrawImage(context, CGRectMake(0, 0, imageWidth, imageHeight), cgImage);//绘画图像区域
-    
-    
+    CGRect rect = CGRectMake(0, 0, imageWidth, imageHeight);
+    CGContextDrawImage(context, rect, rep.CGImage);//绘画图像区域
     
     // 遍历像素
     
@@ -271,25 +170,29 @@
             if ((ptr[1] == 0x9C || ptr[1] == 0x9B) && ptr[2] == 0xBC && (ptr[3] == 0x1A || ptr[3] == 0x1B))
             {
                 //替换颜色
-                ptr[1] = 0xE9;
-                ptr[2] = 0xA0;
-                ptr[3] = 0x00;
+                ptr[1] = color.blueComponent * 0xFF;
+                ptr[2] = color.greenComponent * 0xFF;
+                ptr[3] = color.redComponent * 0xFF;
                 
+            }
+            else if (ptr[0] == 0x00 || (ptr[1] > 240 && ptr[2] > 240 && ptr[3] > 240)) {
+                
+            }else{
+                //替换颜色
+                
+                //NSLog(@"%02X%02X%02X",ptr[1],ptr[2],ptr[3]);
+                
+                ptr[1] = color.blueComponent * 0xFF;
+                ptr[2] = color.greenComponent * 0xFF;
+                ptr[3] = color.redComponent * 0xFF;
             }
             
             pCurPtr++;
         }
     }
     
-    //字体在iOS7中被废除了,移入CoreText框架中,以后再详细讨论.
-    NSDictionary *attrs = @{NSFontAttributeName:[NSFont systemFontOfSize:17],NSForegroundColorAttributeName:[NSColor blackColor]};
-    [@"这是一个飞船" drawAtPoint:CGPointMake(50, 60) withAttributes:attrs];
-    
     // 将内存转成image
-    size_t bitsPerPixel = rep.bitsPerPixel;
-    CGDataProviderRef dataProvider = CGDataProviderCreateWithData(NULL, rgbImageBuf, bytesPerRow * imageHeight, nil);
-    CGImageRef imageRef = CGImageCreate(imageWidth, imageHeight,perComponent, bitsPerPixel, bytesPerRow, colorSpace, kCGImageAlphaLast |kCGBitmapByteOrder32Little, dataProvider,  NULL, true,kCGRenderingIntentDefault);
-    
+    CGImageRef imageRef = CGBitmapContextCreateImage(context);
     
     NSImage *resultImage = [[NSImage alloc] initWithCGImage:imageRef size:size];
     
@@ -297,7 +200,6 @@
     CGImageRelease(imageRef);
     CGContextRelease(context);
     CGColorSpaceRelease(colorSpace);
-    CGDataProviderRelease(dataProvider);
     
     return resultImage;
     
