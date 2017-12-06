@@ -16,28 +16,12 @@
 {
     [super drawRect:dirtyRect];
     
-    NSImage *image = [NSImage imageNamed:@"msg1@2x.png"];
-    NSImageView *imgView = [[NSImageView alloc] initWithFrame:dirtyRect];
-    imgView.tag = 3;
-    imgView.image = image;
-    imgView.imageScaling = NSImageScaleProportionallyDown;
-    imgView.allowsCutCopyPaste = YES;
-    [self addSubview:imgView];
-    imgView.layer.borderWidth = 3;
-    imgView.layer.borderColor = [NSColor redColor].CGColor;
-    
-    imgView.translatesAutoresizingMaskIntoConstraints = NO;
-    NSDictionary *viewsDic = NSDictionaryOfVariableBindings(imgView);
-    [self addConstraintsWithFormat:@"|[imgView]|" views:viewsDic];
-    [self addConstraintsWithFormat:@"V:|[imgView]|" views:viewsDic];
-
-    
     CGContextRef context = [[NSGraphicsContext currentContext] CGContext]; // 1
     
     //字体在CoreGraphics中被废除了,移入CoreText框架中,以后再详细讨论.
     //char *aChar = "Helvetica-Bold";
     NSMutableAttributedString *mabstring = [[NSMutableAttributedString alloc] initWithString:@"This is a test of characterAttribute. 中文字符"];
-    [mabstring beginEditing];
+    //[mabstring beginEditing];
     //设置字体属性
     CTFontRef font = CTFontCreateWithName(CFSTR("CourierNewPS-ItalicMT"), 50, NULL);
     [mabstring addAttribute:(id)kCTFontAttributeName value:(__bridge id)font range:NSMakeRange(0, 4)];
@@ -49,7 +33,7 @@
                                  NSWritingDirectionAttributeName: @[@(NSWritingDirectionLeftToRight | NSTextWritingDirectionOverride)]};
     [mabstring addAttributes:attributes range:NSMakeRange(4, mabstring.length-4)];
     
-    [mabstring endEditing];
+    //[mabstring endEditing];
     
     //调整坐标系
     //CGContextTranslateCTM(context, 0, imageHeight);//x，y偏移值
@@ -69,19 +53,9 @@
     CGPathRelease(Path);
     CFRelease(framesetter);
     
-//    CGImageRef clippedImageRef = CGBitmapContextCreateImage(context);
-//    NSImage *clippedImage = [[NSImage alloc] initWithCGImage:clippedImageRef size:dirtyRect.size];
-//    CGImageRelease(clippedImageRef);
-//    NSLog(@"%@",clippedImage);
-    
     //CGContextClosePath(context);
     //CGContextRelease (context);
 }
-
-//- (void)layoutSubtreeIfNeeded
-//{
-//    [super layoutSubtreeIfNeeded];
-//}
 
 @end
 
