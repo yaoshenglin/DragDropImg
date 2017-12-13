@@ -11,6 +11,8 @@
 
 @interface DrawImage : NSView
 
+@property (nonatomic, retain) NSString *content;
+
 @end
 
 @interface NSImage (NSObject)

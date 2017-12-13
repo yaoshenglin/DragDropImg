@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		140DFC601FE11EBE00166C5B /* MyHttpRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 140DFC5F1FE11EBE00166C5B /* MyHttpRequest.m */; };
 		143CFF631FD13BD000BD5753 /* 配置iFace@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 143CFF621FD13BD000BD5753 /* 配置iFace@2x.png */; };
 		1445792B1E14F0B30066A9DB /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1445792A1E14F0B30066A9DB /* AppDelegate.m */; };
 		1445792E1E14F0B30066A9DB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1445792D1E14F0B30066A9DB /* main.m */; };
@@ -26,6 +27,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		140DFC5E1FE11EBE00166C5B /* MyHttpRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyHttpRequest.h; sourceTree = "<group>"; };
+		140DFC5F1FE11EBE00166C5B /* MyHttpRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyHttpRequest.m; sourceTree = "<group>"; };
+		140DFC631FE12BDA00166C5B /* DragDropImg.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = DragDropImg.entitlements; sourceTree = "<group>"; };
 		143CFF621FD13BD000BD5753 /* 配置iFace@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "配置iFace@2x.png"; sourceTree = "<group>"; };
 		144579261E14F0B30066A9DB /* DragDropImg.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DragDropImg.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		144579291E14F0B30066A9DB /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -83,6 +87,7 @@
 		144579281E14F0B30066A9DB /* DragDropImg */ = {
 			isa = PBXGroup;
 			children = (
+				140DFC631FE12BDA00166C5B /* DragDropImg.entitlements */,
 				144579291E14F0B30066A9DB /* AppDelegate.h */,
 				1445792A1E14F0B30066A9DB /* AppDelegate.m */,
 				1445792F1E14F0B30066A9DB /* ViewController.h */,
@@ -91,6 +96,8 @@
 				1445793E1E14F1A90066A9DB /* DragDropImageView.m */,
 				14F4694F1FCBB5AB00E21658 /* DrawImage.h */,
 				14F469501FCBB5AB00E21658 /* DrawImage.m */,
+				140DFC5E1FE11EBE00166C5B /* MyHttpRequest.h */,
+				140DFC5F1FE11EBE00166C5B /* MyHttpRequest.m */,
 				14D20EF31F678EF80061EBAA /* Tools.h */,
 				14D20EF41F678EF80061EBAA /* Tools.m */,
 				14F4695D1FCBF98000E21658 /* Resource */,
@@ -165,6 +172,11 @@
 						CreatedOnToolsVersion = 8.1;
 						DevelopmentTeam = Y3VUD4UDB6;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.Sandbox = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -211,6 +223,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				144579311E14F0B30066A9DB /* ViewController.m in Sources */,
+				140DFC601FE11EBE00166C5B /* MyHttpRequest.m in Sources */,
 				14D20EF51F678EF80061EBAA /* Tools.m in Sources */,
 				1445792E1E14F0B30066A9DB /* main.m in Sources */,
 				1445792B1E14F0B30066A9DB /* AppDelegate.m in Sources */,
@@ -326,6 +339,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = DragDropImg/DragDropImg.entitlements;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = Y3VUD4UDB6;
@@ -341,6 +355,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = DragDropImg/DragDropImg.entitlements;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = Y3VUD4UDB6;

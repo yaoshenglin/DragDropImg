@@ -10,6 +10,8 @@
 #import "DrawImage.h"
 #import "Tools.h"
 
+#define TILE_SIZE 20
+
 @implementation DrawImage
 
 - (void)drawRect:(NSRect)dirtyRect
@@ -32,6 +34,11 @@
                                  NSFontAttributeName: [NSFont fontWithName:@"Georgia" size:37],
                                  NSWritingDirectionAttributeName: @[@(NSWritingDirectionLeftToRight | NSTextWritingDirectionOverride)]};
     [mabstring addAttributes:attributes range:NSMakeRange(4, mabstring.length-4)];
+    
+    if (_content.length > 0) {
+        mabstring = [[NSMutableAttributedString alloc] initWithString:_content];
+        [mabstring addAttribute:(id)kCTFontAttributeName value:(__bridge id)font range:NSMakeRange(0, _content.length)];
+    }
     
     //[mabstring endEditing];
     
@@ -107,6 +114,13 @@
     return result;
 }
 
+void drawColoredTile(void *info,CGContextRef context){
+    //有颜色填充，这里设置填充色
+    CGContextSetRGBFillColor(context, 254.0/255.0, 52.0/255.0, 90.0/255.0, 1);
+    CGContextFillRect(context, CGRectMake(0, 0, TILE_SIZE, TILE_SIZE));
+    CGContextFillRect(context, CGRectMake(TILE_SIZE, TILE_SIZE, TILE_SIZE, TILE_SIZE));
+}
+
 + (NSImage *) imageToTransparent:(NSImage *) image withColor:(NSColor *)color
 {
     NSBitmapImageRep *rep = (NSBitmapImageRep *)image.representations.firstObject;
@@ -120,9 +134,7 @@
     size_t perComponent = rep.bitsPerSample;
     size_t bytesPerRow = rep.bytesPerRow;
     
-    uint32_t *rgbImageBuf = (uint32_t*)malloc(rep.pixelsWide * rep.pixelsHigh * 4);
-    
-    
+    uint32_t *rgbImageBuf = (uint32_t*)malloc(imageWidth * imageHeight * 4);
     
     // 创建context
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();//色彩空间
@@ -130,12 +142,13 @@
     CGRect rect = CGRectMake(0, 0, imageWidth, imageHeight);
     CGContextDrawImage(context, rect, rep.CGImage);//绘画图像区域
     
+//    NSRectFill(rect);
+//    CGContextFillRects
     // 遍历像素
-    
-    uint32_t* pCurPtr = rgbImageBuf;
-    for (int i=0; i<rep.pixelsWide; i++) {
-        for (int y = 0; y<rep.pixelsHigh; y++) {
-            //将像素点转成子节数组来表示---第一个表示透明度即ARGB这种表示方式。ptr[0]:透明度,ptr[1]:B,ptr[2]:G,ptr[3]:R
+    uint32_t *pCurPtr = rgbImageBuf;
+    for (int i=0; i<imageWidth; i++) {
+        for (int y = 0; y<imageHeight; y++) {
+            //将像素点转成子节数组来表示---第一个表示透明度即ARGB这种表示方式。ptr[0]:不透明度,ptr[1]:B,ptr[2]:G,ptr[3]:R
             
             //分别取出RGB值后。进行判断需不需要设成透明。
             
@@ -165,10 +178,20 @@
         }
     }
     
+    //CGContextSaveGState(context);
+    CGFloat fillColor[] = {1,1,1,1};
+    CGContextSetFillColor(context, fillColor);//设置被填充色
+    CGContextSetFillColorWithColor(context, [[NSColor redColor] CGColor]);//设置填充色
+    CGContextFillRect(context, NSMakeRect(100, 0, 150, 150));
+    //NSRectFill(NSMakeRect(100, 0, 150, 150));
+    //CGContextRestoreGState(context);
+    
+    
     // 将内存转成image
     CGImageRef imageRef = CGBitmapContextCreateImage(context);
     
     NSImage *resultImage = [[NSImage alloc] initWithCGImage:imageRef size:size];
+    NSRectFill(rect);
     
     // 释放
     CGImageRelease(imageRef);
@@ -176,7 +199,6 @@
     CGColorSpaceRelease(colorSpace);
     
     return resultImage;
-    
 }
 
 @end

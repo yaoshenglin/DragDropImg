@@ -9,6 +9,7 @@
 #import "ViewController.h"
 #import "Tools.h"
 #import "DrawImage.h"
+#import "MyHttpRequest.h"
 
 @interface ViewController ()
 {
@@ -16,6 +17,8 @@
     NSString *path2;
     
     NSView *hintView;
+    DrawImage *drawView;
+    MyHttpRequest *myRequest;
 }
 
 @property (nonatomic, retain) NSData *oldData;
@@ -55,26 +58,25 @@
     
     hintView.layer.cornerRadius = CGRectGetWidth(hintView.frame)/2;
     
-//    [self.view.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-//    NSImageView *imgView = [[NSImageView alloc] initWithFrame:self.view.bounds];
-//    imgView.tag = 3;
-//    imgView.imageScaling = NSImageScaleProportionallyDown;
-//    imgView.allowsCutCopyPaste = YES;
-//    [self.view addSubview:imgView];
+    [self.view.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    NSImageView *imgView = [[NSImageView alloc] initWithFrame:self.view.bounds];
+    imgView.tag = 3;
+    imgView.imageScaling = NSImageScaleProportionallyDown;
+    imgView.allowsCutCopyPaste = YES;
+    [self.view addSubview:imgView];
     
 //    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
 //        NSImage *image = [[NSImage alloc] initWithContentsOfFile:@"/Volumes/Apple/OS工程/DragDropImg/DragDropImg/Resource/配置iFace@2x.png"];
 //        NSColor *color = [NSColor colorWithRed:0x00/255.0 green:0xA0/255.0 blue:0xE9/255.0 alpha:1];
 //        image = [NSImage imageToTransparent:image withColor:color];
-//        
-//        dispatch_queue_t queue = dispatch_get_main_queue();
-//        dispatch_async(queue, ^{
+//
+//        dispatch_async(dispatch_get_main_queue(), ^{
 //            imgView.image = image;
 //        });
 //    });
     
     
-    DrawImage *drawView = [[DrawImage alloc] initWithFrame:self.view.bounds];
+    drawView = [[DrawImage alloc] initWithFrame:self.view.bounds];
     drawView.layerContentsPlacement = NSViewLayerContentsPlacementCenter;
     [self.view addSubview:drawView];
     
@@ -82,6 +84,19 @@
     NSDictionary *viewsDic = NSDictionaryOfVariableBindings(drawView);
     [self.view addConstraintsWithFormat:@"|[drawView]|" views:viewsDic];
     [self.view addConstraintsWithFormat:@"V:|[drawView]|" views:viewsDic];
+    
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"iface主机@2x" ofType:@"png"];
+    NSLog(@"path = %@",path);
+    NSString *documentPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
+    NSLog(@"documentPath = %@",documentPath);
+    
+    myRequest = [[MyHttpRequest alloc] init];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
+        [NSThread sleepForTimeInterval:0.5];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            //[myRequest startRequest];
+        });
+    });
 }
 
 - (void)setOldData:(NSData *)oldData
@@ -194,15 +209,19 @@
     self.view.acceptsTouchEvents = YES;
 }
 
-#pragma mark
-//- (void)viewWillLayout
-//{
-//    [super viewWillLayout];
-//    
-//    NSRect rect = _dragImgView2.frame;
-//    CGFloat w = CGRectGetWidth(rect);
-//    [hintView setFrameOrigin:NSMakePoint(CGRectGetMaxX(rect)+20, CGRectGetMidY(rect)-w/2)];
-//}
+#pragma mark -
+- (void)downloadToProgress:(CGFloat)progress rate:(CGFloat)rate
+{
+    NSString *speedString = [NSString stringWithFormat:@"%.2lfB/s", rate];
+    if (rate > 1024) {
+        speedString = [NSString stringWithFormat:@"%.2lfKB/s", rate / 1024];
+    }
+    else if (rate > 1024 * 1024) {
+        speedString = [NSString stringWithFormat:@"%.2lfMB/s", rate / 1024 / 1024];
+    }
+    
+    drawView.content = speedString;
+}
 
 - (void)viewDidLayout
 {
