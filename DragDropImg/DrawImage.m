@@ -10,9 +10,22 @@
 #import "DrawImage.h"
 #import "Tools.h"
 
-#define TILE_SIZE 20
-
 @implementation DrawImage
+
+- (instancetype)initWithFrame:(NSRect)frameRect
+{
+    self = [super initWithFrame:frameRect];
+    if (self) {
+        
+    }
+    
+    return self;
+}
+
+- (void)layout
+{
+    [super layout];
+}
 
 - (void)drawRect:(NSRect)dirtyRect
 {
@@ -34,11 +47,6 @@
                                  NSFontAttributeName: [NSFont fontWithName:@"Georgia" size:37],
                                  NSWritingDirectionAttributeName: @[@(NSWritingDirectionLeftToRight | NSTextWritingDirectionOverride)]};
     [mabstring addAttributes:attributes range:NSMakeRange(4, mabstring.length-4)];
-    
-    if (_content.length > 0) {
-        mabstring = [[NSMutableAttributedString alloc] initWithString:_content];
-        [mabstring addAttribute:(id)kCTFontAttributeName value:(__bridge id)font range:NSMakeRange(0, _content.length)];
-    }
     
     //[mabstring endEditing];
     
@@ -112,13 +120,6 @@
                fraction: 1.0];
     // cleanup
     return result;
-}
-
-void drawColoredTile(void *info,CGContextRef context){
-    //有颜色填充，这里设置填充色
-    CGContextSetRGBFillColor(context, 254.0/255.0, 52.0/255.0, 90.0/255.0, 1);
-    CGContextFillRect(context, CGRectMake(0, 0, TILE_SIZE, TILE_SIZE));
-    CGContextFillRect(context, CGRectMake(TILE_SIZE, TILE_SIZE, TILE_SIZE, TILE_SIZE));
 }
 
 + (NSImage *) imageToTransparent:(NSImage *) image withColor:(NSColor *)color

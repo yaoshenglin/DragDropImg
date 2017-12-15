@@ -11,7 +11,7 @@
 
 @interface DrawImage : NSView
 
-@property (nonatomic, retain) NSString *content;
+//@property (nonatomic, retain) NSTextField *textField;
 
 @end
 

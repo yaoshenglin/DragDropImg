@@ -9,7 +9,6 @@
 #import "ViewController.h"
 #import "Tools.h"
 #import "DrawImage.h"
-#import "MyHttpRequest.h"
 
 @interface ViewController ()
 {
@@ -18,7 +17,6 @@
     
     NSView *hintView;
     DrawImage *drawView;
-    MyHttpRequest *myRequest;
 }
 
 @property (nonatomic, retain) NSData *oldData;
@@ -58,12 +56,12 @@
     
     hintView.layer.cornerRadius = CGRectGetWidth(hintView.frame)/2;
     
-    [self.view.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-    NSImageView *imgView = [[NSImageView alloc] initWithFrame:self.view.bounds];
-    imgView.tag = 3;
-    imgView.imageScaling = NSImageScaleProportionallyDown;
-    imgView.allowsCutCopyPaste = YES;
-    [self.view addSubview:imgView];
+//    [self.view.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+//    NSImageView *imgView = [[NSImageView alloc] initWithFrame:self.view.bounds];
+//    imgView.tag = 3;
+//    imgView.imageScaling = NSImageScaleProportionallyDown;
+//    imgView.allowsCutCopyPaste = YES;
+//    [self.view addSubview:imgView];
     
 //    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
 //        NSImage *image = [[NSImage alloc] initWithContentsOfFile:@"/Volumes/Apple/OS工程/DragDropImg/DragDropImg/Resource/配置iFace@2x.png"];
@@ -79,24 +77,11 @@
     drawView = [[DrawImage alloc] initWithFrame:self.view.bounds];
     drawView.layerContentsPlacement = NSViewLayerContentsPlacementCenter;
     [self.view addSubview:drawView];
-    
+    ///Users/xy/Library/Developer/Xcode/DerivedData/DragDropImg-bgyaoueutozmwweewybfgccinuzg/Build/Products/Debug/DragDropImg.app/Contents
     drawView.translatesAutoresizingMaskIntoConstraints = NO;
     NSDictionary *viewsDic = NSDictionaryOfVariableBindings(drawView);
     [self.view addConstraintsWithFormat:@"|[drawView]|" views:viewsDic];
     [self.view addConstraintsWithFormat:@"V:|[drawView]|" views:viewsDic];
-    
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"iface主机@2x" ofType:@"png"];
-    NSLog(@"path = %@",path);
-    NSString *documentPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
-    NSLog(@"documentPath = %@",documentPath);
-    
-    myRequest = [[MyHttpRequest alloc] init];
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
-        [NSThread sleepForTimeInterval:0.5];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            //[myRequest startRequest];
-        });
-    });
 }
 
 - (void)setOldData:(NSData *)oldData
@@ -130,6 +115,14 @@
     }else{
         hintView.layer.backgroundColor = [NSColor redColor].CGColor;
     }
+}
+- (IBAction)NextButtonEvents:(NSButton *)sender
+{
+    NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
+    NSString *title = [infoDict objectForKey:@"NSMainStoryboardFile"];
+    NSStoryboard *storyBoard = [NSStoryboard storyboardWithName:title bundle:nil];
+    NSViewController *Second = [storyBoard instantiateControllerWithIdentifier:@"Second"];
+    [self presentViewControllerAsSheet:Second];
 }
 
 - (IBAction)ReplaceImgEvents:(NSButton *)sender
@@ -207,20 +200,6 @@
     
     sender.enabled = YES;
     self.view.acceptsTouchEvents = YES;
-}
-
-#pragma mark -
-- (void)downloadToProgress:(CGFloat)progress rate:(CGFloat)rate
-{
-    NSString *speedString = [NSString stringWithFormat:@"%.2lfB/s", rate];
-    if (rate > 1024) {
-        speedString = [NSString stringWithFormat:@"%.2lfKB/s", rate / 1024];
-    }
-    else if (rate > 1024 * 1024) {
-        speedString = [NSString stringWithFormat:@"%.2lfMB/s", rate / 1024 / 1024];
-    }
-    
-    drawView.content = speedString;
 }
 
 - (void)viewDidLayout

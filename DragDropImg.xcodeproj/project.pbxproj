@@ -15,6 +15,9 @@
 		144579331E14F0B30066A9DB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 144579321E14F0B30066A9DB /* Assets.xcassets */; };
 		144579361E14F0B30066A9DB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 144579341E14F0B30066A9DB /* Main.storyboard */; };
 		1445793F1E14F1A90066A9DB /* DragDropImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1445793E1E14F1A90066A9DB /* DragDropImageView.m */; };
+		1477B9221FE2090800857CE2 /* Second_ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1477B9211FE2090800857CE2 /* Second_ViewController.m */; };
+		1477B9251FE26F6900857CE2 /* DownloadRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1477B9241FE26F6900857CE2 /* DownloadRequest.m */; };
+		1477B9281FE284E900857CE2 /* DataRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1477B9271FE284E900857CE2 /* DataRequest.m */; };
 		148772C61FD54348003C13E9 /* 47个吸引正妹的把妹惯例.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 148772C51FD54348003C13E9 /* 47个吸引正妹的把妹惯例.pdf */; };
 		14AAE66B1FD1007800321544 /* IMG_6212.PNG in Resources */ = {isa = PBXBuildFile; fileRef = 14AAE66A1FD1007800321544 /* IMG_6212.PNG */; };
 		14D20EF51F678EF80061EBAA /* Tools.m in Sources */ = {isa = PBXBuildFile; fileRef = 14D20EF41F678EF80061EBAA /* Tools.m */; };
@@ -42,6 +45,12 @@
 		144579371E14F0B30066A9DB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1445793D1E14F1A90066A9DB /* DragDropImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragDropImageView.h; sourceTree = "<group>"; };
 		1445793E1E14F1A90066A9DB /* DragDropImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DragDropImageView.m; sourceTree = "<group>"; };
+		1477B9201FE2090800857CE2 /* Second_ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Second_ViewController.h; sourceTree = "<group>"; };
+		1477B9211FE2090800857CE2 /* Second_ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Second_ViewController.m; sourceTree = "<group>"; };
+		1477B9231FE26F6900857CE2 /* DownloadRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadRequest.h; sourceTree = "<group>"; };
+		1477B9241FE26F6900857CE2 /* DownloadRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DownloadRequest.m; sourceTree = "<group>"; };
+		1477B9261FE284E900857CE2 /* DataRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataRequest.h; sourceTree = "<group>"; };
+		1477B9271FE284E900857CE2 /* DataRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataRequest.m; sourceTree = "<group>"; };
 		148772C51FD54348003C13E9 /* 47个吸引正妹的把妹惯例.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "47个吸引正妹的把妹惯例.pdf"; sourceTree = "<group>"; };
 		14AAE66A1FD1007800321544 /* IMG_6212.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IMG_6212.PNG; sourceTree = "<group>"; };
 		14D20EF31F678EF80061EBAA /* Tools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tools.h; sourceTree = "<group>"; };
@@ -92,12 +101,18 @@
 				1445792A1E14F0B30066A9DB /* AppDelegate.m */,
 				1445792F1E14F0B30066A9DB /* ViewController.h */,
 				144579301E14F0B30066A9DB /* ViewController.m */,
+				1477B9201FE2090800857CE2 /* Second_ViewController.h */,
+				1477B9211FE2090800857CE2 /* Second_ViewController.m */,
 				1445793D1E14F1A90066A9DB /* DragDropImageView.h */,
 				1445793E1E14F1A90066A9DB /* DragDropImageView.m */,
 				14F4694F1FCBB5AB00E21658 /* DrawImage.h */,
 				14F469501FCBB5AB00E21658 /* DrawImage.m */,
 				140DFC5E1FE11EBE00166C5B /* MyHttpRequest.h */,
 				140DFC5F1FE11EBE00166C5B /* MyHttpRequest.m */,
+				1477B9231FE26F6900857CE2 /* DownloadRequest.h */,
+				1477B9241FE26F6900857CE2 /* DownloadRequest.m */,
+				1477B9261FE284E900857CE2 /* DataRequest.h */,
+				1477B9271FE284E900857CE2 /* DataRequest.m */,
 				14D20EF31F678EF80061EBAA /* Tools.h */,
 				14D20EF41F678EF80061EBAA /* Tools.m */,
 				14F4695D1FCBF98000E21658 /* Resource */,
@@ -170,8 +185,8 @@
 				TargetAttributes = {
 					144579251E14F0B30066A9DB = {
 						CreatedOnToolsVersion = 8.1;
-						DevelopmentTeam = Y3VUD4UDB6;
-						ProvisioningStyle = Automatic;
+						DevelopmentTeam = 9D3GVQFWSP;
+						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
 								enabled = 1;
@@ -226,9 +241,12 @@
 				140DFC601FE11EBE00166C5B /* MyHttpRequest.m in Sources */,
 				14D20EF51F678EF80061EBAA /* Tools.m in Sources */,
 				1445792E1E14F0B30066A9DB /* main.m in Sources */,
+				1477B9221FE2090800857CE2 /* Second_ViewController.m in Sources */,
 				1445792B1E14F0B30066A9DB /* AppDelegate.m in Sources */,
 				1445793F1E14F1A90066A9DB /* DragDropImageView.m in Sources */,
+				1477B9251FE26F6900857CE2 /* DownloadRequest.m in Sources */,
 				14F469511FCBB5AB00E21658 /* DrawImage.m in Sources */,
+				1477B9281FE284E900857CE2 /* DataRequest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -340,14 +358,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = DragDropImg/DragDropImg.entitlements;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = Y3VUD4UDB6;
+				DEVELOPMENT_TEAM = 9D3GVQFWSP;
 				INFOPLIST_FILE = DragDropImg/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.weikong.DragDropImg;
+				PRODUCT_BUNDLE_IDENTIFIER = com.weicontrol.DragDropImg;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE = "c6d0c036-ae3e-4308-8c1b-da25e2506499";
+				PROVISIONING_PROFILE_SPECIFIER = weicontrol_Dev;
 			};
 			name = Debug;
 		};
@@ -356,14 +375,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = DragDropImg/DragDropImg.entitlements;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = Y3VUD4UDB6;
+				DEVELOPMENT_TEAM = 9D3GVQFWSP;
 				INFOPLIST_FILE = DragDropImg/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.weikong.DragDropImg;
+				PRODUCT_BUNDLE_IDENTIFIER = com.weicontrol.DragDropImg;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE = "fc5fc37f-7e0b-4965-88c0-99f98f40aab4";
+				PROVISIONING_PROFILE_SPECIFIER = Weicontrol_Dis;
 			};
 			name = Release;
 		};

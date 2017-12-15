@@ -1,15 +1,16 @@
 //
-//  MyHttpRequest.m
+//  DataRequest.m
 //  DragDropImg
 //
-//  Created by xy on 2017/12/13.
+//  Created by xy on 2017/12/14.
 //  Copyright © 2017年 xy. All rights reserved.
 //
 
+#import "DataRequest.h"
 #import "MyHttpRequest.h"
 #import "Tools.h"
 
-@interface MyHttpRequest ()<NSURLSessionDelegate>
+@interface DataRequest ()<NSURLSessionDelegate>
 {
     NSDate *receiveDate;
     NSMutableData *vData;
@@ -17,7 +18,7 @@
 
 @end
 
-@implementation MyHttpRequest
+@implementation DataRequest
 
 - (void)startRequest
 {
@@ -30,7 +31,7 @@
                            @"hwVer":@(hwVer)};
     NSString *urlString = @"http://dldir1.qq.com/qqfile/qq/QQ2013/QQ2013SP5/9050/QQ2013SP5.exe";
     urlString = @"http://120.25.226.186:32812/resources/videos/minion_01.mp4";
-//    urlString = @"https://api.happyeasy.cc/api_V2/GetLastVersions";
+    urlString = @"https://api.happyeasy.cc/api_V2/GetLastVersions";
     
     NSURL *url = [NSURL URLWithString:urlString];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
@@ -60,47 +61,53 @@
         }
     }
     
-    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:@"backgroundIdentifier"];
     NSOperationQueue *operationQueue = [[NSOperationQueue alloc] init];
     operationQueue.maxConcurrentOperationCount = 1;
     operationQueue.name = @"MyQueue";
     
     _session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:operationQueue];
+    //[self.session downloadTaskWithResumeData:_resumData];
     
     // 由系统直接返回一个dataTask任务
-//    _myDataTask = [_session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-//        // 网络请求完成之后就会执行，NSURLSession自动实现多线程
-//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
-//            [NSThread sleepForTimeInterval:0.3];
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                //hudView.progress = 1;
-//                //[hudView hide:YES afterDelay:0.2];
-//            });
-//        });
-//        
-//        [NSThread currentThread].name = @"MyThread";
-//        NSLog(@"%@",[NSThread currentThread]);
-//        if (data && error == nil) {
-//            // 网络访问成功
-//            NSLog(@"data=%@",[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-//        }
-//        else if (error) {
-//            // 网络访问失败
-//            NSLog(@"error, %@",error.localizedDescription);
-//        }else{
-//            // 网络访问失败
-//            NSLog(@"error, 请求异常");
-//        }
-//    }];
+    //    _myDataTask = [_session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+    //        // 网络请求完成之后就会执行，NSURLSession自动实现多线程
+    //        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
+    //            [NSThread sleepForTimeInterval:0.3];
+    //            dispatch_async(dispatch_get_main_queue(), ^{
+    //                //hudView.progress = 1;
+    //                //[hudView hide:YES afterDelay:0.2];
+    //            });
+    //        });
+    //
+    //        [NSThread currentThread].name = @"MyThread";
+    //        NSLog(@"%@",[NSThread currentThread]);
+    //        if (data && error == nil) {
+    //            // 网络访问成功
+    //            NSLog(@"data=%@",[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+    //        }
+    //        else if (error) {
+    //            // 网络访问失败
+    //            NSLog(@"error, %@",error.localizedDescription);
+    //        }else{
+    //            // 网络访问失败
+    //            NSLog(@"error, 请求异常");
+    //        }
+    //    }];
     
-    //    _myDataTask = [_session dataTaskWithRequest:request];
-        _myDataTask = [_session downloadTaskWithRequest:request];
+    _myDataTask = [_session dataTaskWithRequest:request];
+    //_myDataTask = [_session downloadTaskWithRequest:request];
     
     // 每一个任务默认都是挂起的，需要调用 resume 方法
+    [self resume];
+}
+
+- (void)resume
+{
     [_myDataTask resume];
 }
 
-- (void)stopRequest
+- (void)suspend
 {
     [_myDataTask suspend];
 }
@@ -141,11 +148,6 @@
     }
     
     NSLog(@"%lld",contentLength);
-}
-
-- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data
-{
-    [vData appendData:data];
 }
 
 #pragma mark - --------NSURLSessionDownloadDelegate------------------------
@@ -265,10 +267,7 @@
         //[hudView hide:YES];
     });
     if (error) {
-        /** 如果发生错误, 我们可以从error中获取到续传数据. */
-        _resumData =  [error.userInfo objectForKey:NSURLSessionDownloadTaskResumeData];
-        
-        NSLog(@"NSURLSessionTaskDelegate error: %@", error);
+        NSLog(@"NSURLSessionTaskDelegate error: %@", error.localizedDescription);
         dispatch_async(dispatch_get_main_queue(), ^{
             //[self.view makeToast:error.localizedDescription];
         });
@@ -278,10 +277,7 @@
     }
 }
 
-- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task
-willPerformHTTPRedirection:(NSHTTPURLResponse *)response
-        newRequest:(NSURLRequest *)request
- completionHandler:(void (^)(NSURLRequest * _Nullable))completionHandler
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task willPerformHTTPRedirection:(NSHTTPURLResponse *)response newRequest:(NSURLRequest *)request completionHandler:(void (^)(NSURLRequest * _Nullable))completionHandler
 {
     NSLog(@"NSURLSessionTaskDelegate %s",__func__);
 }
@@ -291,9 +287,7 @@ willPerformHTTPRedirection:(NSHTTPURLResponse *)response
  * will *NOT* be called and the behavior will be the same as using the default handling
  * disposition.
  */
-- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task
-didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
- completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential * _Nullable credential))completionHandler
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential * _Nullable credential))completionHandler
 {
     NSLog(@"NSURLSessionTaskDelegate %s",__func__);
 }
@@ -302,8 +296,7 @@ didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
  * necessary when authentication has failed for any request that
  * involves a body stream.
  */
-- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task
- needNewBodyStream:(void (^)(NSInputStream * _Nullable bodyStream))completionHandler
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task needNewBodyStream:(void (^)(NSInputStream * _Nullable bodyStream))completionHandler
 {
     NSLog(@"NSURLSessionTaskDelegate %s",__func__);
 }

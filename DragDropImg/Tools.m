@@ -7,10 +7,86 @@
 //
 
 #import "Tools.h"
+#import <objc/runtime.h>
 #import <QuartzCore/QuartzCore.h>
 #import <CoreGraphics/CoreGraphics.h>
 
 @implementation Tools
+
++ (NSAlert *)alertWithMessage:(NSString *)messageText informative:(NSString *)informativeText completionHandler:(void (^)(NSModalResponse returnCode))handler
+{
+    NSAlert *alert = [[NSAlert alloc] init];
+    alert.messageText = messageText;
+    alert.informativeText = informativeText;
+    alert.alertStyle = NSAlertStyleInformational;
+    [alert addButtonWithTitle:@"确定"];
+    NSWindow *window = [NSApplication sharedApplication].windows.firstObject;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [alert beginSheetModalForWindow:window completionHandler:handler];
+    });
+    
+    return alert;
+}
+
+@end
+
+@implementation NSString (NSObject)
+
+- (NSString *)stringForFormat
+{
+    NSString *tempStr1 = [self stringByReplacingOccurrencesOfString:@"\\u" withString:@"\\U"];
+    NSString *tempStr2 = [tempStr1 stringByReplacingOccurrencesOfString:@"\"" withString:@"\\\""];
+    NSString *tempStr3 = [[@"\"" stringByAppendingString:tempStr2] stringByAppendingString:@"\""];
+    NSData *tempData = [tempStr3 dataUsingEncoding:NSUTF8StringEncoding];
+    
+    NSError *error = nil;
+    NSString *str = [NSPropertyListSerialization propertyListWithData:tempData options:NSPropertyListImmutable format:NULL error:&error];
+    if (error) {
+        NSLog(@"format : %@",error.localizedDescription);
+    }
+    
+    return str;
+}
+
+@end
+
+@implementation NSDictionary (NSObject)
+
+- (NSString *)stringForFormat
+{
+    NSString *str = [self.description stringForFormat];
+    
+    return str;
+}
+
+@end
+
+@implementation NSObject (NSObject)
+
+- (NSString *)customDescription
+{
+    if ([self isKindOfClass:[NSDictionary class]]) {
+        return [(NSDictionary *)self stringForFormat];
+    }
+    NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+    unsigned int propsCount;
+    objc_property_t *props = class_copyPropertyList([self class], &propsCount);
+    for(int i = 0;i < propsCount; i++)
+    {
+        objc_property_t prop = props[i];
+        
+        NSString *propName = [NSString stringWithUTF8String:property_getName(prop)];
+        id value = [self valueForKey:propName];
+        if(value == nil)
+        {
+            value = [NSNull null];
+        }
+        
+        [dic setObject:value forKey:propName];
+    }
+    NSString *content = [dic stringForFormat];
+    return content;
+}
 
 @end
 

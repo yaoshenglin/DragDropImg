@@ -11,6 +11,24 @@
 
 @interface Tools : NSObject
 
++ (NSAlert *)alertWithMessage:(NSString *)messageText informative:(NSString *)informativeText completionHandler:(void (^)(NSModalResponse returnCode))handler;
+
+@end
+
+@interface NSString (NSObject)
+
+- (NSString *)stringForFormat;
+
+@end
+
+@interface NSDictionary (NSObject);
+
+@end
+
+@interface NSObject (NSObject)
+
+- (NSString *)customDescription;
+
 @end
 
 #pragma mark - UIView
