@@ -1,0 +1,19 @@
+//
+//  PrefixHeader.pch
+//  DragDropImg
+//
+//  Created by xy on 2017/12/15.
+//  Copyright © 2017年 xy. All rights reserved.
+//
+
+#ifndef PrefixHeader_pch
+#define PrefixHeader_pch
+
+#define k_action @"api_V2"                      //默认动作根目录
+#define k_host @"https://api.happyeasy.cc"      //http://121.201.17.130:8100
+#define k_res_host @"http://res.happyeasy.cc"   //http://res.weicontrol.cn
+
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+
+#endif /* PrefixHeader_pch */

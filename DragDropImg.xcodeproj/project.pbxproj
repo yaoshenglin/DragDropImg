@@ -27,6 +27,7 @@
 		14F469631FCBF9A400E21658 /* msg1@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 14F4695F1FCBF9A400E21658 /* msg1@2x.png */; };
 		14F469641FCBF9A400E21658 /* msg2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 14F469601FCBF9A400E21658 /* msg2@2x.png */; };
 		14F469651FCBF9A400E21658 /* 按钮点击效果.png in Resources */ = {isa = PBXBuildFile; fileRef = 14F469611FCBF9A400E21658 /* 按钮点击效果.png */; };
+		14FF10CD1FE35BB6004DB424 /* HTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 14FF10CC1FE35BB6004DB424 /* HTTPRequest.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -62,6 +63,9 @@
 		14F4695F1FCBF9A400E21658 /* msg1@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "msg1@2x.png"; sourceTree = "<group>"; };
 		14F469601FCBF9A400E21658 /* msg2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "msg2@2x.png"; sourceTree = "<group>"; };
 		14F469611FCBF9A400E21658 /* 按钮点击效果.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "按钮点击效果.png"; sourceTree = "<group>"; };
+		14FF10CB1FE35BB6004DB424 /* HTTPRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPRequest.h; sourceTree = "<group>"; };
+		14FF10CC1FE35BB6004DB424 /* HTTPRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTTPRequest.m; sourceTree = "<group>"; };
+		14FF10CE1FE35BEA004DB424 /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,6 +117,8 @@
 				1477B9241FE26F6900857CE2 /* DownloadRequest.m */,
 				1477B9261FE284E900857CE2 /* DataRequest.h */,
 				1477B9271FE284E900857CE2 /* DataRequest.m */,
+				14FF10CB1FE35BB6004DB424 /* HTTPRequest.h */,
+				14FF10CC1FE35BB6004DB424 /* HTTPRequest.m */,
 				14D20EF31F678EF80061EBAA /* Tools.h */,
 				14D20EF41F678EF80061EBAA /* Tools.m */,
 				14F4695D1FCBF98000E21658 /* Resource */,
@@ -126,6 +132,7 @@
 			children = (
 				1445792D1E14F0B30066A9DB /* main.m */,
 				144579371E14F0B30066A9DB /* Info.plist */,
+				14FF10CE1FE35BEA004DB424 /* PrefixHeader.pch */,
 				144579321E14F0B30066A9DB /* Assets.xcassets */,
 				144579341E14F0B30066A9DB /* Main.storyboard */,
 			);
@@ -242,6 +249,7 @@
 				14D20EF51F678EF80061EBAA /* Tools.m in Sources */,
 				1445792E1E14F0B30066A9DB /* main.m in Sources */,
 				1477B9221FE2090800857CE2 /* Second_ViewController.m in Sources */,
+				14FF10CD1FE35BB6004DB424 /* HTTPRequest.m in Sources */,
 				1445792B1E14F0B30066A9DB /* AppDelegate.m in Sources */,
 				1445793F1E14F1A90066A9DB /* DragDropImageView.m in Sources */,
 				1477B9251FE26F6900857CE2 /* DownloadRequest.m in Sources */,
@@ -361,6 +369,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 9D3GVQFWSP;
+				GCC_PREFIX_HEADER = DragDropImg/PrefixHeader.pch;
 				INFOPLIST_FILE = DragDropImg/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.weicontrol.DragDropImg;
@@ -378,6 +387,7 @@
 				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 9D3GVQFWSP;
+				GCC_PREFIX_HEADER = DragDropImg/PrefixHeader.pch;
 				INFOPLIST_FILE = DragDropImg/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.weicontrol.DragDropImg;

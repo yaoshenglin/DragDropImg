@@ -61,41 +61,42 @@
         }
     }
     
-    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:@"backgroundIdentifier"];
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSOperationQueue *operationQueue = [[NSOperationQueue alloc] init];
     operationQueue.maxConcurrentOperationCount = 1;
     operationQueue.name = @"MyQueue";
     
-    _session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:operationQueue];
+    _session = [NSURLSession sessionWithConfiguration:configuration delegate:nil delegateQueue:operationQueue];
     //[self.session downloadTaskWithResumeData:_resumData];
     
     // 由系统直接返回一个dataTask任务
-    //    _myDataTask = [_session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-    //        // 网络请求完成之后就会执行，NSURLSession自动实现多线程
-    //        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
-    //            [NSThread sleepForTimeInterval:0.3];
-    //            dispatch_async(dispatch_get_main_queue(), ^{
-    //                //hudView.progress = 1;
-    //                //[hudView hide:YES afterDelay:0.2];
-    //            });
-    //        });
-    //
-    //        [NSThread currentThread].name = @"MyThread";
-    //        NSLog(@"%@",[NSThread currentThread]);
-    //        if (data && error == nil) {
-    //            // 网络访问成功
-    //            NSLog(@"data=%@",[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-    //        }
-    //        else if (error) {
-    //            // 网络访问失败
-    //            NSLog(@"error, %@",error.localizedDescription);
-    //        }else{
-    //            // 网络访问失败
-    //            NSLog(@"error, 请求异常");
-    //        }
-    //    }];
+    __weak typeof(self) wSelf = self;
+    _myDataTask = [_session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        // 网络请求完成之后就会执行，NSURLSession自动实现多线程
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
+            [NSThread sleepForTimeInterval:0.3];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                //hudView.progress = 1;
+                //[hudView hide:YES afterDelay:0.2];
+            });
+        });
+        
+        [NSThread currentThread].name = @"MyThread";
+        NSLog(@"%@",[NSThread currentThread]);
+        if (data && !error) {
+            // 网络访问成功
+            [wSelf parseData:data response:response error:error];
+        }
+        else if (error) {
+            // 网络访问失败
+            NSLog(@"error, %@",error.localizedDescription);
+        }else{
+            // 网络访问失败
+            NSLog(@"error, 请求异常");
+        }
+    }];
     
-    _myDataTask = [_session dataTaskWithRequest:request];
+//    _myDataTask = [_session dataTaskWithRequest:request];
     //_myDataTask = [_session downloadTaskWithRequest:request];
     
     // 每一个任务默认都是挂起的，需要调用 resume 方法
@@ -115,6 +116,63 @@
 - (void)cancel
 {
     [_session invalidateAndCancel];
+}
+
+#pragma mark 解析数据
+- (void)parseData:(NSData *)data response:(NSURLResponse *)response error:(NSError *)error
+{
+    NSString *MIMEType = response.MIMEType;
+    if ([data length]>0 && ([MIMEType hasPrefix:@"text/"] || [MIMEType hasSuffix:@"/json"])) {
+        NSDictionary *jsonDic = nil;
+        if ([MIMEType hasSuffix:@"/json"]) {
+            NSError *error = nil;
+            jsonDic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error];
+            if (error) {
+                NSLog(@"%@",error.localizedDescription);
+            }
+            
+            if (jsonDic) {
+                NSLog(@"%@",[jsonDic customDescription]);
+                return;
+            }
+        }
+        NSString *textEncodingName = response.textEncodingName ?: @"utf-8";
+        CFStringRef textEncode = (__bridge CFStringRef)textEncodingName;
+        CFStringEncoding enc = CFStringConvertIANACharSetNameToEncoding(textEncode);
+        NSStringEncoding encoding = CFStringConvertEncodingToNSStringEncoding (enc);
+        NSString *stringL = [[NSString alloc] initWithData:data encoding: encoding];
+        if (!stringL) {
+            printf("/////////%s////////\n",response.textEncodingName.UTF8String);
+            printf("自动获取编码失败\n");
+            NSStringEncoding GBEncoding = NSUTF8StringEncoding;
+            stringL = [[NSString alloc] initWithData:data encoding: GBEncoding];
+            
+            if (!stringL) {
+                GBEncoding = 0x80000632;
+                stringL = [[NSString alloc] initWithData:data encoding: GBEncoding];
+            }
+        }
+        
+        if ([stringL hasPrefix:@"\""] && [stringL hasSuffix:@"\""]) {
+            stringL = [stringL substringWithRange:NSMakeRange(1, stringL.length-2)];
+        }
+        
+        if (stringL) {
+            //_responseString = stringL;
+        }
+        
+        NSError *error1 = nil;
+        NSData *data = [stringL dataUsingEncoding:NSUTF8StringEncoding];
+        jsonDic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error1];
+        if (jsonDic) {
+            NSLog(@"%@",[jsonDic customDescription]);
+        }else{
+            NSLog(@"%@",error1.localizedDescription);
+        }
+    }
+    else if (data.length > 0) {
+        NSLog(@"下载文件 类型:%@, 文件名:%@",MIMEType,response.suggestedFilename);
+    }
 }
 
 #pragma mark - --------NSURLSessionDelegate------------------------

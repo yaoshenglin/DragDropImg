@@ -6,10 +6,6 @@
 //  Copyright © 2017年 xy. All rights reserved.
 //
 
-#define k_action @"api_V2"                      //默认动作根目录
-#define k_host @"https://api.happyeasy.cc"      //http://121.201.17.130:8100
-#define k_res_host @"http://res.happyeasy.cc"   //http://res.weicontrol.cn
-
 #import <Foundation/Foundation.h>
 
 @protocol MyRequestDelegate <NSObject>
