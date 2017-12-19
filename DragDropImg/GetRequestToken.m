@@ -9,7 +9,6 @@
 #import "GetRequestToken.h"
 #import "EnumTypes.h"
 #import "Tools.h"
-#import "DataRequest.h"
 #import "ExportGather.h"
 
 @interface GetRequestToken ()<NSURLSessionDelegate>
