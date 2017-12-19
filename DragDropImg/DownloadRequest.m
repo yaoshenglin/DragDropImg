@@ -14,6 +14,7 @@
 {
     NSDate *receiveDate;
     NSMutableData *vData;
+    int64_t currentLength;
 }
 
 @end
@@ -22,6 +23,7 @@
 
 - (void)startRequest
 {
+    vData = [NSMutableData data];
     NSInteger appVer = 33;//当前APP内部版本号
     NSInteger hwVer = 2;//当前固件内部版本号
     NSString *hwName = @"ModelName";
@@ -29,8 +31,8 @@
                            @"appVer":@(appVer),
                            @"hwName":hwName,
                            @"hwVer":@(hwVer)};
-    NSString *urlString = @"http://dldir1.qq.com/qqfile/qq/QQ2013/QQ2013SP5/9050/QQ2013SP5.exe";
-    urlString = @"http://120.25.226.186:32812/resources/videos/minion_01.mp4";
+    NSString *urlString = @"http://dldir1.qq.com/qqfile/QQforMac/QQ_V6.2.0.dmg";
+//    urlString = @"http://120.25.226.186:32812/resources/videos/minion_01.mp4";
     //urlString = @"https://api.happyeasy.cc/api_V2/GetLastVersions";
     
     NSURL *url = [NSURL URLWithString:urlString];
@@ -67,35 +69,7 @@
     operationQueue.name = @"MyQueue";
     
     _session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:operationQueue];
-    //[self.session downloadTaskWithResumeData:_resumData];
     
-    // 由系统直接返回一个dataTask任务
-    //    _myDataTask = [_session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-    //        // 网络请求完成之后就会执行，NSURLSession自动实现多线程
-    //        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
-    //            [NSThread sleepForTimeInterval:0.3];
-    //            dispatch_async(dispatch_get_main_queue(), ^{
-    //                //hudView.progress = 1;
-    //                //[hudView hide:YES afterDelay:0.2];
-    //            });
-    //        });
-    //
-    //        [NSThread currentThread].name = @"MyThread";
-    //        NSLog(@"%@",[NSThread currentThread]);
-    //        if (data && error == nil) {
-    //            // 网络访问成功
-    //            NSLog(@"data=%@",[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-    //        }
-    //        else if (error) {
-    //            // 网络访问失败
-    //            NSLog(@"error, %@",error.localizedDescription);
-    //        }else{
-    //            // 网络访问失败
-    //            NSLog(@"error, 请求异常");
-    //        }
-    //    }];
-    
-    //    _myDataTask = [_session dataTaskWithRequest:request];
     _myDataTask = [_session downloadTaskWithRequest:request];
     
     // 每一个任务默认都是挂起的，需要调用 resume 方法
@@ -118,20 +92,11 @@
 }
 
 #pragma mark - --------NSURLSessionDelegate------------------------
-- (void)URLSession:(NSURLSession *)session didBecomeInvalidWithError:(nullable NSError *)error
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didSendBodyData:(int64_t)bytesSent totalBytesSent:(int64_t)totalBytesSent totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
 {
-    NSLog(@"NSURLSessionDelegate,%@,%@",session,error.localizedDescription);
-}
-
-- (void)URLSession:(NSURLSession *)session didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
- completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential * _Nullable credential))completionHandler
-{
-    NSLog(@"NSURLSessionDelegate,%@,%@",session,challenge);
-}
-
-- (void)URLSessionDidFinishEventsForBackgroundURLSession:(NSURLSession *)session
-{
-    NSLog(@"NSURLSessionDelegate,%@",session);
+    //发送数据回调
+    CGFloat rate = 1.0 * totalBytesSent / totalBytesExpectedToSend;
+    NSLog(@"发送进度:%.2f%%,%lld",rate/0.01,task.countOfBytesSent);
 }
 
 #pragma mark - --------NSURLSessionDataDelegate------------------------
@@ -147,10 +112,52 @@
         NSLog(@"响应错误,%d",responseStatusCode);
     }
     
-    NSLog(@"%lld",contentLength);
+    NSLog(@"收到服务器响应,内容长度：%lld",contentLength);
+    
+    completionHandler(NSURLSessionResponseAllow);
 }
 
-#pragma mark - --------NSURLSessionDownloadDelegate------------------------
+- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data
+{
+    NSDictionary *info = @{@(NSURLSessionTaskStateRunning):@"Running",
+                           @(NSURLSessionTaskStateSuspended):@"Suspended",
+                           @(NSURLSessionTaskStateCanceling):@"Canceling",
+                           @(NSURLSessionTaskStateCompleted):@"Completed"};
+    [vData appendData:data];
+    NSLog(@"已经收到数据,%@",info[@(dataTask.state)]);
+}
+
+/* Sent periodically to notify the delegate of download progress. */
+- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
+{
+    CGFloat rate = 1.0 * totalBytesWritten / totalBytesExpectedToWrite;
+    NSTimeInterval space = [[NSDate date] timeIntervalSinceDate:receiveDate];
+    
+    if (space < 0.1 && rate != 1) {
+        //NSString *msg = @"----------接收进度没有更新--------------------";
+        //[self.class printDebugMsg:msg];
+        return;
+    }
+    
+    int64_t changeLength = totalBytesWritten - currentLength;
+    currentLength = totalBytesWritten;
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        /** 算出下载速度. */
+        CGFloat kate = changeLength / space;
+        //hudView.labelText = speedString;
+        if ([_delegate respondsToSelector:@selector(downloadToProgress:rate:)]) {
+            [_delegate downloadToProgress:rate rate:kate];
+        }
+    });
+    
+    receiveDate = [NSDate date];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        //hudView.progress = rate;
+    });
+    //NSLog(@"接收进度:%.2f,%lld",rate/0.01,downloadTask.countOfBytesReceived);
+}
+
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location;
 {
     _totalLength = downloadTask.response.expectedContentLength;
@@ -197,35 +204,6 @@
     }
 }
 
-/* Sent periodically to notify the delegate of download progress. */
-- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
-{
-    CGFloat rate = 1.0 * totalBytesWritten / totalBytesExpectedToWrite;
-    NSTimeInterval space = [[NSDate date] timeIntervalSinceDate:receiveDate];
-    
-    if (space < 0.1 && rate != 1) {
-        //NSString *msg = @"----------接收进度没有更新--------------------";
-        //[self.class printDebugMsg:msg];
-        return;
-    }
-    
-    dispatch_sync(dispatch_get_main_queue(), ^{
-        /** 算出下载速度. */
-        CGFloat kate = bytesWritten / space;
-        //hudView.labelText = speedString;
-        if ([_delegate respondsToSelector:@selector(downloadToProgress:rate:)]) {
-            [_delegate downloadToProgress:rate rate:kate];
-        }
-    });
-    
-    receiveDate = [NSDate date];
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        //hudView.progress = rate;
-    });
-    //NSLog(@"接收进度:%.2f,%lld",rate/0.01,downloadTask.countOfBytesReceived);
-}
-
 /* Sent when a download has been resumed. If a download failed with an
  * error, the -userInfo dictionary of the error will contain an
  * NSURLSessionDownloadTaskResumeData key, whose value is the resume
@@ -238,28 +216,6 @@
 }
 
 #pragma mark - --------NSURLSessionTaskDelegate------------------------
-- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didSendBodyData:(int64_t)bytesSent totalBytesSent:(int64_t)totalBytesSent totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
-{
-    //收到服务器响应回调
-    NSHTTPURLResponse *_response = (NSHTTPURLResponse *)task.response;
-    if (!_response) {
-        return;
-    }
-    
-    NSDictionary *userInfo = _response.allHeaderFields;
-    int responseStatusCode = (int)_response.statusCode;
-    int64_t contentLength = [userInfo[@"Content-Length"] longLongValue];
-    //NSLog(@"File Size:%lld",contentLength);
-    if (responseStatusCode != 200) {
-        NSLog(@"响应错误,%d",responseStatusCode);
-    }
-    
-    NSLog(@"%lld",contentLength);
-    
-    CGFloat rate = 1.0 * totalBytesSent / totalBytesExpectedToSend;
-    NSLog(@"发送进度:%.2f,%lld",rate/0.01,task.countOfBytesReceived);
-}
-
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
 {
     //任务完成
@@ -278,38 +234,6 @@
         NSLog(@"NSURLSessionTaskStateCompleted 下载成功!");
         //[self.view makeToast:@"下载成功"];
     }
-}
-
-- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task willPerformHTTPRedirection:(NSHTTPURLResponse *)response newRequest:(NSURLRequest *)request completionHandler:(void (^)(NSURLRequest * _Nullable))completionHandler
-{
-    NSLog(@"NSURLSessionTaskDelegate %s",__func__);
-}
-
-/* The task has received a request specific authentication challenge.
- * If this delegate is not implemented, the session specific authentication challenge
- * will *NOT* be called and the behavior will be the same as using the default handling
- * disposition.
- */
-- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential * _Nullable credential))completionHandler
-{
-    NSLog(@"NSURLSessionTaskDelegate %s",__func__);
-}
-
-/* Sent if a task requires a new, unopened body stream.  This may be
- * necessary when authentication has failed for any request that
- * involves a body stream.
- */
-- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task needNewBodyStream:(void (^)(NSInputStream * _Nullable bodyStream))completionHandler
-{
-    NSLog(@"NSURLSessionTaskDelegate %s",__func__);
-}
-
-/*
- * Sent when complete statistics information has been collected for the task.
- */
-- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didFinishCollectingMetrics:(NSURLSessionTaskMetrics *)metrics
-{
-    NSLog(@"NSURLSessionTaskDelegate %s",__func__);
 }
 
 @end

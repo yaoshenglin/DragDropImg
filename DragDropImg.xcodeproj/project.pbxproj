@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		140DFC601FE11EBE00166C5B /* MyHttpRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 140DFC5F1FE11EBE00166C5B /* MyHttpRequest.m */; };
 		143CFF631FD13BD000BD5753 /* 配置iFace@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 143CFF621FD13BD000BD5753 /* 配置iFace@2x.png */; };
+		143DC8FE1FE90DC60005B43D /* FileDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 143DC8FD1FE90DC60005B43D /* FileDownloader.m */; };
 		1445792B1E14F0B30066A9DB /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1445792A1E14F0B30066A9DB /* AppDelegate.m */; };
 		1445792E1E14F0B30066A9DB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1445792D1E14F0B30066A9DB /* main.m */; };
 		144579311E14F0B30066A9DB /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 144579301E14F0B30066A9DB /* ViewController.m */; };
@@ -18,9 +19,12 @@
 		1477B9221FE2090800857CE2 /* Second_ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1477B9211FE2090800857CE2 /* Second_ViewController.m */; };
 		1477B9251FE26F6900857CE2 /* DownloadRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1477B9241FE26F6900857CE2 /* DownloadRequest.m */; };
 		1477B9281FE284E900857CE2 /* DataRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1477B9271FE284E900857CE2 /* DataRequest.m */; };
-		148772C61FD54348003C13E9 /* 47个吸引正妹的把妹惯例.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 148772C51FD54348003C13E9 /* 47个吸引正妹的把妹惯例.pdf */; };
+		148772C61FD54348003C13E9 /* 47个吸引惯例.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 148772C51FD54348003C13E9 /* 47个吸引惯例.pdf */; };
 		14AAE66B1FD1007800321544 /* IMG_6212.PNG in Resources */ = {isa = PBXBuildFile; fileRef = 14AAE66A1FD1007800321544 /* IMG_6212.PNG */; };
 		14D20EF51F678EF80061EBAA /* Tools.m in Sources */ = {isa = PBXBuildFile; fileRef = 14D20EF41F678EF80061EBAA /* Tools.m */; };
+		14DAC7541FE8E7AB00225CD8 /* GDataXMLNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 14DAC7531FE8E7AB00225CD8 /* GDataXMLNode.m */; };
+		14DAC75A1FE8E94E00225CD8 /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 14DAC7591FE8E94E00225CD8 /* libxml2.tbd */; };
+		14E8EFF71FE7630B00A0FF4E /* UploadFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 14E8EFF61FE7630B00A0FF4E /* UploadFile.m */; };
 		14F469511FCBB5AB00E21658 /* DrawImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 14F469501FCBB5AB00E21658 /* DrawImage.m */; };
 		14F4695C1FCBF76C00E21658 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14F4695B1FCBF76C00E21658 /* QuartzCore.framework */; };
 		14F469621FCBF9A400E21658 /* iface主机@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 14F4695E1FCBF9A400E21658 /* iface主机@2x.png */; };
@@ -28,6 +32,9 @@
 		14F469641FCBF9A400E21658 /* msg2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 14F469601FCBF9A400E21658 /* msg2@2x.png */; };
 		14F469651FCBF9A400E21658 /* 按钮点击效果.png in Resources */ = {isa = PBXBuildFile; fileRef = 14F469611FCBF9A400E21658 /* 按钮点击效果.png */; };
 		14FF10CD1FE35BB6004DB424 /* HTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 14FF10CC1FE35BB6004DB424 /* HTTPRequest.m */; };
+		14FF10D11FE39BD2004DB424 /* UploadRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 14FF10D01FE39BD2004DB424 /* UploadRequest.m */; };
+		14FF10D41FE3A353004DB424 /* GetRequestToken.m in Sources */ = {isa = PBXBuildFile; fileRef = 14FF10D31FE3A353004DB424 /* GetRequestToken.m */; };
+		14FF10D91FE3A5A5004DB424 /* ExportGather.m in Sources */ = {isa = PBXBuildFile; fileRef = 14FF10D81FE3A5A5004DB424 /* ExportGather.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +42,8 @@
 		140DFC5F1FE11EBE00166C5B /* MyHttpRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyHttpRequest.m; sourceTree = "<group>"; };
 		140DFC631FE12BDA00166C5B /* DragDropImg.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = DragDropImg.entitlements; sourceTree = "<group>"; };
 		143CFF621FD13BD000BD5753 /* 配置iFace@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "配置iFace@2x.png"; sourceTree = "<group>"; };
+		143DC8FC1FE90DC60005B43D /* FileDownloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileDownloader.h; sourceTree = "<group>"; };
+		143DC8FD1FE90DC60005B43D /* FileDownloader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileDownloader.m; sourceTree = "<group>"; };
 		144579261E14F0B30066A9DB /* DragDropImg.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DragDropImg.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		144579291E14F0B30066A9DB /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		1445792A1E14F0B30066A9DB /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -52,10 +61,15 @@
 		1477B9241FE26F6900857CE2 /* DownloadRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DownloadRequest.m; sourceTree = "<group>"; };
 		1477B9261FE284E900857CE2 /* DataRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataRequest.h; sourceTree = "<group>"; };
 		1477B9271FE284E900857CE2 /* DataRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataRequest.m; sourceTree = "<group>"; };
-		148772C51FD54348003C13E9 /* 47个吸引正妹的把妹惯例.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "47个吸引正妹的把妹惯例.pdf"; sourceTree = "<group>"; };
+		148772C51FD54348003C13E9 /* 47个吸引惯例.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "47个吸引惯例.pdf"; sourceTree = "<group>"; };
 		14AAE66A1FD1007800321544 /* IMG_6212.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IMG_6212.PNG; sourceTree = "<group>"; };
-		14D20EF31F678EF80061EBAA /* Tools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tools.h; sourceTree = "<group>"; };
-		14D20EF41F678EF80061EBAA /* Tools.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tools.m; sourceTree = "<group>"; };
+		14D20EF31F678EF80061EBAA /* Tools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tools.h; path = ../Tools.h; sourceTree = "<group>"; };
+		14D20EF41F678EF80061EBAA /* Tools.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Tools.m; path = ../Tools.m; sourceTree = "<group>"; };
+		14DAC7521FE8E7AB00225CD8 /* GDataXMLNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GDataXMLNode.h; sourceTree = "<group>"; };
+		14DAC7531FE8E7AB00225CD8 /* GDataXMLNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GDataXMLNode.m; sourceTree = "<group>"; };
+		14DAC7591FE8E94E00225CD8 /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = usr/lib/libxml2.tbd; sourceTree = SDKROOT; };
+		14E8EFF51FE7630B00A0FF4E /* UploadFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UploadFile.h; sourceTree = "<group>"; };
+		14E8EFF61FE7630B00A0FF4E /* UploadFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UploadFile.m; sourceTree = "<group>"; };
 		14F4694F1FCBB5AB00E21658 /* DrawImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawImage.h; sourceTree = "<group>"; };
 		14F469501FCBB5AB00E21658 /* DrawImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DrawImage.m; sourceTree = "<group>"; };
 		14F4695B1FCBF76C00E21658 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -66,6 +80,13 @@
 		14FF10CB1FE35BB6004DB424 /* HTTPRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPRequest.h; sourceTree = "<group>"; };
 		14FF10CC1FE35BB6004DB424 /* HTTPRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTTPRequest.m; sourceTree = "<group>"; };
 		14FF10CE1FE35BEA004DB424 /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
+		14FF10CF1FE39BD2004DB424 /* UploadRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UploadRequest.h; sourceTree = "<group>"; };
+		14FF10D01FE39BD2004DB424 /* UploadRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UploadRequest.m; sourceTree = "<group>"; };
+		14FF10D21FE3A353004DB424 /* GetRequestToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetRequestToken.h; sourceTree = "<group>"; };
+		14FF10D31FE3A353004DB424 /* GetRequestToken.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GetRequestToken.m; sourceTree = "<group>"; };
+		14FF10D61FE3A3C9004DB424 /* EnumTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnumTypes.h; sourceTree = "<group>"; };
+		14FF10D71FE3A5A5004DB424 /* ExportGather.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExportGather.h; sourceTree = "<group>"; };
+		14FF10D81FE3A5A5004DB424 /* ExportGather.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExportGather.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +94,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				14DAC75A1FE8E94E00225CD8 /* libxml2.tbd in Frameworks */,
 				14F4695C1FCBF76C00E21658 /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -117,10 +139,13 @@
 				1477B9241FE26F6900857CE2 /* DownloadRequest.m */,
 				1477B9261FE284E900857CE2 /* DataRequest.h */,
 				1477B9271FE284E900857CE2 /* DataRequest.m */,
+				14FF10CF1FE39BD2004DB424 /* UploadRequest.h */,
+				14FF10D01FE39BD2004DB424 /* UploadRequest.m */,
 				14FF10CB1FE35BB6004DB424 /* HTTPRequest.h */,
 				14FF10CC1FE35BB6004DB424 /* HTTPRequest.m */,
-				14D20EF31F678EF80061EBAA /* Tools.h */,
-				14D20EF41F678EF80061EBAA /* Tools.m */,
+				14FF10D21FE3A353004DB424 /* GetRequestToken.h */,
+				14FF10D31FE3A353004DB424 /* GetRequestToken.m */,
+				14FF10D51FE3A3BD004DB424 /* Common */,
 				14F4695D1FCBF98000E21658 /* Resource */,
 				1445792C1E14F0B30066A9DB /* Supporting Files */,
 			);
@@ -142,6 +167,7 @@
 		14F4695A1FCBF72E00E21658 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				14DAC7591FE8E94E00225CD8 /* libxml2.tbd */,
 				14F4695B1FCBF76C00E21658 /* QuartzCore.framework */,
 			);
 			name = Frameworks;
@@ -156,9 +182,27 @@
 				14F4695F1FCBF9A400E21658 /* msg1@2x.png */,
 				14F469601FCBF9A400E21658 /* msg2@2x.png */,
 				14F469611FCBF9A400E21658 /* 按钮点击效果.png */,
-				148772C51FD54348003C13E9 /* 47个吸引正妹的把妹惯例.pdf */,
+				148772C51FD54348003C13E9 /* 47个吸引惯例.pdf */,
 			);
 			path = Resource;
+			sourceTree = "<group>";
+		};
+		14FF10D51FE3A3BD004DB424 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				14D20EF31F678EF80061EBAA /* Tools.h */,
+				14D20EF41F678EF80061EBAA /* Tools.m */,
+				14FF10D61FE3A3C9004DB424 /* EnumTypes.h */,
+				14FF10D71FE3A5A5004DB424 /* ExportGather.h */,
+				14FF10D81FE3A5A5004DB424 /* ExportGather.m */,
+				14E8EFF51FE7630B00A0FF4E /* UploadFile.h */,
+				14E8EFF61FE7630B00A0FF4E /* UploadFile.m */,
+				143DC8FC1FE90DC60005B43D /* FileDownloader.h */,
+				143DC8FD1FE90DC60005B43D /* FileDownloader.m */,
+				14DAC7521FE8E7AB00225CD8 /* GDataXMLNode.h */,
+				14DAC7531FE8E7AB00225CD8 /* GDataXMLNode.m */,
+			);
+			path = Common;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -229,7 +273,7 @@
 				14F469631FCBF9A400E21658 /* msg1@2x.png in Resources */,
 				14F469621FCBF9A400E21658 /* iface主机@2x.png in Resources */,
 				144579331E14F0B30066A9DB /* Assets.xcassets in Resources */,
-				148772C61FD54348003C13E9 /* 47个吸引正妹的把妹惯例.pdf in Resources */,
+				148772C61FD54348003C13E9 /* 47个吸引惯例.pdf in Resources */,
 				14F469651FCBF9A400E21658 /* 按钮点击效果.png in Resources */,
 				144579361E14F0B30066A9DB /* Main.storyboard in Resources */,
 				143CFF631FD13BD000BD5753 /* 配置iFace@2x.png in Resources */,
@@ -245,12 +289,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				144579311E14F0B30066A9DB /* ViewController.m in Sources */,
+				14DAC7541FE8E7AB00225CD8 /* GDataXMLNode.m in Sources */,
 				140DFC601FE11EBE00166C5B /* MyHttpRequest.m in Sources */,
 				14D20EF51F678EF80061EBAA /* Tools.m in Sources */,
 				1445792E1E14F0B30066A9DB /* main.m in Sources */,
+				14FF10D91FE3A5A5004DB424 /* ExportGather.m in Sources */,
+				14FF10D11FE39BD2004DB424 /* UploadRequest.m in Sources */,
+				143DC8FE1FE90DC60005B43D /* FileDownloader.m in Sources */,
 				1477B9221FE2090800857CE2 /* Second_ViewController.m in Sources */,
 				14FF10CD1FE35BB6004DB424 /* HTTPRequest.m in Sources */,
+				14FF10D41FE3A353004DB424 /* GetRequestToken.m in Sources */,
 				1445792B1E14F0B30066A9DB /* AppDelegate.m in Sources */,
+				14E8EFF71FE7630B00A0FF4E /* UploadFile.m in Sources */,
 				1445793F1E14F1A90066A9DB /* DragDropImageView.m in Sources */,
 				1477B9251FE26F6900857CE2 /* DownloadRequest.m in Sources */,
 				14F469511FCBB5AB00E21658 /* DrawImage.m in Sources */,
@@ -370,12 +420,15 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 9D3GVQFWSP;
 				GCC_PREFIX_HEADER = DragDropImg/PrefixHeader.pch;
+				HEADER_SEARCH_PATHS = /usr/include/libxml2;
 				INFOPLIST_FILE = DragDropImg/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.weicontrol.DragDropImg;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "c6d0c036-ae3e-4308-8c1b-da25e2506499";
 				PROVISIONING_PROFILE_SPECIFIER = weicontrol_Dev;
+				SYSTEM_HEADER_SEARCH_PATHS = /usr/include/libxml2;
 			};
 			name = Debug;
 		};
@@ -388,12 +441,15 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 9D3GVQFWSP;
 				GCC_PREFIX_HEADER = DragDropImg/PrefixHeader.pch;
+				HEADER_SEARCH_PATHS = /usr/include/libxml2;
 				INFOPLIST_FILE = DragDropImg/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.weicontrol.DragDropImg;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "fc5fc37f-7e0b-4965-88c0-99f98f40aab4";
 				PROVISIONING_PROFILE_SPECIFIER = Weicontrol_Dis;
+				SYSTEM_HEADER_SEARCH_PATHS = /usr/include/libxml2;
 			};
 			name = Release;
 		};

@@ -22,6 +22,7 @@
 
 - (void)startRequest
 {
+    vData = [NSMutableData data];
     NSInteger appVer = 33;//当前APP内部版本号
     NSInteger hwVer = 2;//当前固件内部版本号
     NSString *hwName = @"ModelName";
@@ -31,7 +32,7 @@
                            @"hwVer":@(hwVer)};
     NSString *urlString = @"http://dldir1.qq.com/qqfile/qq/QQ2013/QQ2013SP5/9050/QQ2013SP5.exe";
     urlString = @"http://120.25.226.186:32812/resources/videos/minion_01.mp4";
-    urlString = @"https://api.happyeasy.cc/api_V2/GetLastVersions";
+    urlString = [NSString stringWithFormat:@"%@/%@/%@",k_host,k_action,@"GetLastVersions"];
     
     NSURL *url = [NSURL URLWithString:urlString];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
@@ -45,15 +46,15 @@
         request.HTTPMethod = @"POST";//设置为 POST
         request.HTTPBody = jsonData;//把刚才封装的 JSON 数据塞进去
         [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-        [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-        [request setValue:@(_totalLength).stringValue forHTTPHeaderField:@"Content-length"];
+        [request setValue:@"text/json" forHTTPHeaderField:@"Content-Type"];
+        //[request setValue:@(_totalLength).stringValue forHTTPHeaderField:@"Content-length"];
         if ([k_action isEqualToString:@"api_V2"]) {
             NSString *token = [body objectForKey:@"token"];
             if (token) {
                 [request setValue:token forHTTPHeaderField:@"token"];
             }
             
-            //[self setValue:KIFaceApikey forHeader:@"apikey"];
+            [request setValue:KIFaceApikey forHTTPHeaderField:@"apikey"];
             
             NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
             NSString *versions = [infoDict objectForKey:@"CFBundleShortVersionString"];
@@ -63,41 +64,32 @@
     
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSOperationQueue *operationQueue = [[NSOperationQueue alloc] init];
-    operationQueue.maxConcurrentOperationCount = 1;
+    operationQueue.maxConcurrentOperationCount = 3;
     operationQueue.name = @"MyQueue";
     
-    _session = [NSURLSession sessionWithConfiguration:configuration delegate:nil delegateQueue:operationQueue];
+    _session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:operationQueue];
     //[self.session downloadTaskWithResumeData:_resumData];
     
     // 由系统直接返回一个dataTask任务
-    __weak typeof(self) wSelf = self;
-    _myDataTask = [_session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        // 网络请求完成之后就会执行，NSURLSession自动实现多线程
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
-            [NSThread sleepForTimeInterval:0.3];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                //hudView.progress = 1;
-                //[hudView hide:YES afterDelay:0.2];
-            });
-        });
-        
-        [NSThread currentThread].name = @"MyThread";
-        NSLog(@"%@",[NSThread currentThread]);
-        if (data && !error) {
-            // 网络访问成功
-            [wSelf parseData:data response:response error:error];
-        }
-        else if (error) {
-            // 网络访问失败
-            NSLog(@"error, %@",error.localizedDescription);
-        }else{
-            // 网络访问失败
-            NSLog(@"error, 请求异常");
-        }
-    }];
+//    __weak typeof(self) wSelf = self;
+//    _myDataTask = [_session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+//        NSLog(@"数据类型, %@",response.MIMEType);
+//        [NSThread currentThread].name = @"MyThread";
+//        NSLog(@"%@",[NSThread currentThread]);
+//        if (data && !error) {
+//            // 网络访问成功
+//            [wSelf parseData:data response:response error:error];
+//        }
+//        else if (error) {
+//            // 网络访问失败
+//            NSLog(@"error, %@",error.localizedDescription);
+//        }else{
+//            // 网络访问失败
+//            NSLog(@"error, 请求异常");
+//        }
+//    }];
     
-//    _myDataTask = [_session dataTaskWithRequest:request];
-    //_myDataTask = [_session downloadTaskWithRequest:request];
+    _myDataTask = [_session dataTaskWithRequest:request];
     
     // 每一个任务默认都是挂起的，需要调用 resume 方法
     [self resume];
@@ -168,6 +160,9 @@
             NSLog(@"%@",[jsonDic customDescription]);
         }else{
             NSLog(@"%@",error1.localizedDescription);
+            if (stringL) {
+                NSLog(@"%@",stringL);
+            }
         }
     }
     else if (data.length > 0) {
@@ -205,7 +200,9 @@
         NSLog(@"响应错误,%d",responseStatusCode);
     }
     
-    NSLog(@"%lld",contentLength);
+    NSLog(@"收到响应,内容长度：%lld",contentLength);
+    
+    completionHandler(NSURLSessionResponseAllow);
 }
 
 #pragma mark - --------NSURLSessionDownloadDelegate------------------------
@@ -299,23 +296,8 @@
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didSendBodyData:(int64_t)bytesSent totalBytesSent:(int64_t)totalBytesSent totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
 {
     //收到服务器响应回调
-    NSHTTPURLResponse *_response = (NSHTTPURLResponse *)task.response;
-    if (!_response) {
-        return;
-    }
-    
-    NSDictionary *userInfo = _response.allHeaderFields;
-    int responseStatusCode = (int)_response.statusCode;
-    int64_t contentLength = [userInfo[@"Content-Length"] longLongValue];
-    //NSLog(@"File Size:%lld",contentLength);
-    if (responseStatusCode != 200) {
-        NSLog(@"响应错误,%d",responseStatusCode);
-    }
-    
-    NSLog(@"%lld",contentLength);
-    
     CGFloat rate = 1.0 * totalBytesSent / totalBytesExpectedToSend;
-    NSLog(@"发送进度:%.2f,%lld",rate/0.01,task.countOfBytesReceived);
+    NSLog(@"进度:%.2f%%,%lld",rate/0.01,task.countOfBytesSent);
 }
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error

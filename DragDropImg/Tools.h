@@ -13,6 +13,15 @@
 
 + (NSAlert *)alertWithMessage:(NSString *)messageText informative:(NSString *)informativeText completionHandler:(void (^)(NSModalResponse returnCode))handler;
 
++ (NSUserDefaults *)userDefaults;
++ (void)setObject:(id)value forKey:(NSString *)defaultName;
++ (id)objectForKey:(NSString *)defaultName;
+
+#pragma mark 生成长度为length的随机字符串
++ (NSString *)getRandomByString:(NSString *)string Length:(int)length;
+#pragma mark 生成长度为length的随机字符串
++ (NSString *)getRandomByLength:(int)length;
+
 @end
 
 @interface NSString (NSObject)
@@ -21,7 +30,20 @@
 
 @end
 
-@interface NSDictionary (NSObject);
+@interface NSDictionary (NSObject)
+
+#pragma mark 根据关键字获取对应数据
+- (BOOL)existsForKey:(id)key;
+- (int)intForKey:(id)key;
+- (NSInteger)integerForKey:(id)key;
+- (long)longForKey:(id)key;
+- (float)floatForKey:(id)key;
+- (double)doubleForKey:(id)key;
+- (BOOL)boolForKey:(id)key;
+- (NSString *)stringForKey:(id)key;
+- (NSArray *)arrayForKey:(id)key;
+- (NSDictionary *)dictionaryForKey:(id)key;
+- (NSData *)dataForKey:(id)key;
 
 @end
 

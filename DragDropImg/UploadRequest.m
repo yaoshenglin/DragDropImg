@@ -1,15 +1,21 @@
 //
-//  MyHttpRequest.m
+//  UploadRequest.m
 //  DragDropImg
 //
-//  Created by xy on 2017/12/13.
+//  Created by xy on 2017/12/15.
 //  Copyright © 2017年 xy. All rights reserved.
 //
 
-#import "MyHttpRequest.h"
-#import "Tools.h"
+#define BOUNDRY_B @"cc013nchft7" //分隔符标志
+#define ENTER @"\r\n"  //回车换行
 
-@interface MyHttpRequest ()<NSURLSessionDelegate>
+#import "UploadRequest.h"
+#import "ExportGather.h"
+#import "EnumTypes.h"
+#import "Tools.h"
+//#import "GDataXMLNode.h"
+
+@interface UploadRequest ()<NSURLSessionDelegate,NSStreamDelegate>
 {
     NSDate *receiveDate;
     NSMutableData *vData;
@@ -17,7 +23,7 @@
 
 @end
 
-@implementation MyHttpRequest
+@implementation UploadRequest
 
 - (NSMutableURLRequest *)withUrl:(NSString *)urlString body:(NSDictionary *)body
 {
@@ -90,44 +96,22 @@
 - (void)startRequest
 {
     vData = [NSMutableData data];
-    NSInteger appVer = 33;//当前APP内部版本号
-    NSInteger hwVer = 2;//当前固件内部版本号
-    NSString *hwName = @"ModelName";
-    NSDictionary *body = @{@"deviceType":@(4),//4
-                           @"appVer":@(appVer),
-                           @"hwName":hwName,
-                           @"hwVer":@(hwVer)};
-    NSString *urlString = @"http://dldir1.qq.com/qqfile/qq/QQ2013/QQ2013SP5/9050/QQ2013SP5.exe";
-    urlString = @"http://120.25.226.186:32812/resources/videos/minion_01.mp4";
-//    urlString = @"https://api.happyeasy.cc/api_V2/GetLastVersions";
+    NSString *urlString = [NSString stringWithFormat:@"%@/%@/%@",k_host,k_action,UpdateFace];
+//    urlString = @"http://www.freeimagehosting.net/upl.php";
+    NSString *imgName = @"msg2";
+    NSImage *image = [NSImage imageNamed:imgName];
+    
+    NSDictionary *body = @{@"file":image,@"fileName":imgName};
     
     NSMutableURLRequest *request = [self withUrl:urlString body:body];
-    request.HTTPMethod = @"GET";
+    NSDictionary *userInfo = [Tools objectForKey:@"userInfo"];
+    NSString *token = [userInfo stringForKey:@"token"];
+    [request addValue:token forHTTPHeaderField:@"token"];
+    [request addValue:@(692).stringValue forHTTPHeaderField:@"SceneID"];
     
-    if ([NSJSONSerialization isValidJSONObject:body]) {
-        //利用系统自带 JSON 工具封装 JSON 数据
-        NSError *error = nil;
-        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:body options:NSJSONWritingPrettyPrinted error: &error];
-        _totalLength = jsonData.length;
-        request.HTTPMethod = @"POST";//设置为 POST
-        request.HTTPBody = jsonData;//把刚才封装的 JSON 数据塞进去
-        [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-        [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-        [request setValue:@(_totalLength).stringValue forHTTPHeaderField:@"Content-length"];
-        if ([k_action isEqualToString:@"api_V2"]) {
-            NSString *token = [body objectForKey:@"token"];
-            if (token) {
-                [request setValue:token forHTTPHeaderField:@"token"];
-            }
-            
-            //[self setValue:KIFaceApikey forHeader:@"apikey"];
-            
-            NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
-            NSString *versions = [infoDict objectForKey:@"CFBundleShortVersionString"];
-            [request setValue:versions forHTTPHeaderField:@"ver"];
-        }
-    }
-    
+    __unused NSString *path = [request.allHTTPHeaderFields objectForKey:@"path"];
+    [request setValue:nil forHTTPHeaderField:@"path"];
+
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSOperationQueue *operationQueue = [[NSOperationQueue alloc] init];
     operationQueue.maxConcurrentOperationCount = 1;
@@ -135,8 +119,22 @@
     
     _session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:[NSOperationQueue mainQueue]];
     
-    // 由系统直接返回一个dataTask任务
-    _myDataTask = [_session dataTaskWithRequest:request];
+    _myDataTask = [_session uploadTaskWithRequest:request fromData:request.HTTPBody];
+//    _myDataTask = [_session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+//        if (data) {
+//            NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
+//            if (dictionary) {
+//                NSLog(@"%@",dictionary);
+//            }
+//            else if (error) {
+//                NSString *string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+//                NSLog(@"%@",string);
+//            }
+//        }
+//        else if (error) {
+//            NSLog(@"%@",error.localizedDescription);
+//        }
+//    }];
     
     // 每一个任务默认都是挂起的，需要调用 resume 方法
     [_myDataTask resume];
@@ -152,24 +150,14 @@
     [_session invalidateAndCancel];
 }
 
-#pragma mark - --------NSURLSessionDelegate------------------------
-- (void)URLSession:(NSURLSession *)session didBecomeInvalidWithError:(nullable NSError *)error
-{
-    NSLog(@"NSURLSessionDelegate,%@,%@",session,error.localizedDescription);
-}
-
-- (void)URLSession:(NSURLSession *)session didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
- completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential * _Nullable credential))completionHandler
-{
-    NSLog(@"NSURLSessionDelegate,%@,%@",session,challenge);
-}
-
-- (void)URLSessionDidFinishEventsForBackgroundURLSession:(NSURLSession *)session
-{
-    NSLog(@"NSURLSessionDelegate,%@",session);
-}
-
 #pragma mark - --------NSURLSessionDataDelegate------------------------
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didSendBodyData:(int64_t)bytesSent totalBytesSent:(int64_t)totalBytesSent totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
+{
+    //发送数据回调
+    CGFloat rate = 1.0 * totalBytesSent / totalBytesExpectedToSend;
+    NSLog(@"发送进度:%.2f%%,%lld",rate/0.01,task.countOfBytesSent);
+}
+
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
 {
     //收到服务器响应回调
@@ -182,17 +170,21 @@
         NSLog(@"响应错误,%d",responseStatusCode);
     }
     
-    NSLog(@"收到响应,内容长度：%lld",contentLength);
+    NSLog(@"收到服务器响应,内容长度：%lld",contentLength);
     
     completionHandler(NSURLSessionResponseAllow);
 }
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data
 {
+    NSDictionary *info = @{@(NSURLSessionTaskStateRunning):@"Running",
+                           @(NSURLSessionTaskStateSuspended):@"Suspended",
+                           @(NSURLSessionTaskStateCanceling):@"Canceling",
+                           @(NSURLSessionTaskStateCompleted):@"Completed"};
     [vData appendData:data];
+    NSLog(@"已经收到数据,%@",info[@(dataTask.state)]);
 }
 
-#pragma mark - --------NSURLSessionDownloadDelegate------------------------
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location;
 {
     _totalLength = downloadTask.response.expectedContentLength;
@@ -265,7 +257,7 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         //hudView.progress = rate;
     });
-    //NSLog(@"接收进度:%.2f,%lld",rate/0.01,downloadTask.countOfBytesReceived);
+    NSLog(@"接收进度:%.2f,%lld",rate/0.01,downloadTask.countOfBytesReceived);
 }
 
 /* Sent when a download has been resumed. If a download failed with an
@@ -273,19 +265,11 @@
  * NSURLSessionDownloadTaskResumeData key, whose value is the resume
  * data.
  */
-- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didResumeAtOffset:(int64_t)fileOffset expectedTotalBytes:(int64_t)expectedTotalBytes
-{
-    //告诉代理人下载任务已经恢复
-    NSLog(@"NSURLSessionDownloadDelegate 下载任务已经恢复");
-}
-
-#pragma mark - --------NSURLSessionTaskDelegate------------------------
-- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didSendBodyData:(int64_t)bytesSent totalBytesSent:(int64_t)totalBytesSent totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
-{
-    //收到服务器响应回调
-    CGFloat rate = 1.0 * totalBytesSent / totalBytesExpectedToSend;
-    NSLog(@"进度:%.2f%%,%lld",rate/0.01,task.countOfBytesSent);
-}
+//- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didResumeAtOffset:(int64_t)fileOffset expectedTotalBytes:(int64_t)expectedTotalBytes
+//{
+//    //告诉代理人下载任务已经恢复
+//    NSLog(@"NSURLSessionDownloadDelegate 下载任务已经恢复");
+//}
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
 {
@@ -297,52 +281,28 @@
         /** 如果发生错误, 我们可以从error中获取到续传数据. */
         _resumData =  [error.userInfo objectForKey:NSURLSessionDownloadTaskResumeData];
         
-        NSLog(@"NSURLSessionTaskDelegate error: %@", error);
+        NSLog(@"NSURLSessionTaskDelegate error: %@", error.localizedDescription);
         dispatch_async(dispatch_get_main_queue(), ^{
             //[self.view makeToast:error.localizedDescription];
         });
     } else {
-        NSLog(@"NSURLSessionTaskStateCompleted 下载成功!");
+        NSLog(@"NSURLSessionTaskStateCompleted 操作成功!");
         //[self.view makeToast:@"下载成功"];
+        if (vData.length > 0) {
+            NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:vData options:kNilOptions error:&error];
+            if (dictionary) {
+                NSLog(@"%@",[dictionary customDescription]);
+            }
+            else if (error) {
+                NSString *string = [[NSString alloc] initWithData:vData encoding:NSUTF8StringEncoding];
+                //string = [GDataXMLNode getBody:string];
+                NSLog(@"%@",string);
+            }
+        }
+        else if (error) {
+            NSLog(@"%@",error.localizedDescription);
+        }
     }
-}
-
-- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task
-willPerformHTTPRedirection:(NSHTTPURLResponse *)response
-        newRequest:(NSURLRequest *)request
- completionHandler:(void (^)(NSURLRequest * _Nullable))completionHandler
-{
-    NSLog(@"NSURLSessionTaskDelegate %s",__func__);
-}
-
-/* The task has received a request specific authentication challenge.
- * If this delegate is not implemented, the session specific authentication challenge
- * will *NOT* be called and the behavior will be the same as using the default handling
- * disposition.
- */
-- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task
-didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
- completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential * _Nullable credential))completionHandler
-{
-    NSLog(@"NSURLSessionTaskDelegate %s",__func__);
-}
-
-/* Sent if a task requires a new, unopened body stream.  This may be
- * necessary when authentication has failed for any request that
- * involves a body stream.
- */
-- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task
- needNewBodyStream:(void (^)(NSInputStream * _Nullable bodyStream))completionHandler
-{
-    NSLog(@"NSURLSessionTaskDelegate %s",__func__);
-}
-
-/*
- * Sent when complete statistics information has been collected for the task.
- */
-- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didFinishCollectingMetrics:(NSURLSessionTaskMetrics *)metrics
-{
-    NSLog(@"NSURLSessionTaskDelegate %s",__func__);
 }
 
 @end

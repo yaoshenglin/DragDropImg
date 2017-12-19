@@ -74,14 +74,19 @@
 //    });
     
     
-    drawView = [[DrawImage alloc] initWithFrame:self.view.bounds];
-    drawView.layerContentsPlacement = NSViewLayerContentsPlacementCenter;
-    [self.view addSubview:drawView];
-    ///Users/xy/Library/Developer/Xcode/DerivedData/DragDropImg-bgyaoueutozmwweewybfgccinuzg/Build/Products/Debug/DragDropImg.app/Contents
-    drawView.translatesAutoresizingMaskIntoConstraints = NO;
-    NSDictionary *viewsDic = NSDictionaryOfVariableBindings(drawView);
-    [self.view addConstraintsWithFormat:@"|[drawView]|" views:viewsDic];
-    [self.view addConstraintsWithFormat:@"V:|[drawView]|" views:viewsDic];
+//    drawView = [[DrawImage alloc] initWithFrame:self.view.bounds];
+//    drawView.layerContentsPlacement = NSViewLayerContentsPlacementCenter;
+//    [self.view addSubview:drawView];
+//    
+//    drawView.translatesAutoresizingMaskIntoConstraints = NO;
+//    NSDictionary *viewsDic = NSDictionaryOfVariableBindings(drawView);
+//    [self.view addConstraintsWithFormat:@"|[drawView]|" views:viewsDic];
+//    [self.view addConstraintsWithFormat:@"V:|[drawView]|" views:viewsDic];
+    
+//    NSDictionary *userInfo = @{@"mobile":@"18602561935",
+//                               @"token":@"301|E21CA9946944987340C1DA235AC2A73C",
+//                               @"Salt":@"a0367a36a4bf2db0"};
+//    [Tools setObject:userInfo forKey:@"userInfo"];
 }
 
 - (void)setOldData:(NSData *)oldData

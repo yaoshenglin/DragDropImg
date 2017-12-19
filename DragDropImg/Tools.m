@@ -28,6 +28,48 @@
     return alert;
 }
 
++ (NSUserDefaults *)userDefaults
+{
+    return [NSUserDefaults standardUserDefaults];
+}
+
++ (void)setObject:(id)value forKey:(NSString *)defaultName
+{
+    [[Tools userDefaults] setObject:value forKey:defaultName];
+    [[Tools userDefaults] synchronize];
+}
+
++ (id)objectForKey:(NSString *)defaultName
+{
+    id value = [[Tools userDefaults] objectForKey:defaultName];
+    return value;
+}
+
+#pragma mark 生成长度为length的随机字符串
++ (NSString *)getRandomByString:(NSString *)string Length:(int)length
+{
+    if (![string isKindOfClass:[NSString class]] || string.length <= 0) {
+        //'A' ~ "Z",'a' ~ "z",'0' ~ "9"
+        string = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    }
+    NSString *result = @"";
+    NSString *mStr = string;
+    u_int32_t bounds = (u_int32_t)mStr.length;//取值范围
+    for (int i = 0; i <length; i ++) {
+        int ran = arc4random() % bounds;
+        //ran = arc4random_uniform(bounds);
+        NSString *charStr = [mStr substringWithRange:NSMakeRange(ran, 1)];
+        result = [result stringByAppendingString:charStr];
+    }
+    return result;
+}
+
+#pragma mark 生成长度为length的随机字符串
++ (NSString *)getRandomByLength:(int)length
+{
+    return [self getRandomByString:nil Length:length];
+}
+
 @end
 
 @implementation NSString (NSObject)
@@ -57,6 +99,111 @@
     NSString *str = [self.description stringForFormat];
     
     return str;
+}
+
+- (id)checkClass:(Class)aClass key:(id)key
+{
+    if (![self isKindOfClass:[NSDictionary class]]) {
+        NSLog(@"该数据不是NSDictionary类型,%@,%@",self,key);
+        return 0;
+    }
+    
+    id result = [self objectForKey:key];
+    if (!result || ![result isKindOfClass:aClass]) {
+        return nil;
+    }
+    
+    return result;
+}
+
+- (id)checkClasses:(NSArray *)listClass key:(id)key
+{
+    id result = [self objectForKey:key];
+    if (!result) return nil;
+    for (Class aClass in listClass) {
+        if ([result isKindOfClass:aClass]) {
+            return result;
+        }
+    }
+    
+    return nil;
+}
+
+#pragma mark 根据关键字获取对应数据
+- (BOOL)existsForKey:(id)key
+{
+    id value = [self objectForKey:key];
+    if (!value || [value isKindOfClass:[NSNull class]]) {
+        return NO;
+    }
+    
+    return YES;
+}
+
+- (int)intForKey:(id)key
+{
+    id value = [self checkClasses:@[NSNumber.class,NSString.class] key:key];
+    int result = value ? [value intValue] : -1;
+    return result;
+}
+
+- (NSInteger)integerForKey:(id)key
+{
+    id value = [self checkClasses:@[NSNumber.class,NSString.class] key:key];
+    NSInteger result = value ? [value integerValue] : -1;
+    return result;
+}
+
+- (long)longForKey:(id)key
+{
+    id value = [self checkClasses:@[NSNumber.class,NSString.class] key:key];
+    long result = [value longValue];
+    return result;
+}
+
+- (float)floatForKey:(id)key
+{
+    id value = [self checkClasses:@[NSNumber.class,NSString.class] key:key];
+    float result = [value floatValue];
+    return result;
+}
+
+- (double)doubleForKey:(id)key
+{
+    id value = [self checkClasses:@[NSNumber.class,NSString.class] key:key];
+    double result = [value doubleValue];
+    return result;
+}
+
+- (BOOL)boolForKey:(id)key
+{
+    id value = [self checkClasses:@[NSNumber.class,NSString.class] key:key];
+    BOOL result = [value boolValue];
+    return result;
+}
+
+- (NSString *)stringForKey:(id)key
+{
+    id value = [self checkClass:[NSString class] key:key];
+    return value;
+}
+
+- (NSArray *)arrayForKey:(id)key
+{
+    id value = [self checkClass:[NSArray class] key:key];
+    return value;
+}
+
+- (NSDictionary *)dictionaryForKey:(id)key
+{
+    id value = [self checkClass:[NSDictionary class] key:key];
+    return value;
+}
+
+- (NSData *)dataForKey:(id)key
+{
+    id value = [self checkClass:[NSData class] key:key];
+    return value;
 }
 
 @end

@@ -9,8 +9,18 @@
 #ifndef PrefixHeader_pch
 #define PrefixHeader_pch
 
+#ifdef __OBJC__
+    #import <Foundation/Foundation.h>
+#endif
+
+/*
+ iFace：873CAE6EEEF6484C89B19256C9AF8327
+ 云家：C5139CF2BF6D436AB6E4AE27C1B666A3
+ */
+#define KIFaceApikey @"873CAE6EEEF6484C89B19256C9AF8327"
+
 #define k_action @"api_V2"                      //默认动作根目录
-#define k_host @"https://api.happyeasy.cc"      //http://121.201.17.130:8100
+#define k_host @"https://api.weicontrol.cn"      //http://121.201.17.130:8100
 #define k_res_host @"http://res.happyeasy.cc"   //http://res.weicontrol.cn
 
 // Include any system framework and library headers here that should be included in all compilation units.

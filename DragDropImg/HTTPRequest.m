@@ -11,11 +11,11 @@
 
 //#import "CTB.h"
 
-@interface HTTPRequest ()<NSURLConnectionDataDelegate>
+@interface HTTPRequest ()<NSURLSessionDelegate>
 {
+    int64_t currentLen;
     NSDate *sendDate;//发送时间
     NSDate *receiveDate;//接收时间
-    NSURLConnection *connect;//连接对象
 }
 
 @end
@@ -178,6 +178,8 @@
             [self setValue:versions forHeader:@"ver"];
         }
         
+        _body = [self dicWithHTTPBody];
+        
         // 设置请求头文件
         //NSString *rangeValue = [NSString stringWithFormat:@"bytes=%d-", 1];
         //[self addValue:rangeValue forHeader:@"Range"];
@@ -229,20 +231,42 @@
 
 - (void)start
 {
-    connect = [NSURLConnection connectionWithRequest:request delegate:self];
-    [connect start];
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    //NSOperationQueue *operationQueue = [[NSOperationQueue alloc] init];
+    //operationQueue.maxConcurrentOperationCount = 1;
+    //operationQueue.name = @"MyQueue";
     
-    _body = [self dicWithHTTPBody];
+    _session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:[NSOperationQueue mainQueue]];
+    
+    // 由系统直接返回一个dataTask任务
+
+    _myDataTask = [_session dataTaskWithRequest:request];
+    [self resume];
+}
+
+- (void)resume
+{
+    [_myDataTask resume];//继续
+}
+
+- (void)suspend
+{
+    [_myDataTask suspend];//暂停
 }
 
 - (void)cancel
 {
-    [connect cancel];
+    [_session invalidateAndCancel];//取消
 }
 
 - (NSDictionary *)dicWithHTTPBody
 {
     NSError *error = nil;
+    NSDictionary *allHTTPHeaderFields = request.allHTTPHeaderFields;
+    NSString *ContentType = [allHTTPHeaderFields objectForKey:@"Content-Type"];
+    if ([ContentType containsString:@"multipart/form-data"]) {
+        return @{@"type":@"file"};
+    }
     NSDictionary *body = [NSJSONSerialization JSONObjectWithData:request.HTTPBody options:NSJSONReadingMutableContainers error:&error];
     if (error) {
         NSLog(@"获取body失败,%@",error.localizedDescription);
@@ -251,13 +275,13 @@
 }
 
 #pragma mark - --------请求回调------------------------
-- (void)connection:(NSURLConnection *)connection didSendBodyData:(NSInteger)bytesWritten totalBytesWritten:(NSInteger)totalBytesWritten totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didSendBodyData:(int64_t)bytesSent totalBytesSent:(int64_t)totalBytesSent totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
 {
     //发送数据回调
-    CGFloat totalData = totalBytesExpectedToWrite * 1.0;
-    CGFloat rate = totalBytesWritten / totalData;
+    CGFloat totalData = totalBytesExpectedToSend * 1.0;
+    CGFloat rate = totalBytesSent / totalData;
     NSTimeInterval space = [[NSDate date] timeIntervalSinceDate:sendDate];
-    if (space < 0.02 && rate != 1) {
+    if (space < 0.1 && rate != 1) {
         //NSString *msg = @"----------发送进度没有更新--------------------";
         //[self.class printDebugMsg:msg];
         return;
@@ -270,20 +294,29 @@
     else if ([_delegate respondsToSelector:@selector(sendProgress:)]) {
         [_delegate sendProgress:rate];
     }
+    
+    NSLog(@"发送进度:%.2f%%,%lld",rate/0.01,task.countOfBytesSent);
 }
 
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
+- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
 {
     //收到服务器响应回调
     _response = (NSHTTPURLResponse *)response;
     NSDictionary *userInfo = _response.allHeaderFields;
     _responseStatusCode = (int)_response.statusCode;
     contentLength = [userInfo[@"Content-Length"] longLongValue];
-    _dataType = userInfo[@"Content-Type"];//json类型为"application/json";
+    _dataType = response.MIMEType;
     //NSLog(@"File Size:%lld",contentLength);
     if (_responseStatusCode != 200) {
         NSLog(@"响应错误,%@,%d",_method,_responseStatusCode);
     }
+    
+    if (!_body) {
+    }
+    
+    NSLog(@"收到服务器响应,内容长度：%lld",contentLength);
+    
+    completionHandler(NSURLSessionResponseAllow);
 }
 
 - (NSCachedURLResponse *)connection:(NSURLConnection *)connection willCacheResponse:(NSCachedURLResponse *)cachedResponse
@@ -293,13 +326,18 @@
     return nil;
 }
 
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
+- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data
 {
-    //接收数据回调
+    //NSDictionary *info = @{@(NSURLSessionTaskStateRunning):@"Running",
+    //                       @(NSURLSessionTaskStateSuspended):@"Suspended",
+    //                       @(NSURLSessionTaskStateCanceling):@"Canceling",
+    //                       @(NSURLSessionTaskStateCompleted):@"Completed"};
+    //NSLog(@"已经收到数据,%@",info[@(dataTask.state)]);
     [activeDownload appendData:data];
     if (_responseStatusCode != 200) {
         return;
     }
+    
     CGFloat totalLen = contentLength * 1.0;
     CGFloat rate = activeDownload.length / totalLen;
     NSTimeInterval space = [[NSDate date] timeIntervalSinceDate:receiveDate];
@@ -309,6 +347,8 @@
         return;
     }
     
+    //CGFloat NetSpeed = (activeDownload.length-currentLen)/space;
+    currentLen = activeDownload.length;
     receiveDate = [NSDate date];
     if ([_delegate respondsToSelector:@selector(ws:receiveProgress:)]) {
         [_delegate ws:self receiveProgress:rate];
@@ -317,41 +357,44 @@
         [_delegate receiveProgress:rate];
     }
     
-    //NSLog(@"进度:%.2f",newProgress/0.01);
+    NSLog(@"进度:%.2f%%",rate/0.01);
 }
 
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
 {
-    //请求失败
-    NSDictionary *userInfo = error.userInfo;
-    NSLog(@"请求失败, %d, %@, %@",_responseStatusCode,_method,error.localizedDescription);
-    //NSString *path = [[NSBundle mainBundle] pathForResource:@"errDic" ofType:@"txt"];
-    //NSDictionary *dic = [NSDictionary dictionaryWithContentsOfFile:path];
-    //NSLog(@"%@",dic[@(error.code).stringValue]);
-    _errMsg = error.localizedDescription;
-    if ([_errMsg hasSuffix:@"。"]) {
-        _errMsg = [_errMsg substringToIndex:_errMsg.length-1];
-    }
-    _urlString = userInfo[@"NSErrorFailingURLStringKey"];
-    [self wsFailedWithDelegate:_delegate];
-}
-
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection
-{
-    //请求完成
-    _responseData = activeDownload;
-    if (_responseStatusCode != 200) {
-        //请求失败
-        [self parseData:activeDownload];
-    }else{
-        if ([_dataType hasPrefix:@"application/"]||[_dataType hasPrefix:@"text/html"]) {
-            //解析成字符
+    //任务完成
+    if (error) {
+        /** 如果发生错误, 我们可以从error中获取到续传数据. */
+        NSDictionary *userInfo = error.userInfo;
+        _resumData =  [userInfo objectForKey:NSURLSessionDownloadTaskResumeData];
+        
+        NSLog(@"请求失败, %d, %@, %@",_responseStatusCode,_method,error.localizedDescription);
+        //NSString *path = [[NSBundle mainBundle] pathForResource:@"errDic" ofType:@"txt"];
+        //NSDictionary *dic = [NSDictionary dictionaryWithContentsOfFile:path];
+        //NSLog(@"%@",dic[@(error.code).stringValue]);
+        _errMsg = error.localizedDescription;
+        if ([_errMsg hasSuffix:@"。"]) {
+            _errMsg = [_errMsg substringToIndex:_errMsg.length-1];
+        }
+        _urlString = userInfo[@"NSErrorFailingURLStringKey"];
+        [self wsFailedWithDelegate:_delegate];
+    } else {
+        NSLog(@"NSURLSessionTaskStateCompleted 操作成功!");
+        //请求完成
+        _responseData = activeDownload;
+        if (_responseStatusCode != 200) {
+            //请求失败
             [self parseData:activeDownload];
         }else{
-            //文件
-            _method = @"fileDownload";
-            if ([_delegate respondsToSelector:@selector(wsOK:)]) {
-                [_delegate wsOK:self];
+            if ([_dataType hasPrefix:@"text/"]||[_dataType hasSuffix:@"/json"]) {
+                //解析成字符
+                [self parseData:activeDownload];
+            }else{
+                //文件
+                _method = @"fileDownload";
+                if ([_delegate respondsToSelector:@selector(wsOK:)]) {
+                    [_delegate wsOK:self];
+                }
             }
         }
     }

@@ -7,14 +7,15 @@
 //
 
 #import "Second_ViewController.h"
-#import "MyHttpRequest.h"
-#import "DataRequest.h"
-#import "DownloadRequest.h"
+#import "ExportGather.h"
+#import "HTTPRequest.h"
+#import "FileDownloader.h"
+#import "UploadFile.h"
+#import "Tools.h"
 
 @interface Second_ViewController ()
 {
-    DataRequest *dataRequest;
-    DownloadRequest *downRequest;
+    HTTPRequest *request;
 }
 
 @property (nonatomic, retain) NSTextField *textField;
@@ -43,24 +44,45 @@
 
 - (void)initCapacity
 {
-    dataRequest = [[DataRequest alloc] init];
-    dataRequest.delegate = self;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
         [NSThread sleepForTimeInterval:0.5];
         dispatch_async(dispatch_get_main_queue(), ^{
-            [dataRequest startRequest];
+            [self downRequest];
         });
     });
 }
 
+- (void)uploadRequest
+{
+    NSDictionary *userInfo = [Tools objectForKey:@"userInfo"];
+    NSString *token = [userInfo stringForKey:@"token"];
+    NSString *imgName = @"按钮点击效果";
+    NSImage *image = [NSImage imageNamed:imgName];
+    
+    NSDictionary *body = @{@"file":image,@"fileName":imgName};
+    UploadFile *load = [[UploadFile alloc] init];
+    [load run:UpdateSceneImg body:body delegate:self];
+    [load addRequestHeader:@{@"token":token} encoding:NSUTF8StringEncoding];
+    [load addRequestHeader:@{@"SceneID":@(692)} encoding:NSUTF8StringEncoding];
+    [load start];
+}
+
+- (void)downRequest
+{
+    request = [[HTTPRequest alloc] initWithDelegate:self];
+    request.urlString = @"http://dldir1.qq.com/qqfile/QQforMac/QQ_V6.2.0.dmg";
+    [request run:nil body:nil];
+    [request start];
+}
+
 - (IBAction)SuspendEvents:(NSButton *)sender
 {
-    [downRequest suspend];
+    [request suspend];
 }
 
 - (IBAction)CancelEvents:(NSButton *)sender
 {
-    [downRequest cancel];
+    [request cancel];
 }
 
 - (IBAction)BackButtonEvents:(NSButton *)sender
@@ -72,7 +94,7 @@
 - (void)downloadToProgress:(CGFloat)progress rate:(CGFloat)rate
 {
     NSString *speedString = [NSString stringWithFormat:@"%.2lfB/s", rate];
-    if (rate > 1024) {
+    if (rate > 1024 && rate <= 1024 * 1024) {
         speedString = [NSString stringWithFormat:@"%.2lfKB/s", rate / 1024];
     }
     else if (rate > 1024 * 1024) {
@@ -93,7 +115,23 @@
 - (void)viewDidDisappear
 {
     [super viewDidDisappear];
-    [downRequest cancel];
+    [request cancel];
+}
+
+#pragma mark - --------WSDelegate----------------
+- (void)wsOK:(HTTPRequest *)iWS
+{
+    NSDictionary *jsonDic = iWS.jsonDic;
+    if ([iWS.method isEqualToString:UpdateSceneImg]) {
+        NSString *imgUrl = [jsonDic stringForKey:@"data"];//新的图片地址
+        NSLog(@"imgUrl = %@",imgUrl);
+    }
+}
+
+- (void)wsFailed:(HTTPRequest *)iWS
+{
+    NSString *errMsg = iWS.errMsg;
+    NSLog(@"%@,%d,%@",iWS.method,iWS.responseStatusCode,errMsg);
 }
 
 @end
