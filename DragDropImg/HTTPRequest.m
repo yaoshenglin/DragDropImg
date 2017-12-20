@@ -7,9 +7,12 @@
 //
 
 #import "HTTPRequest.h"
+#import <AppKit/AppKit.h>
 //#import "GDataXMLNode.h"
 
 //#import "CTB.h"
+
+NSString *const FileDownload = @"fileDownload";
 
 @interface HTTPRequest ()<NSURLSessionDelegate>
 {
@@ -41,7 +44,9 @@
     if ((self = [super init])) {
         _timeOut = 30.0f;
         _isShowErrmsg = YES;
+        _taskType = SessionTaskType_Data;
         activeDownload = [NSMutableData data];
+        [self addObserver:self forKeyPath:@"request" options:0 context:nil];
     }
     
     return self;
@@ -53,7 +58,9 @@
         _timeOut = 30.0f;
         _isShowErrmsg = YES;
         _delegate = delegate;
+        _taskType = SessionTaskType_Data;
         activeDownload = [NSMutableData data];
+        [self addObserver:self forKeyPath:@"request" options:0 context:nil];
     }
     
     return self;
@@ -155,35 +162,126 @@
         //[request setCachePolicy:NSURLRequestReturnCacheDataDontLoad];
     }
     
+    if (_taskType == SessionTaskType_Upload) {
+        request.timeoutInterval = 180.0f;
+        request.HTTPMethod = @"POST";//设置为 POST
+        NSData *data = [self packageData:body];
+        NSString *fileName;
+        if (data) {
+            fileName = [body objectForKey:@"fileName"];
+        }
+        //一连串上传头标签
+        NSString *boundary = @"---------------------------14737809831466499882746641449";
+        NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@",boundary];
+        [self addValue:contentType forHeader: @"Content-Type"];
+        NSMutableData *bodyData = [NSMutableData data];
+        [bodyData appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+        [bodyData appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"userfile\"; filename=\"%@\"\r\n",fileName] dataUsingEncoding:NSUTF8StringEncoding]];
+        [bodyData appendData:[@"Content-Type: application/octet-stream\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+        [bodyData appendData:[NSData dataWithData:data]];
+        [bodyData appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+        [request setHTTPBody:bodyData];
+        body = nil;
+    }
+    
     if ([NSJSONSerialization isValidJSONObject:body]) {
         //利用系统自带 JSON 工具封装 JSON 数据
         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:body options:NSJSONWritingPrettyPrinted error: &error];
-        _totalLength = jsonData.length;
         request.HTTPMethod = @"POST";//设置为 POST
         request.HTTPBody = jsonData;//把刚才封装的 JSON 数据塞进去
-        [self setValue:@"application/json" forHeader:@"Accept"];
         [self setValue:@"application/json" forHeader:@"Content-Type"];
-        [self setValue:@(_totalLength).stringValue forHeader:@"Content-length"];
-        if ([k_action isEqualToString:@"api_V2"]) {
-            NSString *token = [body objectForKey:@"token"];
-            token = token ?: [_dicTag objectForKey:@"token"];
-            if (token) {
-                [self setValue:token forHeader:@"token"];
-            }
-            
-            //[self setValue:KIFaceApikey forHeader:@"apikey"];
-            
-            NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
-            NSString *versions = [infoDict objectForKey:@"CFBundleShortVersionString"];
-            [self setValue:versions forHeader:@"ver"];
-        }
-        
         _body = [self dicWithHTTPBody];
         
         // 设置请求头文件
         //NSString *rangeValue = [NSString stringWithFormat:@"bytes=%d-", 1];
         //[self addValue:rangeValue forHeader:@"Range"];
     }
+    
+    [self setValue:@"application/json" forHeader:@"Accept"];
+    [self setValue:@(request.HTTPBody.length).stringValue forHeader:@"Content-length"];
+    if ([k_action isEqualToString:@"api_V2"]) {
+        NSString *token = [body objectForKey:@"token"];
+        token = token ?: [_dicTag objectForKey:@"token"];
+        if (token) {
+            [self setValue:token forHeader:@"token"];
+        }
+        
+        [self setValue:KIFaceApikey forHeader:@"apikey"];
+        
+        NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
+        NSString *versions = [infoDict objectForKey:@"CFBundleShortVersionString"];
+        [self setValue:versions forHeader:@"ver"];
+    }
+}
+
+- (NSData *)packageData:(NSDictionary *)dic
+{
+    if (!dic) {
+        return NULL;
+    }
+    
+    NSData *data = nil;
+    
+    NSString *fileName = [dic objectForKey:@"fileName"];
+    
+    id file = [dic objectForKey:@"file"];
+    
+    if ([file isKindOfClass:[NSImage class]]) {
+        NSImage *image = (NSImage *)file;
+        NSString *ext = fileName.pathExtension;
+        NSBitmapImageRep *rep = (NSBitmapImageRep *)image.representations.firstObject;
+        int scale = rep.pixelsWide / image.size.width;//缩放值
+        
+        if (ext.length <= 0 && image) {
+            ext = @"png";
+            if (scale == 1) {
+                fileName = [NSString stringWithFormat:@"%@.%@",fileName,ext];
+            }
+            else if (scale > 1) {
+                NSString *scaleStr = [NSString stringWithFormat:@"@%dx",scale];
+                if ([fileName hasSuffix:scaleStr]) {
+                    fileName = [NSString stringWithFormat:@"%@.%@",fileName,ext];
+                }else{
+                    fileName = [NSString stringWithFormat:@"%@@%dx.%@",fileName,scale,ext];
+                }
+            }
+            NSLog(@"%@",fileName);
+        }
+        else if (ext.length > 0 && image) {
+            NSLog(@"%@",fileName);
+        }else{
+            fileName = nil;
+            NSLog(@"文件不存在");
+        }
+        
+        if (fileName.length > 0) {
+            NSString *path = [[NSBundle mainBundle] pathForResource:fileName ofType:nil];
+            data = [NSData dataWithContentsOfFile:path];
+            //[request addValue:path forHTTPHeaderField: @"path"];
+        }
+        
+        //fileType = @"image/jpg";
+        
+        //如果路径存在,直接拿取
+        NSString *Path = dic[@"path"];
+        if (Path) {
+            data = [NSData dataWithContentsOfFile:Path];
+        }
+        
+        if ([data length]>8000000) {
+            NSLog(@"文件过大");
+            return nil;
+        }
+    }
+    else if ([file isKindOfClass:[NSData class]]) {
+        data = file;
+        //fileType = @"stream";
+        if ([fileName hasSuffix:@".txt"]) {
+            //fileType = @"text/plain";
+        }
+    }
+    
+    return data;
 }
 
 //#pragma mark 生成User-Agent参数
@@ -221,6 +319,14 @@
 
 - (void)setValue:(NSString *)value forHeader:(NSString *)field
 {
+    [request setValue:value forHTTPHeaderField:field];
+}
+
+- (void)setValue:(NSString *)value forHeader:(NSString *)field encoding:(NSStringEncoding)encoding
+{
+    if (encoding && value.length) {
+        value = [value stringByAddingPercentEscapesUsingEncoding:encoding];
+    }
     [request setValue:value forHTTPHeaderField:field];
 }
 
@@ -272,6 +378,13 @@
         NSLog(@"获取body失败,%@",error.localizedDescription);
     }
     return body;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:@"request"] ) {
+        NSLog(@"%@",request.allHTTPHeaderFields);
+    }
 }
 
 #pragma mark - --------请求回调------------------------
@@ -357,7 +470,7 @@
         [_delegate receiveProgress:rate];
     }
     
-    NSLog(@"进度:%.2f%%",rate/0.01);
+    //NSLog(@"接收进度:%.2f%%",rate/0.01);
 }
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
@@ -391,7 +504,7 @@
                 [self parseData:activeDownload];
             }else{
                 //文件
-                _method = @"fileDownload";
+                _method = FileDownload;
                 if ([_delegate respondsToSelector:@selector(wsOK:)]) {
                     [_delegate wsOK:self];
                 }
@@ -433,7 +546,7 @@
         NSData *data = [stringL dataUsingEncoding:NSUTF8StringEncoding];
         if (data.length <= 0) {
             //文件
-            _method = @"fileDownload";
+            _method = FileDownload;
             if ([_delegate respondsToSelector:@selector(wsOK:)]) {
                 [_delegate wsOK:self];
             }
@@ -500,6 +613,11 @@
         @finally {
         }
     }
+}
+
+- (void)dealloc
+{
+    [self removeObserver:self forKeyPath:@"request"];
 }
 
 #pragma mark - -------HTTPRequest--------------------

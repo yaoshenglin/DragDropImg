@@ -47,24 +47,39 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
         [NSThread sleepForTimeInterval:0.5];
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self downRequest];
+            [self dataRequest];
         });
     });
+}
+
+- (void)dataRequest
+{
+    NSInteger appVer = 33;//当前APP内部版本号
+    NSInteger hwVer = 2;//当前固件内部版本号
+    NSString *hwName = @"ModelName";
+    NSDictionary *body = @{@"deviceType":@(4),//4
+                           @"appVer":@(appVer),
+                           @"hwName":hwName,
+                           @"hwVer":@(hwVer)};
+    request = [[HTTPRequest alloc] initWithDelegate:self];
+    [request run:GetLastVersions body:body];
+    [request start];
 }
 
 - (void)uploadRequest
 {
     NSDictionary *userInfo = [Tools objectForKey:@"userInfo"];
     NSString *token = [userInfo stringForKey:@"token"];
-    NSString *imgName = @"按钮点击效果";
+    NSString *imgName = @"msg2";
     NSImage *image = [NSImage imageNamed:imgName];
     
     NSDictionary *body = @{@"file":image,@"fileName":imgName};
-    UploadFile *load = [[UploadFile alloc] init];
-    [load run:UpdateSceneImg body:body delegate:self];
-    [load addRequestHeader:@{@"token":token} encoding:NSUTF8StringEncoding];
-    [load addRequestHeader:@{@"SceneID":@(692)} encoding:NSUTF8StringEncoding];
-    [load start];
+    request = [[HTTPRequest alloc] initWithDelegate:self];
+    request.taskType = SessionTaskType_Upload;
+    [request run:UpdateSceneImg body:body delegate:self];
+    [request setValue:token forHeader:@"token" encoding:NSUTF8StringEncoding];
+    [request setValue:@(692).stringValue forHeader:@"SceneID" encoding:NSUTF8StringEncoding];
+    [request start];
 }
 
 - (void)downRequest
@@ -78,6 +93,14 @@
 - (IBAction)SuspendEvents:(NSButton *)sender
 {
     [request suspend];
+    
+    NSString *fileName = request.response.suggestedFilename;
+    NSString *dirPath = @"/Volumes/Apple/应用软件";
+    NSString *path = [dirPath stringByAppendingPathComponent:fileName];
+    BOOL result = [request.responseData writeToFile:path atomically:YES];
+    if (!result) {
+        NSLog(@"写入失败,%@",path);
+    }
 }
 
 - (IBAction)CancelEvents:(NSButton *)sender
@@ -112,6 +135,21 @@
     }
 }
 
+- (void)receiveProgress:(CGFloat)progress
+{
+    NSString *speedString = [NSString stringWithFormat:@"接收进度:%.2f%%",progress/0.01];
+    
+    dispatch_block_t block = ^{
+        _textField.stringValue = speedString;
+    };
+    
+    if (![NSThread isMainThread]) {
+        dispatch_async(dispatch_get_main_queue(), block);
+    }else{
+        block();
+    }
+}
+
 - (void)viewDidDisappear
 {
     [super viewDidDisappear];
@@ -125,6 +163,23 @@
     if ([iWS.method isEqualToString:UpdateSceneImg]) {
         NSString *imgUrl = [jsonDic stringForKey:@"data"];//新的图片地址
         NSLog(@"imgUrl = %@",imgUrl);
+    }
+    else if ([iWS.method isEqualToString:FileDownload]) {
+        NSString *fileName = iWS.response.suggestedFilename;
+        NSString *dirPath = [[[NSBundle mainBundle] resourcePath] stringByDeletingLastPathComponent];
+        dirPath = [dirPath stringByAppendingPathComponent:@"Downloads"];
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        if (![fileManager fileExistsAtPath:dirPath]) {
+            [fileManager createDirectoryAtPath:dirPath withIntermediateDirectories:YES attributes:nil error:nil];
+        }
+        NSString *path = [dirPath stringByAppendingPathComponent:fileName];
+        BOOL result = [iWS.responseData writeToFile:path atomically:YES];
+        if (!result) {
+            NSLog(@"写入失败,%@",path);
+        }
+    }
+    else if ([iWS.method isEqualToString:GetLastVersions]) {
+        NSLog(@"%@",[jsonDic customDescription]);
     }
 }
 

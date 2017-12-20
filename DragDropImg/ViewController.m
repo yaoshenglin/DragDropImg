@@ -87,6 +87,8 @@
 //                               @"token":@"301|E21CA9946944987340C1DA235AC2A73C",
 //                               @"Salt":@"a0367a36a4bf2db0"};
 //    [Tools setObject:userInfo forKey:@"userInfo"];
+    
+    //NSLog(@"%@",[[[NSBundle mainBundle] infoDictionary] customDescription]);
 }
 
 - (void)setOldData:(NSData *)oldData
@@ -132,6 +134,11 @@
 
 - (IBAction)ReplaceImgEvents:(NSButton *)sender
 {
+    if (!_dragImgView1.image || !_dragImgView2.image) {
+        NSLog(@"请添加对应图片");
+        return;
+    }
+    
     if (hintView.layer.backgroundColor != [NSColor greenColor].CGColor) {
         __weak typeof(self) wSelf = self;
         NSAlert *alert = [[NSAlert alloc] init];

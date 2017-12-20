@@ -28,15 +28,29 @@
     return alert;
 }
 
-+ (NSUserDefaults *)userDefaults
++ (NSString *)getPlistPath
 {
-    return [NSUserDefaults standardUserDefaults];
+    NSString *identifier = [[NSBundle mainBundle] bundleIdentifier];
+    NSString *dirPath = [NSString stringWithFormat:@"/Users/xy/Library/Containers/%@/Data/Library/Preferences",identifier];
+    NSString *fileName = [NSString stringWithFormat:@"%@.plist",identifier];
+    NSString *path = [dirPath stringByAppendingPathComponent:fileName];
+    return path;
+}
+
++ (NSMutableDictionary *)userDefaults
+{
+    NSString *path = [self getPlistPath];
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+    userInfo.dictionary = [NSDictionary dictionaryWithContentsOfFile:path];
+    return userInfo;
 }
 
 + (void)setObject:(id)value forKey:(NSString *)defaultName
 {
-    [[Tools userDefaults] setObject:value forKey:defaultName];
-    [[Tools userDefaults] synchronize];
+    NSMutableDictionary *userInfo = [self userDefaults];
+    [userInfo setObject:value forKey:defaultName];
+    NSString *path = [self getPlistPath];
+    [userInfo writeToFile:path atomically:YES];
 }
 
 + (id)objectForKey:(NSString *)defaultName

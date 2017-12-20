@@ -13,7 +13,7 @@
 
 + (NSAlert *)alertWithMessage:(NSString *)messageText informative:(NSString *)informativeText completionHandler:(void (^)(NSModalResponse returnCode))handler;
 
-+ (NSUserDefaults *)userDefaults;
++ (NSMutableDictionary *)userDefaults;
 + (void)setObject:(id)value forKey:(NSString *)defaultName;
 + (id)objectForKey:(NSString *)defaultName;
 

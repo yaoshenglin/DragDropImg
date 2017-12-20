@@ -8,6 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
+typedef NS_ENUM(int, SessionTaskType) {
+    SessionTaskType_Data        = 0,    //普通
+    SessionTaskType_Upload      = 1,    //上传
+    SessionTaskType_Download    = 2,    //下载
+};
+
+FOUNDATION_EXPORT NSString *const FileDownload;//文件下载
+
 @class HTTPRequest;
 @protocol RequestDelegate
 @optional
@@ -28,6 +36,7 @@
 }
 
 @property (nonatomic, weak) id delegate;//代理
+@property (nonatomic, assign) SessionTaskType taskType;
 @property (nonatomic, strong) NSData *resumData; // 续传数据
 @property (nonatomic, strong) NSURLSession *session; // 会话
 @property (nonatomic, strong) NSURLSessionTask *myDataTask; // 请求任务
@@ -68,6 +77,7 @@
 - (void)run:(NSString *)method body:(NSDictionary *)body;
 - (void)runWithUrl:(NSString *)urlStr body:(NSDictionary *)body;
 - (void)setValue:(NSString *)value forHeader:(NSString *)field;
+- (void)setValue:(NSString *)value forHeader:(NSString *)field encoding:(NSStringEncoding)encoding;
 - (void)addValue:(NSString *)value forHeader:(NSString *)field;
 - (void)start;//启动
 - (void)resume;//继续
