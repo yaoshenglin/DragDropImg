@@ -47,7 +47,7 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
         [NSThread sleepForTimeInterval:0.5];
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self dataRequest];
+            [self uploadRequest];
         });
     });
 }
@@ -70,10 +70,14 @@
 {
     NSDictionary *userInfo = [Tools objectForKey:@"userInfo"];
     NSString *token = [userInfo stringForKey:@"token"];
-    NSString *imgName = @"msg2";
-    NSImage *image = [NSImage imageNamed:imgName];
+    NSString *imgName = @"QQ_V6.2.0.dmg";
+    NSString *dirPath = [[[NSBundle mainBundle] resourcePath] stringByDeletingLastPathComponent];
+    dirPath = [dirPath stringByAppendingPathComponent:@"Downloads"];
+    NSString *path = [dirPath stringByAppendingPathComponent:imgName];
+    NSData *data = [NSData dataWithContentsOfFile:path];
+//    NSImage *image = [NSImage imageNamed:imgName];
     
-    NSDictionary *body = @{@"file":image,@"fileName":imgName};
+    NSDictionary *body = @{@"file":data,@"fileName":imgName,@"path":path};
     request = [[HTTPRequest alloc] initWithDelegate:self];
     request.taskType = SessionTaskType_Upload;
     [request run:UpdateSceneImg body:body delegate:self];
@@ -86,20 +90,18 @@
 {
     request = [[HTTPRequest alloc] initWithDelegate:self];
     request.urlString = @"http://dldir1.qq.com/qqfile/QQforMac/QQ_V6.2.0.dmg";
+    request.urlString = @"http://120.25.226.186:32812/resources/videos/minion_01.mp4";
     [request run:nil body:nil];
     [request start];
 }
 
 - (IBAction)SuspendEvents:(NSButton *)sender
 {
-    [request suspend];
-    
-    NSString *fileName = request.response.suggestedFilename;
-    NSString *dirPath = @"/Volumes/Apple/应用软件";
-    NSString *path = [dirPath stringByAppendingPathComponent:fileName];
-    BOOL result = [request.responseData writeToFile:path atomically:YES];
-    if (!result) {
-        NSLog(@"写入失败,%@",path);
+    if (request.myDataTask.state == NSURLSessionTaskStateRunning) {
+        [request suspend];
+    }
+    else if (request.myDataTask.state == NSURLSessionTaskStateSuspended) {
+        [request resume];
     }
 }
 

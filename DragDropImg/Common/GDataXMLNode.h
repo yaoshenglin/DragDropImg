@@ -1,7 +1,4 @@
-/* Modifications for HTML parser support:
- * Copyright (c) 2011 Simon Grätzer simon@graetzer.org
- *
- * Copyright (c) 2008 Google Inc.
+/* Copyright (c) 2008 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,14 +38,13 @@
 #import <libxml/tree.h>
 #import <libxml/parser.h>
 #import <libxml/xmlstring.h>
-#import <libxml/HTMLparser.h>
 #import <libxml/xpath.h>
 #import <libxml/xpathInternals.h>
 
 
 #if (MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4) || defined(GDATA_TARGET_NAMESPACE)
-// we need NSInteger for the 10.4 SDK, or we're using target namespace macros
-//#import "GDataDefines.h"
+  // we need NSInteger for the 10.4 SDK, or we're using target namespace macros
+  #import "GDataDefines.h"
 #endif
 
 #undef _EXTERN
@@ -57,11 +53,7 @@
 #define _EXTERN
 #define _INITIALIZE_AS(x) =x
 #else
-#if defined(__cplusplus)
-#define _EXTERN extern "C"
-#else
 #define _EXTERN extern
-#endif
 #define _INITIALIZE_AS(x)
 #endif
 
@@ -97,8 +89,8 @@ enum {
 };
 
 typedef NSUInteger GDataXMLNodeKind;
-int xmlCount;
-@interface GDataXMLNode : NSObject <NSCopying>
+
+@interface GDataXMLNode : NSObject
 {
 @protected
     // NSXMLNodes can have a namespace URI or prefix even if not part
@@ -156,15 +148,11 @@ int xmlCount;
 // namespace dictionary (keys are prefixes, values are URIs).
 - (NSArray *)nodesForXPath:(NSString *)xpath namespaces:(NSDictionary *)namespaces error:(NSError **)error;
 
-- (GDataXMLNode *)firstNodeForXPath:(NSString *)xpath namespaces:(NSDictionary *)namespaces error:(NSError **)error;
-
 // This implementation of nodesForXPath registers namespaces only from the
 // document's root node.  _def_ns may be used as a prefix for the default
 // namespace, though there's no guarantee that the default namespace will
 // be consistenly the same namespace in server responses.
 - (NSArray *)nodesForXPath:(NSString *)xpath error:(NSError **)error;
-
-- (GDataXMLNode *)firstNodeForXPath:(NSString *)xpath error:(NSError **)error;
 
 // access to the underlying libxml node; be sure to release the cached values
 // if you change the underlying tree at all
@@ -177,13 +165,11 @@ int xmlCount;
 @interface GDataXMLElement : GDataXMLNode
 
 - (id)initWithXMLString:(NSString *)str error:(NSError **)error;
-- (id)initWithHTMLString:(NSString *)str error:(NSError **)error;
 
 - (NSArray *)namespaces;
 - (void)setNamespaces:(NSArray *)namespaces;
 - (void)addNamespace:(GDataXMLNode *)aNamespace;
 
-// addChild adds a copy of the child node to the element
 - (void)addChild:(GDataXMLNode *)child;
 - (void)removeChild:(GDataXMLNode *)child;
 
@@ -203,22 +189,11 @@ int xmlCount;
 {
 @protected
     xmlDoc* xmlDoc_; // strong; always free'd in dealloc
-	NSStringEncoding _encoding;
+    NSStringEncoding _encoding;
 }
 
-- (id)initWithXMLString:(NSString *)str encoding:(NSStringEncoding)encoding error:(NSError **)error;
-- (id)initWithData:(NSData *)data encoding:(NSStringEncoding)encoding error:(NSError **)error;
-
-- (id)initWithHTMLString:(NSString *)str encoding:(NSStringEncoding)encoding error:(NSError **)error;
-- (id)initWithHTMLData:(NSData *)data encoding:(NSStringEncoding)encoding error:(NSError **)error;
-
-- (id)initWithXMLString:(NSString *)str error:(NSError **)error;
-- (id)initWithData:(NSData *)data error:(NSError **)error;
-
-- (id)initWithHTMLString:(NSString *)str error:(NSError **)error;
-- (id)initWithHTMLData:(NSData *)data error:(NSError **)error;
-
-// initWithRootElement uses a copy of the argument as the new document's root
+- (id)initWithXMLString:(NSString *)str options:(unsigned int)mask error:(NSError **)error;
+- (id)initWithData:(NSData *)data options:(unsigned int)mask error:(NSError **)error;
 - (id)initWithRootElement:(GDataXMLElement *)element;
 
 - (GDataXMLElement *)rootElement;
@@ -232,16 +207,11 @@ int xmlCount;
 // namespace dictionary (keys are prefixes, values are URIs).
 - (NSArray *)nodesForXPath:(NSString *)xpath namespaces:(NSDictionary *)namespaces error:(NSError **)error;
 
-// Convenience method returns first element with speciifed xpath or nil
-- (GDataXMLNode *)firstNodeForXPath:(NSString *)xpath namespaces:(NSDictionary *)namespaces error:(NSError **)error;
-
 // This implementation of nodesForXPath registers namespaces only from the
 // document's root node.  _def_ns may be used as a prefix for the default
 // namespace, though there's no guarantee that the default namespace will
 // be consistenly the same namespace in server responses.
 - (NSArray *)nodesForXPath:(NSString *)xpath error:(NSError **)error;
-
-- (GDataXMLNode *)firstNodeForXPath:(NSString *)xpath error:(NSError **)error;
 
 - (NSString *)description;
 @end

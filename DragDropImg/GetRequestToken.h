@@ -10,4 +10,6 @@
 
 @interface GetRequestToken : NSObject
 
+- (void)LoginIFace:(NSString *)mobile pwd:(NSString *)pwd;
+
 @end

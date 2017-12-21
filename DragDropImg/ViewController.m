@@ -87,8 +87,6 @@
 //                               @"token":@"301|E21CA9946944987340C1DA235AC2A73C",
 //                               @"Salt":@"a0367a36a4bf2db0"};
 //    [Tools setObject:userInfo forKey:@"userInfo"];
-    
-    //NSLog(@"%@",[[[NSBundle mainBundle] infoDictionary] customDescription]);
 }
 
 - (void)setOldData:(NSData *)oldData
