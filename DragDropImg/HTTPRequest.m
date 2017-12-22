@@ -184,6 +184,10 @@ NSString *const FileDownload = @"fileDownload";
         [request setHTTPBody:bodyData];
         body = nil;
     }
+    else if (_taskType == SessionTaskType_Download) {
+        request.HTTPMethod = @"POST";//设置为 POST
+        [request setValue:@"zh" forHTTPHeaderField:@"lang"];
+    }
     
     if ([NSJSONSerialization isValidJSONObject:body]) {
         //利用系统自带 JSON 工具封装 JSON 数据
@@ -459,12 +463,16 @@ NSString *const FileDownload = @"fileDownload";
     completionHandler(NSURLSessionResponseAllow);
 }
 
-- (NSCachedURLResponse *)connection:(NSURLConnection *)connection willCacheResponse:(NSCachedURLResponse *)cachedResponse
-{
-    //缓存处理
-    //NSLog(@"method : %@",_method);
-    return nil;
-}
+/* Sent when a download has been resumed. If a download failed with an
+ * error, the -userInfo dictionary of the error will contain an
+ * NSURLSessionDownloadTaskResumeData key, whose value is the resume
+ * data.
+ */
+//- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didResumeAtOffset:(int64_t)fileOffset expectedTotalBytes:(int64_t)expectedTotalBytes
+//{
+//    //告诉代理人下载任务已经恢复
+//    NSLog(@"NSURLSessionDownloadDelegate 下载任务已经恢复");
+//}
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data
 {
@@ -499,6 +507,11 @@ NSString *const FileDownload = @"fileDownload";
     
     //NSLog(@"接收进度:%.2f%%",rate/0.01);
 }
+
+//- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location;
+//{
+//
+//}
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
 {

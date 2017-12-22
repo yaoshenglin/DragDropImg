@@ -8,18 +8,21 @@
 
 #import "FileDownloader.h"
 #import "Tools.h"
-#import "AppDelegate.h"
-//#import "GDataXMLNode.h"
-//#import "CTB.h"
+#import "GDataXMLNode.h"
+
+@interface FileDownloader ()<NSURLSessionDelegate>
+
+@end
 
 @implementation FileDownloader
 
 @synthesize fileName;
 @synthesize timeOut;
+@synthesize isAutoSave;
 @synthesize isShowActivity;
 //@synthesize Type;
-@synthesize delegate;
 @synthesize hostPort;
+@synthesize delegate;
 
 - (id)init
 {
@@ -27,6 +30,7 @@
     if (self) {
 //        Type = ActivityStyle_WhiteLarge;
         fileName = @"";
+        isAutoSave = YES;
     }
     
     return self;
@@ -56,8 +60,13 @@
         return;
     }
     
-    targetImgView = imgView;
     delegate = theDelegate;
+    _imgView = imgView;
+    [self downWithUrl:fileUrl fileName:theFileName];
+}
+
+- (void)downWithUrl:(NSString *)fileUrl fileName:(NSString *)theFileName
+{
     fileName = theFileName;
     
     NSString *urlString;
@@ -67,24 +76,40 @@
     }
     else {
         NSString *host = k_res_host;
-        urlString = [NSString stringWithFormat:@"%@%@", host, fileUrl];
+        //urlString = [NSString stringWithFormat:@"%@%@", host, fileUrl];
+        urlString = [host stringByAppendingPathComponent:fileUrl];
     }
     
     self.urlString = urlString;
-    self.imgView = imgView;
     activeDownload = [NSMutableData data];
     NSURL *URL = [NSURL URLWithString:urlString];
     timeOut = timeOut==0 ? 60 : timeOut;
-    NSMutableURLRequest *URLRequest = [NSMutableURLRequest requestWithURL:URL cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:timeOut];
-    urlConnection = [[NSURLConnection alloc] initWithRequest: URLRequest delegate:self];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
+    request.timeoutInterval = timeOut;
+    
+    NSString *url_action = [NSString stringWithFormat:@"/%@/",k_action];
+    if ([urlString containsString:url_action]) {
+        [self setHTTPBody:request body:nil];
+    }
+    
+//    urlConnection = [[NSURLConnection alloc] initWithRequest: URLRequest delegate:self];
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    
+    _session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:[[NSOperationQueue alloc] init]];
+    NSURLSessionTask *myDataTask = [_session dataTaskWithRequest:request];
+    [myDataTask resume];
+    
+    if ([fileName isEqualToString:@"wifi.bin"]) {
+        NSLog(@"url = %@",urlString);
+    }
     
     if (isShowActivity) {
-//        UIActivityIndicatorView *activity = [[self class] getSuperView:[UIActivityIndicatorView class] from:targetImgView];
+//        UIActivityIndicatorView *activity = [[self class] getSuperView:[UIActivityIndicatorView class] from:_imgView];
 //        if (!activity) {
 //            activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:(UIActivityIndicatorViewStyle)Type];
-//            activity.center = CGPointMake(targetImgView.frame.size.width/2, targetImgView.frame.size.height/2);
+//            activity.center = CGPointMake(_imgView.frame.size.width/2, _imgView.frame.size.height/2);
 //            activity.hidesWhenStopped = YES;
-//            [targetImgView addSubview:activity];
+//            [_imgView addSubview:activity];
 //        }
 //        [activity startAnimating];
     }
@@ -96,18 +121,28 @@
     body = body ?: @{};
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:body options:NSJSONWritingPrettyPrinted error: &error];
     [URLRequest setHTTPMethod:@"POST"];//设置为 POST
-    [URLRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+    //[URLRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
     [URLRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    [URLRequest setValue:[NSString stringWithFormat:@"%ld",(long)[jsonData length]] forHTTPHeaderField:@"Content-length"];
+    //[URLRequest setValue:[NSString stringWithFormat:@"%ld",(long)[jsonData length]] forHTTPHeaderField:@"Content-length"];
+    
+    NSString *languageCode = [Tools getLocaleLangArea][@"lang"];//en_CN,zh_CN(语言_地区)
+    [URLRequest setValue:languageCode forHTTPHeaderField:@"lang"];
     [URLRequest setHTTPBody:jsonData];
 }
 
 - (void)cancelDownload
 {
-    if (urlConnection) {
-        
-        [urlConnection cancel];
-    }
+//    if (urlConnection) {
+//        
+//        [urlConnection cancel];
+//        
+//        for (UIView *activity in _imgView.subviews) {
+//            if ([activity isKindOfClass:UIActivityIndicatorView.class]) {
+//                [(UIActivityIndicatorView *)activity stopAnimating];
+//            }
+//        }
+//    }
+    [_session invalidateAndCancel];
 }
 
 + (id)getSuperView:(Class)aClass from:(NSView *)View
@@ -135,8 +170,8 @@
 {
     NSTimeInterval space = [[NSDate date] timeIntervalSinceDate:sendDate];
     if (space < 0.02 && progress != 1.0) {
-        NSString *msg = @"----------接收进度没有更新--------------------";
-        NSLog(@"%@",msg);
+        //NSString *msg = @"----------接收进度没有更新--------------------";
+        //[CTB printDebugMsg:msg];
         return;
     }
     
@@ -151,18 +186,28 @@
 
 #pragma mark -
 #pragma mark Download support (NSURLConnectionDelegate)
-
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
+- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
 {
-    NSHTTPURLResponse *theResponse = (NSHTTPURLResponse *)response;
-    _userInfo = theResponse.allHeaderFields;
-    _statusCode = theResponse.statusCode;
-    contentLength = [_userInfo[@"Content-Length"] longLongValue];
+    //收到服务器响应回调
+    _response = (NSHTTPURLResponse *)response;
+    _headerFields = _response.allHeaderFields;
+    _statusCode = (int)_response.statusCode;
+    contentLength = [_headerFields[@"Content-Length"] longLongValue];
+    _dataType = response.MIMEType;
     //NSLog(@"File Size:%lld",contentLength);
     isFailed = _statusCode != 200;
+    if (isFailed) {
+        NSLog(@"响应错误,%@,%ld",_method,_statusCode);
+    }
+    
+    if (_isShowLog) {
+        NSLog(@"收到服务器响应,内容长度：%lld",contentLength);
+    }
+    
+    completionHandler(NSURLSessionResponseAllow);
 }
 
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
+- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data
 {
     [activeDownload appendData:data];
     
@@ -175,95 +220,87 @@
     [self setProgress:rate];
 }
 
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
 {
-//    for (UIActivityIndicatorView *activity in targetImgView.subviews) {
-//        if ([activity isKindOfClass:[UIActivityIndicatorView class]]) {
-//            [activity stopAnimating];
-//        }
-//    }
-    
-    id obj = delegate;
-    if ([obj respondsToSelector:@selector(downLoadFail:)]) {
-        _errMsg = error.localizedDescription;
-        [delegate downLoadFail:self];
-    }
-    else if (_isDisplay) {
-        NSLog(@"%@,%@",connection.currentRequest.URL,error.localizedDescription);
-    }
-}
-
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection
-{
-//    for (UIActivityIndicatorView *activity in targetImgView.subviews) {
-//        if ([activity isKindOfClass:[UIActivityIndicatorView class]]) {
-//            [activity stopAnimating];
-//        }
-//    }
-    
-    _responseData = activeDownload;
-    if (_statusCode != 200) {
-        //请求失败
+    if (error) {
         id obj = delegate;
-        NSString *string = [[NSString alloc] initWithData:activeDownload encoding:NSUTF8StringEncoding];
-        if (!string) {
-            NSStringEncoding encoding = 0x80000632;
-            string = [[NSString alloc] initWithData:activeDownload encoding:encoding];
-        }
-
         if ([obj respondsToSelector:@selector(downLoadFail:)]) {
-            _errMsg = @"文件下载失败";
-            if (string) {
-//                _errMsg = [GDataXMLNode getBody:string];
-            }
+            _errMsg = error.localizedDescription;
             [delegate downLoadFail:self];
         }
         else if (_isDisplay) {
-            NSLog(@"%@,%@",connection.currentRequest.URL,_errMsg);
+            NSLog(@"%@,%@",task.currentRequest.URL,error.localizedDescription);
         }
-        
-        return;
-    }
-    
-    if([fileName hasSuffix:@".png"] || [fileName hasSuffix:@".PNG"]
-       || [fileName hasSuffix:@".img"] || [fileName hasSuffix:@".IMG"]
-       || [fileName hasSuffix:@".gif"] || [fileName hasSuffix:@".GIF"]
-       || [fileName hasSuffix:@".jpeg"] || [fileName hasSuffix:@".JPEG"]
-       || [fileName hasSuffix:@".jpg"] || [fileName hasSuffix:@".JPG"]) {
-        
-        NSImage *image = [[NSImage alloc] initWithData:activeDownload];
-        if (image) {
+    }else{
+        _responseData = activeDownload;
+        if (_statusCode != 200) {
+            //请求失败
+            id obj = delegate;
+            NSString *textEncodingName = _response.textEncodingName ?: @"utf-8";
+            CFStringRef textEncode = (__bridge CFStringRef)textEncodingName;
+            CFStringEncoding enc = CFStringConvertIANACharSetNameToEncoding(textEncode);
+            NSStringEncoding encoding = CFStringConvertEncodingToNSStringEncoding (enc);
+            NSString *string = [[NSString alloc] initWithData:activeDownload encoding: encoding];
             
-            //NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
-            //[Tools saveDataToFile:imageData fileName:fileName];
-            id obj = delegate;
-            if ([obj respondsToSelector:@selector(downLoadOK:)]) {
-                _image = image;
-                [delegate downLoadOK:self];
-            }
-            else if (_isDisplay && [_imgView isKindOfClass:[NSImageView class]]) {
-                _imgView.image = _image;
-            }
-        }else{
-            id obj = delegate;
             if ([obj respondsToSelector:@selector(downLoadFail:)]) {
-                _errMsg = @"文件下载失败";
+                _errMsg = NSLocalizedString(@"DownLoadFail",@"文件下载失败");//文件下载失败
+                if (string) {
+                    _errMsg = [GDataXMLNode getBody:string];
+                }
                 [delegate downLoadFail:self];
             }
             else if (_isDisplay) {
-                NSLog(@"%@,%@",connection.currentRequest.URL,_errMsg);
+                NSLog(@"%@,%@",task.currentRequest.URL,_errMsg);
+            }
+            
+            return;
+        }
+        
+        if (activeDownload.length<2) {
+            NSLog(@"NOT FILE");
+        }else{
+            NSString *type = [activeDownload getDtataType];//判断数据对应文件类型
+            if (!type || ![fileName hasSuffix:type]) {
+                NSLog(@"%@",fileName);
             }
         }
-    }
-    else {
         
-        //[Tools saveDataToFile:activeDownload fileName:fileName];
-        id obj = delegate;
-        if ([obj respondsToSelector:@selector(downLoadOK:)]) {
-            [delegate downLoadOK:self];
+        NSString *ExtName = [fileName.pathExtension lowercaseString];
+        if([ExtName hasSuffix:@"png"] || [ExtName hasSuffix:@"img"] || [ExtName hasSuffix:@"gif"] || [ExtName hasSuffix:@"jpeg"] || [ExtName hasSuffix:@"jpg"]) {
+            
+            NSImage *image = [[NSImage alloc] initWithData:activeDownload];
+            if (image) {
+                
+                //            if (isAutoSave) [Tools saveDataToFile:activeDownload fileName:fileName];
+                id obj = delegate;
+                if ([obj respondsToSelector:@selector(downLoadOK:)]) {
+                    _image = image;
+                    [delegate downLoadOK:self];
+                }
+                else if (_isDisplay && [_imgView isKindOfClass:[NSImageView class]]) {
+                    _imgView.image = _image;
+                }
+            }else{
+                id obj = delegate;
+                if ([obj respondsToSelector:@selector(downLoadFail:)]) {
+                    _errMsg = NSLocalizedString(@"DownLoadFail",@"文件下载失败");//文件下载失败
+                    [delegate downLoadFail:self];
+                }
+                else if (_isDisplay) {
+                    NSLog(@"%@,%@",task.currentRequest.URL,_errMsg);
+                }
+            }
         }
-        else if (_isDisplay) {
-            NSLog(@"%@,%@",connection.currentRequest.URL,_errMsg);
+        else {
+            
+            //        if (isAutoSave) [Tools saveDataToFile:activeDownload fileName:fileName];
+            id obj = delegate;
+            if ([obj respondsToSelector:@selector(downLoadOK:)]) {
+                [delegate downLoadOK:self];
+            }
+            else if (_isDisplay) {
+                NSLog(@"%@,%@",task.currentRequest.URL,_errMsg);
+            }
         }
     }
 }

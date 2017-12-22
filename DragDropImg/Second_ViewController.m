@@ -13,7 +13,7 @@
 #import "UploadFile.h"
 #import "Tools.h"
 
-@interface Second_ViewController ()
+@interface Second_ViewController ()<FileDownloaderDelegate>
 {
     HTTPRequest *request;
 }
@@ -47,7 +47,7 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
         [NSThread sleepForTimeInterval:0.5];
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self uploadRequest];
+            [self downRequest];
         });
     });
 }
@@ -88,11 +88,22 @@
 
 - (void)downRequest
 {
-    request = [[HTTPRequest alloc] initWithDelegate:self];
-    request.urlString = @"http://dldir1.qq.com/qqfile/QQforMac/QQ_V6.2.0.dmg";
-    request.urlString = @"http://120.25.226.186:32812/resources/videos/minion_01.mp4";
-    [request run:nil body:nil];
-    [request start];
+//    request = [[HTTPRequest alloc] initWithDelegate:self];
+//    request.urlString = @"http://dldir1.qq.com/qqfile/QQforMac/QQ_V6.2.0.dmg";
+//    request.urlString = @"http://120.25.226.186:32812/resources/videos/minion_01.mp4";
+//    request.urlString = @"http://res.weicontrol.cn/Content/Uploads/301/scene/20171221172629561.jpg";
+//    request.taskType = SessionTaskType_Download;
+//    [request run:nil body:nil];
+//    [request start];
+    
+    NSString *url = [NSString stringWithFormat:@"/%@/GetAppFAQ",k_action];
+    url = @"http://res.weicontrol.cn/Content/Uploads/301/scene/20171221172629561.jpg";
+    FileDownloader *down = [[FileDownloader alloc] init];
+    down.delegate = self;
+    down.timeOut = 20.0f;
+    NSString *languageCode = @"zh";
+    NSString *fileName = [NSString stringWithFormat:@"AppFAQ_%@.txt",languageCode];
+    [down downWithUrl:url fileName:fileName];
 }
 
 - (IBAction)SuspendEvents:(NSButton *)sender
@@ -156,6 +167,34 @@
 {
     [super viewDidDisappear];
     [request cancel];
+}
+
+- (void)downLoadOK:(FileDownloader *)loader
+{
+    NSLog(@"下载成功,%ld",(long)loader.statusCode);
+    
+    NSString *fileName = loader.response.suggestedFilename;
+    NSString *dirPath = [[[NSBundle mainBundle] resourcePath] stringByDeletingLastPathComponent];
+    dirPath = [dirPath stringByAppendingPathComponent:@"Downloads"];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if (![fileManager fileExistsAtPath:dirPath]) {
+        [fileManager createDirectoryAtPath:dirPath withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    NSString *path = [dirPath stringByAppendingPathComponent:fileName];
+    BOOL result = [loader.responseData writeToFile:path atomically:YES];
+    if (!result) {
+        NSLog(@"写入失败,%@",path);
+    }else{
+        BOOL result = [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:dirPath]];
+        if (!result) {
+            NSLog(@"%@",dirPath);
+        }
+    }
+}
+
+- (void)downLoadFail:(FileDownloader *)loader
+{
+    NSLog(@"下载失败,%ld,%@",(long)loader.statusCode,loader.errMsg);
 }
 
 #pragma mark - --------WSDelegate----------------

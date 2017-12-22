@@ -84,6 +84,32 @@
     return [self getRandomByString:nil Length:length];
 }
 
++ (NSString *)getSystemVersionString
+{
+    NSProcessInfo *processInfo = [NSProcessInfo processInfo];
+    NSInteger majorVersion = processInfo.operatingSystemVersion.majorVersion;
+    NSInteger minorVersion = processInfo.operatingSystemVersion.minorVersion;
+    NSInteger patchVersion = processInfo.operatingSystemVersion.patchVersion;
+    NSString *versionString = [NSString stringWithFormat:@"%ld.%ld.%ld",majorVersion,minorVersion,patchVersion];
+    
+    return versionString;
+}
+
+#pragma mark 获取系统语言和地区
++ (NSDictionary *)getLocaleLangArea
+{
+    NSLocale *usLocale = [NSLocale currentLocale];
+    NSArray *languages = [usLocale.localeIdentifier componentsSeparatedByString:@"_"];
+    if (languages.count > 1) {
+        NSString *lang = MAC_OS_X_VERSION>=10 ? usLocale.languageCode : languages.firstObject;
+        NSDictionary *dicValue = @{@"lang":lang,
+                                   @"area":languages[1]};
+        return dicValue;
+    }
+    
+    return nil;
+}
+
 @end
 
 @implementation NSString (NSObject)
@@ -218,6 +244,52 @@
 {
     id value = [self checkClass:[NSData class] key:key];
     return value;
+}
+
+@end
+
+@implementation NSData (NSExt)
+
+//判断数据对应文件类型
+- (NSString *)getDtataType
+{
+    uint8_t c;
+    [self getBytes:&c length:1];
+    NSDictionary *dicType = @{@"255216":@"jpg",
+                              @"7173":@"gif",
+                              @"6677":@"bmp",
+                              @"13780":@"png",
+                              @"6787":@"swf",
+                              @"7790":@"exe dll",
+                              @"8297":@"rar",
+                              @"8075":@"zip",
+                              @"55122":@"7z",
+                              @"6063":@"xml",
+                              @"6033":@"html",
+                              @"239187":@"aspx",
+                              @"117115":@"cs",
+                              @"119105":@"js",
+                              @"102100":@"txt",
+                              @"255254":@"sql",
+                              @"254239":@"bin"};
+    if (self.length<2) {
+        NSLog(@"NOT FILE");
+    }else{
+        int char1 = 0 ,char2 =0 ; //必须这样初始化
+        [self getBytes:&char1 range:NSMakeRange(0, 1)];
+        [self getBytes:&char2 range:NSMakeRange(1, 1)];
+        NSString *numStr = [NSString stringWithFormat:@"%i%i",char1,char2];
+        NSString *type = [dicType objectForKey:numStr];
+        if (type) {
+            NSLog(@"下载文件类型,%@",type);
+        }else{
+            NSLog(@"未知文件类型,参数:%@",numStr);
+        }
+        
+        return type;
+    }
+    
+    return nil;
 }
 
 @end
@@ -522,7 +594,7 @@
 
 - (void)addAnimationSetDuration:(CFTimeInterval)duration
 {
-    //UIImageView切换图片动画
+    //NSImageView切换图片动画
     CATransition *animation = [CATransition animation];
     animation.duration = duration;
     animation.type = kCATransitionFade;

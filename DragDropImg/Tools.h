@@ -6,6 +6,9 @@
 //  Copyright © 2017年 xy. All rights reserved.
 //
 
+#define MAC_OS_X_VERSION [[Tools getSystemVersionString] floatValue]
+#define MAC_OS_X_VERSIONString [NSProcessInfo processInfo].operatingSystemVersionString
+
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
@@ -21,6 +24,10 @@
 + (NSString *)getRandomByString:(NSString *)string Length:(int)length;
 #pragma mark 生成长度为length的随机字符串
 + (NSString *)getRandomByLength:(int)length;
+
++ (NSString *)getSystemVersionString;
+#pragma mark 获取系统语言和地区
++ (NSDictionary *)getLocaleLangArea;
 
 @end
 
@@ -44,6 +51,13 @@
 - (NSArray *)arrayForKey:(id)key;
 - (NSDictionary *)dictionaryForKey:(id)key;
 - (NSData *)dataForKey:(id)key;
+
+@end
+
+@interface NSData (NSExt)
+
+//判断数据对应文件类型
+- (NSString *)getDtataType;
 
 @end
 
