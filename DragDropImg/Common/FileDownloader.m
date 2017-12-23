@@ -82,9 +82,9 @@
     
     self.urlString = urlString;
     activeDownload = [NSMutableData data];
-    NSURL *URL = [NSURL URLWithString:urlString];
+    NSURL *url = [NSURL URLWithString:urlString];
     timeOut = timeOut==0 ? 60 : timeOut;
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:timeOut];//超时时间
     request.timeoutInterval = timeOut;
     
     NSString *url_action = [NSString stringWithFormat:@"/%@/",k_action];
@@ -92,10 +92,9 @@
         [self setHTTPBody:request body:nil];
     }
     
-//    urlConnection = [[NSURLConnection alloc] initWithRequest: URLRequest delegate:self];
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
     
-    _session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:[[NSOperationQueue alloc] init]];
+    _session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:[NSOperationQueue currentQueue]];
     NSURLSessionTask *myDataTask = [_session dataTaskWithRequest:request];
     [myDataTask resume];
     
@@ -115,19 +114,19 @@
     }
 }
 
-- (void)setHTTPBody:(NSMutableURLRequest *)URLRequest body:(NSDictionary *)body
+- (void)setHTTPBody:(NSMutableURLRequest *)urlRequest body:(NSDictionary *)body
 {
     NSError *error;
     body = body ?: @{};
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:body options:NSJSONWritingPrettyPrinted error: &error];
-    [URLRequest setHTTPMethod:@"POST"];//设置为 POST
+    [urlRequest setHTTPMethod:@"POST"];//设置为 POST
     //[URLRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-    [URLRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     //[URLRequest setValue:[NSString stringWithFormat:@"%ld",(long)[jsonData length]] forHTTPHeaderField:@"Content-length"];
     
     NSString *languageCode = [Tools getLocaleLangArea][@"lang"];//en_CN,zh_CN(语言_地区)
-    [URLRequest setValue:languageCode forHTTPHeaderField:@"lang"];
-    [URLRequest setHTTPBody:jsonData];
+    [urlRequest setValue:languageCode forHTTPHeaderField:@"lang"];
+    [urlRequest setHTTPBody:jsonData];
 }
 
 - (void)cancelDownload

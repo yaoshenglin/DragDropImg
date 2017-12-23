@@ -9,8 +9,7 @@
 #import "HTTPRequest.h"
 #import <AppKit/AppKit.h>
 #import "GDataXMLNode.h"
-
-//#import "CTB.h"
+#import "Tools.h"
 
 NSString *const FileDownload = @"fileDownload";
 
@@ -182,11 +181,13 @@ NSString *const FileDownload = @"fileDownload";
         [bodyData appendData:[NSData dataWithData:data]];
         [bodyData appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
         [request setHTTPBody:bodyData];
+        [self setValue:@"application/json" forHeader:@"Accept"];
         body = nil;
     }
     else if (_taskType == SessionTaskType_Download) {
-        request.HTTPMethod = @"POST";//设置为 POST
-        [request setValue:@"zh" forHTTPHeaderField:@"lang"];
+        request.HTTPMethod = @"GET";//设置为 GET
+        NSString *languageCode = [Tools getLocaleLangArea][@"lang"];//en_CN,zh_CN(语言_地区)
+        [request setValue:languageCode forHTTPHeaderField:@"lang"];
     }
     
     if ([NSJSONSerialization isValidJSONObject:body]) {
@@ -194,6 +195,7 @@ NSString *const FileDownload = @"fileDownload";
         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:body options:NSJSONWritingPrettyPrinted error: &error];
         request.HTTPMethod = @"POST";//设置为 POST
         request.HTTPBody = jsonData;//把刚才封装的 JSON 数据塞进去
+        [self setValue:@"application/json" forHeader:@"Accept"];
         [self setValue:@"application/json" forHeader:@"Content-Type"];
         _body = [self dicWithHTTPBody];
         
@@ -202,8 +204,6 @@ NSString *const FileDownload = @"fileDownload";
         //[self addValue:rangeValue forHeader:@"Range"];
     }
     
-    [self setValue:@"application/json" forHeader:@"Accept"];
-    [self setValue:@(request.HTTPBody.length).stringValue forHeader:@"Content-length"];
     if ([k_action isEqualToString:@"api_V2"]) {
         NSString *token = [body objectForKey:@"token"];
         token = token ?: [_dicTag objectForKey:@"token"];
@@ -354,7 +354,7 @@ NSString *const FileDownload = @"fileDownload";
     //operationQueue.maxConcurrentOperationCount = 1;
     //operationQueue.name = @"MyQueue";
     
-    _session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:[NSOperationQueue mainQueue]];
+    _session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:[NSOperationQueue currentQueue]];
     
     // 由系统直接返回一个dataTask任务
 
@@ -370,7 +370,7 @@ NSString *const FileDownload = @"fileDownload";
         }
             break;
         case SessionTaskType_Download:
-            _myDataTask = [_session downloadTaskWithRequest:request];
+            _myDataTask = [_session dataTaskWithRequest:request];
             break;
             
         default:
@@ -409,13 +409,6 @@ NSString *const FileDownload = @"fileDownload";
         NSLog(@"获取body失败,%@",error.localizedDescription);
     }
     return body;
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if ([keyPath isEqualToString:@"request"] ) {
-        NSLog(@"%@",request.allHTTPHeaderFields);
-    }
 }
 
 #pragma mark - --------请求回调------------------------
@@ -483,6 +476,7 @@ NSString *const FileDownload = @"fileDownload";
     //NSLog(@"已经收到数据,%@",info[@(dataTask.state)]);
     [activeDownload appendData:data];
     if (_responseStatusCode != 200) {
+        NSLog(@"请求有误");
         return;
     }
     
@@ -505,7 +499,7 @@ NSString *const FileDownload = @"fileDownload";
         [_delegate receiveProgress:rate];
     }
     
-    //NSLog(@"接收进度:%.2f%%",rate/0.01);
+    NSLog(@"接收进度:%.2f%%",rate/0.01);
 }
 
 //- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location;
@@ -532,7 +526,7 @@ NSString *const FileDownload = @"fileDownload";
         _urlString = userInfo[@"NSErrorFailingURLStringKey"];
         [self wsFailedWithDelegate:_delegate];
     } else {
-        NSLog(@"NSURLSessionTaskStateCompleted 操作成功!");
+        NSLog(@"NSURLSessionTaskStateCompleted 操作成功!,%ld",activeDownload.length);
         //请求完成
         _responseData = activeDownload;
         if (_responseStatusCode != 200) {

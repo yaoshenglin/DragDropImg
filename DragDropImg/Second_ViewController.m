@@ -44,12 +44,7 @@
 
 - (void)initCapacity
 {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
-        [NSThread sleepForTimeInterval:0.5];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self downRequest];
-        });
-    });
+    
 }
 
 - (void)dataRequest
@@ -68,9 +63,9 @@
 
 - (void)uploadRequest
 {
-    NSDictionary *userInfo = [Tools objectForKey:@"userInfo"];
-    NSString *token = [userInfo stringForKey:@"token"];
-    NSString *imgName = @"QQ_V6.2.0.dmg";
+//    NSDictionary *userInfo = [Tools objectForKey:@"userInfo"];
+//    NSString *token = [userInfo stringForKey:@"token"];
+    NSString *imgName = @"20171221172629561.png";
     NSString *dirPath = [[[NSBundle mainBundle] resourcePath] stringByDeletingLastPathComponent];
     dirPath = [dirPath stringByAppendingPathComponent:@"Downloads"];
     NSString *path = [dirPath stringByAppendingPathComponent:imgName];
@@ -81,30 +76,45 @@
     request = [[HTTPRequest alloc] initWithDelegate:self];
     request.taskType = SessionTaskType_Upload;
     [request run:UpdateSceneImg body:body delegate:self];
-    [request setValue:token forHeader:@"token" encoding:NSUTF8StringEncoding];
+//    [request setValue:token forHeader:@"token" encoding:NSUTF8StringEncoding];
     [request setValue:@(692).stringValue forHeader:@"SceneID" encoding:NSUTF8StringEncoding];
     [request start];
 }
 
 - (void)downRequest
 {
-//    request = [[HTTPRequest alloc] initWithDelegate:self];
-//    request.urlString = @"http://dldir1.qq.com/qqfile/QQforMac/QQ_V6.2.0.dmg";
-//    request.urlString = @"http://120.25.226.186:32812/resources/videos/minion_01.mp4";
-//    request.urlString = @"http://res.weicontrol.cn/Content/Uploads/301/scene/20171221172629561.jpg";
-//    request.taskType = SessionTaskType_Download;
-//    [request run:nil body:nil];
-//    [request start];
+    request = [[HTTPRequest alloc] initWithDelegate:self];
+    request.urlString = @"http://dldir1.qq.com/qqfile/QQforMac/QQ_V6.2.0.dmg";
+    request.urlString = @"http://120.25.226.186:32812/resources/videos/minion_01.mp4";
+    request.urlString = @"http://res.weicontrol.cn/Content/Uploads/301/scene/20171221172629561.jpg";
+    request.taskType = SessionTaskType_Download;
+    request.isShowErrmsg = YES;
+    [request run:nil body:nil];
+    [request start];
     
-    NSString *url = [NSString stringWithFormat:@"/%@/GetAppFAQ",k_action];
-    url = @"http://res.weicontrol.cn/Content/Uploads/301/scene/20171221172629561.jpg";
-    FileDownloader *down = [[FileDownloader alloc] init];
-    down.delegate = self;
-    down.timeOut = 20.0f;
-    NSString *languageCode = @"zh";
-    NSString *fileName = [NSString stringWithFormat:@"AppFAQ_%@.txt",languageCode];
-    [down downWithUrl:url fileName:fileName];
+//    NSString *url = [NSString stringWithFormat:@"/%@/GetAppFAQ",k_action];
+//    //url = @"http://dldir1.qq.com/qqfile/QQforMac/QQ_V6.2.0.dmg";
+//    url = @"http://res.weicontrol.cn/Content/Uploads/301/scene/20171221172629561.jpg";
+//    FileDownloader *down = [[FileDownloader alloc] init];
+//    down.delegate = self;
+//    down.timeOut = 20.0f;
+//    NSString *fileName = url.lastPathComponent;
+//    [down downWithUrl:url fileName:fileName];
 }
+
+- (IBAction)requestTask:(NSButton *)sender
+{
+    if (sender.tag == 1) {
+        [self dataRequest];
+    }
+    else if (sender.tag == 2) {
+        [self uploadRequest];
+    }
+    else if (sender.tag == 3) {
+        [self downRequest];
+    }
+}
+
 
 - (IBAction)SuspendEvents:(NSButton *)sender
 {
@@ -228,6 +238,7 @@
 {
     NSString *errMsg = iWS.errMsg;
     NSLog(@"%@,%d,%@",iWS.method,iWS.responseStatusCode,errMsg);
+    NSLog(@"%@",iWS.responseString);
 }
 
 @end
