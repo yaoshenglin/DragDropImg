@@ -10,4 +10,9 @@
 
 @interface Second_ViewController : NSViewController
 
+@property (weak) IBOutlet NSTextField *txtURL;
+@property (weak) IBOutlet NSTextField *txtFile;
+@property (weak) IBOutlet NSTextField *txtDown;
+
+
 @end

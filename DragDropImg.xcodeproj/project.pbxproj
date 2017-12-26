@@ -21,6 +21,7 @@
 		14D20EF51F678EF80061EBAA /* Tools.m in Sources */ = {isa = PBXBuildFile; fileRef = 14D20EF41F678EF80061EBAA /* Tools.m */; };
 		14DAC7541FE8E7AB00225CD8 /* GDataXMLNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 14DAC7531FE8E7AB00225CD8 /* GDataXMLNode.m */; };
 		14DAC75A1FE8E94E00225CD8 /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 14DAC7591FE8E94E00225CD8 /* libxml2.tbd */; };
+		14E0407A1FF2501F00304C34 /* PackageXMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 14E040791FF2501F00304C34 /* PackageXMLParser.m */; };
 		14E8EFF71FE7630B00A0FF4E /* UploadFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 14E8EFF61FE7630B00A0FF4E /* UploadFile.m */; };
 		14F469511FCBB5AB00E21658 /* DrawImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 14F469501FCBB5AB00E21658 /* DrawImage.m */; };
 		14F4695C1FCBF76C00E21658 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14F4695B1FCBF76C00E21658 /* QuartzCore.framework */; };
@@ -59,6 +60,8 @@
 		14DAC7521FE8E7AB00225CD8 /* GDataXMLNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GDataXMLNode.h; sourceTree = "<group>"; };
 		14DAC7531FE8E7AB00225CD8 /* GDataXMLNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GDataXMLNode.m; sourceTree = "<group>"; };
 		14DAC7591FE8E94E00225CD8 /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = usr/lib/libxml2.tbd; sourceTree = SDKROOT; };
+		14E040781FF2501F00304C34 /* PackageXMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PackageXMLParser.h; sourceTree = "<group>"; };
+		14E040791FF2501F00304C34 /* PackageXMLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PackageXMLParser.m; sourceTree = "<group>"; };
 		14E8EFF51FE7630B00A0FF4E /* UploadFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UploadFile.h; sourceTree = "<group>"; };
 		14E8EFF61FE7630B00A0FF4E /* UploadFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UploadFile.m; sourceTree = "<group>"; };
 		14F4694F1FCBB5AB00E21658 /* DrawImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawImage.h; sourceTree = "<group>"; };
@@ -186,6 +189,8 @@
 				143DC8FD1FE90DC60005B43D /* FileDownloader.m */,
 				14DAC7521FE8E7AB00225CD8 /* GDataXMLNode.h */,
 				14DAC7531FE8E7AB00225CD8 /* GDataXMLNode.m */,
+				14E040781FF2501F00304C34 /* PackageXMLParser.h */,
+				14E040791FF2501F00304C34 /* PackageXMLParser.m */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -287,6 +292,7 @@
 				14E8EFF71FE7630B00A0FF4E /* UploadFile.m in Sources */,
 				1445793F1E14F1A90066A9DB /* DragDropImageView.m in Sources */,
 				14F469511FCBB5AB00E21658 /* DrawImage.m in Sources */,
+				14E0407A1FF2501F00304C34 /* PackageXMLParser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

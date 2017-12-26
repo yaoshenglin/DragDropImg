@@ -858,7 +858,7 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6jw-Ni-hVM">
-                                <rect key="frame" x="370" y="175" width="80" height="19"/>
+                                <rect key="frame" x="370" y="228" width="80" height="19"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="roundRect" title="Suspend" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="0x6-ac-tHb">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -869,7 +869,7 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wG-Cb-JUp">
-                                <rect key="frame" x="370" y="122" width="80" height="19"/>
+                                <rect key="frame" x="370" y="175" width="80" height="19"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="roundRect" title="Cancel" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="XHL-bP-AHf">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -878,14 +878,6 @@
                                 <connections>
                                     <action selector="CancelEvents:" target="YpH-8C-k2b" id="OY8-Pa-ogV"/>
                                 </connections>
-                            </button>
-                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jY9-mY-a9H">
-                                <rect key="frame" x="370" y="228" width="80" height="19"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="roundRect" title="Resume" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="8j6-LU-IqS">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="cellTitle"/>
-                                </buttonCell>
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="bG7-Bx-L4q">
                                 <rect key="frame" x="32" y="169" width="113" height="32"/>
@@ -907,6 +899,7 @@
                                 </buttonCell>
                                 <connections>
                                     <action selector="requestTask:" target="YpH-8C-k2b" id="vbw-su-bpL"/>
+                                    <binding destination="YpH-8C-k2b" name="argument" keyPath="self.txtDown" id="bNI-SO-fr9"/>
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="xGq-dk-gQM">
@@ -920,8 +913,40 @@
                                     <action selector="requestTask:" target="YpH-8C-k2b" id="wWz-Xy-4w3"/>
                                 </connections>
                             </button>
+                            <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1um-8m-r2U">
+                                <rect key="frame" x="38" y="156" width="264" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="d7Q-bJ-Naj">
+                                    <font key="font" metaFont="system" size="10"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ROq-TL-wbn">
+                                <rect key="frame" x="38" y="101" width="264" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="q5O-qF-ldR">
+                                    <font key="font" metaFont="system" size="10"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="l9d-iw-qUY">
+                                <rect key="frame" x="38" y="211" width="264" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="Tlt-33-MtN">
+                                    <font key="font" metaFont="system" size="10"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                     </view>
+                    <connections>
+                        <outlet property="txtDown" destination="ROq-TL-wbn" id="Gcp-bl-vAI"/>
+                        <outlet property="txtFile" destination="1um-8m-r2U" id="pfs-Xg-R0k"/>
+                        <outlet property="txtURL" destination="l9d-iw-qUY" id="Isl-jt-wo3"/>
+                    </connections>
                 </viewController>
                 <customObject id="duI-Sf-22e" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>

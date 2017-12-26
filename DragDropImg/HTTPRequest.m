@@ -551,7 +551,7 @@ NSString *const FileDownload = @"fileDownload";
 - (void)parseData:(NSData *)data
 {
     if ([data length]>0) {
-        NSString *textEncodingName = _response.textEncodingName ?: @"utf-8";
+        NSString *textEncodingName = _response.textEncodingName ?: @"gb2312";
         CFStringRef textEncode = (__bridge CFStringRef)textEncodingName;
         CFStringEncoding enc = CFStringConvertIANACharSetNameToEncoding(textEncode);
         NSStringEncoding encoding = CFStringConvertEncodingToNSStringEncoding (enc);
@@ -622,7 +622,7 @@ NSString *const FileDownload = @"fileDownload";
         }else{
             NSString *msg = nil;
             msg = [GDataXMLNode getBody:stringL];
-            msg = msg ?: @"服务暂时不可用";//服务暂时不可用
+            msg = msg.length ? msg : @"服务暂时不可用";//服务暂时不可用
             _errMsg = msg;
             [self wsFailedWithDelegate:_delegate];
         }

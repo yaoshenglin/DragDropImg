@@ -14,7 +14,11 @@
 
 @interface Tools : NSObject
 
-+ (NSAlert *)alertWithMessage:(NSString *)messageText informative:(NSString *)informativeText completionHandler:(void (^)(NSModalResponse returnCode))handler;
+//@property (nonatomic, weak) NSMutableArray *list;
+
++ (id)shareTools;
+
++ (NSAlert *)alertWithMessage:(NSString *)messageText informative:(NSString *)informativeText completionHandler:(void (^)(NSModalResponse returnCode, NSString *title))handler;
 
 + (NSMutableDictionary *)userDefaults;
 + (void)setObject:(id)value forKey:(NSString *)defaultName;
@@ -28,6 +32,9 @@
 + (NSString *)getSystemVersionString;
 #pragma mark 获取系统语言和地区
 + (NSDictionary *)getLocaleLangArea;
+
++ (NSStringEncoding)ConvertNSStringEncodingFromIANAChar:(NSString *)name;
++ (NSString *)ConvertIANACharFromNSStringEncoding:(NSStringEncoding)encoding;
 
 @end
 

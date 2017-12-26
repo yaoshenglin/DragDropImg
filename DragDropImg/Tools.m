@@ -13,16 +13,30 @@
 
 @implementation Tools
 
-+ (NSAlert *)alertWithMessage:(NSString *)messageText informative:(NSString *)informativeText completionHandler:(void (^)(NSModalResponse returnCode))handler
++ (id)shareTools
+{
+    static Tools *tool;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        tool = [[Tools alloc] init];
+    });
+    
+    return tool;
+}
+
++ (NSAlert *)alertWithMessage:(NSString *)messageText informative:(NSString *)informativeText completionHandler:(void (^)(NSModalResponse returnCode, NSString *title))handler
 {
     NSAlert *alert = [[NSAlert alloc] init];
     alert.messageText = messageText;
     alert.informativeText = informativeText;
     alert.alertStyle = NSAlertStyleInformational;
     [alert addButtonWithTitle:@"确定"];
-    NSWindow *window = [NSApplication sharedApplication].windows.firstObject;
+    //NSWindow *window = [NSApplication sharedApplication].windows.firstObject;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [alert beginSheetModalForWindow:window completionHandler:handler];
+        NSModalResponse returnCode = [alert runModal];
+        NSInteger index = returnCode - NSAlertFirstButtonReturn;
+        NSString *btnTitle = [alert.buttons[index] title];
+        handler(returnCode,btnTitle);
     });
     
     return alert;
@@ -108,6 +122,24 @@
     }
     
     return nil;
+}
+
++ (NSStringEncoding)ConvertNSStringEncodingFromIANAChar:(NSString *)name
+{
+    CFStringRef textEncode = (__bridge CFStringRef)name;
+    CFStringEncoding enc = CFStringConvertIANACharSetNameToEncoding(textEncode);
+    NSStringEncoding encoding = CFStringConvertEncodingToNSStringEncoding (enc);
+    
+    return encoding;
+}
+
++ (NSString *)ConvertIANACharFromNSStringEncoding:(NSStringEncoding)encoding
+{
+    CFStringEncoding enc = CFStringConvertNSStringEncodingToEncoding(encoding);
+    CFStringRef textEncode = CFStringConvertEncodingToIANACharSetName(enc);
+    NSString *textEncodingName = (__bridge NSString *)(textEncode);
+    
+    return textEncodingName;
 }
 
 @end

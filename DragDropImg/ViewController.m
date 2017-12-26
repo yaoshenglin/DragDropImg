@@ -9,17 +9,21 @@
 #import "ViewController.h"
 #import "Tools.h"
 #import "DrawImage.h"
+#import "PackageXMLParser.h"
 
-@interface ViewController ()
+@interface ViewController ()<NSXMLParserDelegate>
 {
     NSString *path1;
     NSString *path2;
     
     NSView *hintView;
     DrawImage *drawView;
+    
+    PackageXMLParser *xmlParser;
 }
 
 @property (nonatomic, retain) NSData *oldData;
+@property(nonatomic,strong) NSString *currentString;
 
 @end
 
@@ -87,6 +91,13 @@
 //                               @"token":@"301|E21CA9946944987340C1DA235AC2A73C",
 //                               @"Salt":@"a0367a36a4bf2db0"};
 //    [Tools setObject:userInfo forKey:@"userInfo"];
+    
+    NSString *path = @"/Users/xy/Library/Developer/Xcode/DerivedData/DragDropImg-bgyaoueutozmwweewybfgccinuzg/Build/Products/Debug/DragDropImg.app/Contents/Downloads/UpdateSceneImg.html";
+    NSData *data = [NSData dataWithContentsOfFile:path];
+    // 创建解析器
+    xmlParser = [[PackageXMLParser alloc] initWithData:data];
+    // 设置代理
+    xmlParser.delegate = self;
 }
 
 - (void)setOldData:(NSData *)oldData
@@ -121,6 +132,7 @@
         hintView.layer.backgroundColor = [NSColor redColor].CGColor;
     }
 }
+
 - (IBAction)NextButtonEvents:(NSButton *)sender
 {
     NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
@@ -132,26 +144,40 @@
 
 - (IBAction)ReplaceImgEvents:(NSButton *)sender
 {
+    // 开始解析
+    [xmlParser parse];
+    
     if (!_dragImgView1.image || !_dragImgView2.image) {
         NSLog(@"请添加对应图片");
+        
+        NSAlert *alert = [[NSAlert alloc] init];
+        alert.messageText = @"无法替换";
+        alert.informativeText = @"请添加原图片和替换图片";
+        alert.alertStyle = NSAlertStyleInformational;
+        [alert addButtonWithTitle:@"确定"];
+        alert.icon = [NSImage imageNamed:@"iface主机"];
+        NSWindow *window = [NSApplication sharedApplication].windows.firstObject;
+        [alert beginSheetModalForWindow:window completionHandler:nil];
+        
         return;
     }
     
     if (hintView.layer.backgroundColor != [NSColor greenColor].CGColor) {
         __weak typeof(self) wSelf = self;
         NSAlert *alert = [[NSAlert alloc] init];
-        alert.messageText = @"图片有差异，继续替换";
-        //alert.informativeText = @"push结果";
+        alert.messageText = @"存在异常";
+        alert.informativeText = @"图片有差异，是否继续替换";
         alert.alertStyle = NSAlertStyleInformational;
         [alert addButtonWithTitle:@"取消"];
         [alert addButtonWithTitle:@"确定"];
-        NSWindow *window = [NSApplication sharedApplication].windows.firstObject;
-        [alert beginSheetModalForWindow:window completionHandler:^(NSModalResponse returnCode) {
-            if (returnCode == NSAlertSecondButtonReturn) {
-                //响应第一个按钮被按下
-                [wSelf replaceImgOperation];
-            }
-        }];
+        alert.icon = [NSImage imageNamed:@"iface主机"];
+        NSModalResponse returnCode = [alert runModal];
+        NSInteger index = returnCode - NSAlertFirstButtonReturn;
+        NSString *btnTitle = [alert.buttons[index] title];
+        if ([btnTitle isEqualToString:@"确定"]) {
+            //响应第一个按钮被按下
+            [wSelf replaceImgOperation];
+        }
         return;
     }
     //替换图片
