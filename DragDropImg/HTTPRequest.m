@@ -660,7 +660,7 @@ NSString *const FileDownload = @"fileDownload";
 
 #pragma mark - -------HTTPRequest--------------------
 #pragma mark 创建请求体
-- (void)run:(NSString *)method body:(NSDictionary *)body completionHandler:(void (^)(NSURLResponse* response, NSData* data, NSError* error)) handler
+- (void)run:(NSString *)method body:(NSDictionary *)body completionHandler:(void (^)(NSData * data, NSURLResponse * response, NSError * error))completionHandler
 {
     if ([NSJSONSerialization isValidJSONObject:body])//判断是否有效
     {
@@ -683,7 +683,11 @@ NSString *const FileDownload = @"fileDownload";
         /*
          *发起异步访问网络操作 并用 block 操作回调函数
          */
-        [NSURLConnection sendAsynchronousRequest:request queue:[[NSOperationQueue alloc] init] completionHandler:handler];
+        NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+        
+        _session = [NSURLSession sessionWithConfiguration:configuration delegate:nil delegateQueue:[[NSOperationQueue alloc] init]];
+        _myDataTask = [_session dataTaskWithRequest:request completionHandler:completionHandler];
+        [_myDataTask resume];
     }else{
         NSString *urlString = [HTTPRequest initUrl:method];;
         _urlString = _urlString ?: urlString;
@@ -699,7 +703,11 @@ NSString *const FileDownload = @"fileDownload";
         /*
          *发起异步访问网络操作 并用 block 操作回调函数
          */
-        [NSURLConnection sendAsynchronousRequest:request queue:[[NSOperationQueue alloc] init] completionHandler:handler];
+        NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+        
+        _session = [NSURLSession sessionWithConfiguration:configuration delegate:nil delegateQueue:[[NSOperationQueue alloc] init]];
+        _myDataTask = [_session dataTaskWithRequest:request completionHandler:completionHandler];
+        [_myDataTask resume];
     }
 }
 
@@ -712,10 +720,10 @@ NSString *const FileDownload = @"fileDownload";
     return result;
 }
 
-+ (void)run:(NSString *)method body:(NSDictionary *)body completionHandler:(void (^)(NSURLResponse* response, NSData* data, NSError* error)) handler
++ (void)run:(NSString *)method body:(NSDictionary *)body completionHandler:(void (^)(NSData * data, NSURLResponse * response, NSError * error))completionHandler
 {
     HTTPRequest *result = [[HTTPRequest alloc] init];
-    [result run:method body:body completionHandler:handler];
+    [result run:method body:body completionHandler:completionHandler];
 }
 
 #pragma mark 打印调试信息

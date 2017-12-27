@@ -8,16 +8,14 @@
 
 #import "ViewController.h"
 #import "Tools.h"
-#import "DrawImage.h"
 #import "PackageXMLParser.h"
 
 @interface ViewController ()<NSXMLParserDelegate>
 {
-    NSString *path1;
-    NSString *path2;
+    NSString *path1;//图片1路径
+    NSString *path2;//图片2路径
     
     NSView *hintView;
-    DrawImage *drawView;
     
     PackageXMLParser *xmlParser;
 }
@@ -60,44 +58,16 @@
     
     hintView.layer.cornerRadius = CGRectGetWidth(hintView.frame)/2;
     
-//    [self.view.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-//    NSImageView *imgView = [[NSImageView alloc] initWithFrame:self.view.bounds];
-//    imgView.tag = 3;
-//    imgView.imageScaling = NSImageScaleProportionallyDown;
-//    imgView.allowsCutCopyPaste = YES;
-//    [self.view addSubview:imgView];
-    
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
-//        NSImage *image = [[NSImage alloc] initWithContentsOfFile:@"/Volumes/Apple/OS工程/DragDropImg/DragDropImg/Resource/配置iFace@2x.png"];
-//        NSColor *color = [NSColor colorWithRed:0x00/255.0 green:0xA0/255.0 blue:0xE9/255.0 alpha:1];
-//        image = [NSImage imageToTransparent:image withColor:color];
-//
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            imgView.image = image;
-//        });
-//    });
-    
-    
-//    drawView = [[DrawImage alloc] initWithFrame:self.view.bounds];
-//    drawView.layerContentsPlacement = NSViewLayerContentsPlacementCenter;
-//    [self.view addSubview:drawView];
-//    
-//    drawView.translatesAutoresizingMaskIntoConstraints = NO;
-//    NSDictionary *viewsDic = NSDictionaryOfVariableBindings(drawView);
-//    [self.view addConstraintsWithFormat:@"|[drawView]|" views:viewsDic];
-//    [self.view addConstraintsWithFormat:@"V:|[drawView]|" views:viewsDic];
-    
 //    NSDictionary *userInfo = @{@"mobile":@"18602561935",
 //                               @"token":@"301|E21CA9946944987340C1DA235AC2A73C",
 //                               @"Salt":@"a0367a36a4bf2db0"};
 //    [Tools setObject:userInfo forKey:@"userInfo"];
     
-    NSString *path = @"/Users/xy/Library/Developer/Xcode/DerivedData/DragDropImg-bgyaoueutozmwweewybfgccinuzg/Build/Products/Debug/DragDropImg.app/Contents/Downloads/UpdateSceneImg.html";
+    NSString *path = @"/Volumes/Apple/OS工程/DragDropImg/DragDropImg/Resource/weather.xml";
     NSData *data = [NSData dataWithContentsOfFile:path];
     // 创建解析器
-    xmlParser = [[PackageXMLParser alloc] initWithData:data];
-    // 设置代理
-    xmlParser.delegate = self;
+    xmlParser = [PackageXMLParser xmlWithData:data];
+    xmlParser.isShowLog = YES;
 }
 
 - (void)setOldData:(NSData *)oldData
@@ -146,6 +116,7 @@
 {
     // 开始解析
     [xmlParser parse];
+    NSLog(@"title = %@",[xmlParser.dicData stringForKey:@"title"]);
     
     if (!_dragImgView1.image || !_dragImgView2.image) {
         NSLog(@"请添加对应图片");

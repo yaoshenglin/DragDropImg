@@ -36,6 +36,12 @@
 + (NSStringEncoding)ConvertNSStringEncodingFromIANAChar:(NSString *)name;
 + (NSString *)ConvertIANACharFromNSStringEncoding:(NSStringEncoding)encoding;
 
+#pragma mark - --------其它------------------------
++ (void)duration:(NSTimeInterval)dur block:(dispatch_block_t)block;
++ (void)asyncWithBlock:(dispatch_block_t)block;
++ (void)syncWithBlock:(dispatch_block_t)block;
++ (void)async:(dispatch_block_t)block complete:(dispatch_block_t)nextBlock;
+
 @end
 
 @interface NSString (NSObject)

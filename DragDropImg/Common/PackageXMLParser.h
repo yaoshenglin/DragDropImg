@@ -12,10 +12,14 @@
 
 @property (nonatomic, weak) id delegate;
 @property (nonatomic, retain) NSData *data;
+@property (nonatomic, assign) BOOL isShowLog;
+@property (nonatomic, retain) NSMutableArray *dataSource;
+@property (nonatomic, retain) NSMutableDictionary *dicData;
+@property (nonatomic, retain) NSDictionary *userInfo;
 
++ (PackageXMLParser *)xmlWithData:(NSData *)data;
 - (id)initWithDelegate:(id)delegate;
 - (id)initWithData:(NSData *)data;
-- (void)initCapacity;
 - (void)parse;
 
 @end

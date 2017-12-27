@@ -1855,6 +1855,10 @@ const char *IANAEncodingCStringFromNSStringEncoding(NSStringEncoding encoding)
     body = body ?: @"";
     NSDictionary *result = @{@"head":head,
                              @"body":body};
+    if (error) {
+        NSLog(@"%@",error.localizedDescription);
+        return nil;
+    }
     return result;
 }
 

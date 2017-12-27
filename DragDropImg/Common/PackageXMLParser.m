@@ -14,7 +14,6 @@
     NSXMLParser *xmlParser;
     NSString *currentRootElement;
     
-    NSMutableArray *dataSource;
     NSMutableString *currentValue;
 }
 
@@ -22,11 +21,18 @@
 
 @implementation PackageXMLParser
 
++ (PackageXMLParser *)xmlWithData:(NSData *)data
+{
+    PackageXMLParser *xmlParser = [[PackageXMLParser alloc] initWithData:data];
+    return xmlParser;
+}
+
 - (id)init
 {
     self = [super init];
     if (self) {
-        [self initCapacity];
+        _isShowLog = NO;
+        _dicData = [NSMutableDictionary dictionary];
     }
     
     return self;
@@ -43,15 +49,9 @@
 - (id)initWithData:(NSData *)data
 {
     self = [self init];
-    _data = data;
+    self.data = data;
     
     return self;
-}
-
-- (void)initCapacity
-{
-    NSString *path = @"/Users/xy/Library/Developer/Xcode/DerivedData/DragDropImg-bgyaoueutozmwweewybfgccinuzg/Build/Products/Debug/DragDropImg.app/Contents/Downloads/UpdateSceneImg.html";
-    self.data = [NSData dataWithContentsOfFile:path];
 }
 
 - (void)setData:(NSData *)data
@@ -87,15 +87,25 @@
  */
 - (void)parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName attributes:(NSDictionary *)attributeDict
 {
-    NSLog(@"开始标签  %@,%@", elementName,[attributeDict customDescription]);
-    if (namespaceURI.length || qName.length) {
-        NSLog(@"namespaceURI = %@,qName = %@",namespaceURI,qName);
+    if (_isShowLog) {
+        NSLog(@"开始标签  %@,%@", elementName,[attributeDict customDescription]);
+        if (namespaceURI.length || qName.length) {
+            NSLog(@"namespaceURI = %@,qName = %@",namespaceURI,qName);
+        }
     }
     
+    NSString *httpEquiv = attributeDict[@"http-equiv"];
+    httpEquiv = [httpEquiv lowercaseString];
+    if ([httpEquiv isEqualToString:@"content-type"]) {
+        NSString *content = attributeDict[@"content"];//数据类型、编码
+        if (content.length > 0) {
+            _userInfo = @{httpEquiv:content};
+        }
+    }
     
     currentValue = [NSMutableString string];
-    if (dataSource == nil) {
-        dataSource = [NSMutableArray new];
+    if (_dataSource == nil) {
+        _dataSource = [NSMutableArray new];
     }
     
     currentRootElement = elementName;
@@ -104,7 +114,9 @@
 // 当解析器找到开始标记和结束标记之间的字符时，调用这个方法解析当前节点的所有字符
 - (void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string
 {
-    NSLog(@"foundCharacters, %@",string);
+    if (_isShowLog) {
+        NSLog(@"foundCharacters, %@",string);
+    }
     if (string.length) {
         [currentValue appendString:string];
     }
@@ -117,14 +129,16 @@
  */
 - (void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName
 {
-    NSLog(@"didEndElement: %@",elementName);
+    if (_isShowLog) {
+        NSLog(@"didEndElement: %@",elementName);
+    }
     if (namespaceURI.length || qName.length) {
         //NSLog(@"namespaceURI = %@,qName = %@",namespaceURI,qName);
     }
     
     if (currentValue && elementName.length) {
         NSDictionary *dic = @{elementName:currentValue};
-        [dataSource addObject:dic];
+        [_dataSource addObject:dic];
     }
     
     currentValue = nil;
@@ -150,12 +164,13 @@
 
 - (void)logWithData
 {
-    NSLog(@"%ld",(long)dataSource.count);
+    NSLog(@"%ld",(long)_dataSource.count);
     NSMutableString *string = [NSMutableString string];
-    for (NSDictionary *dic in dataSource) {
+    for (NSDictionary *dic in _dataSource) {
         NSString *key = dic.allKeys.firstObject;
         NSString *value = dic[key];
         [string appendFormat:@"\n%@ = %@",key,value];
+        [_dicData setObject:value forKey:key];
     }
     
     NSLog(@"%@",string);

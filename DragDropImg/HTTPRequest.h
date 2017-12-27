@@ -69,7 +69,7 @@ FOUNDATION_EXPORT NSString *const FileDownload;//文件下载
 
 + (NSString *)initUrl:(NSString *)method;
 + (HTTPRequest *)run:(NSString *)method body:(NSDictionary *)body delegate:(id)thedelegate;
-+ (void)run:(NSString *)method body:(NSDictionary *)body completionHandler:(void (^)(NSURLResponse* response, NSData* data, NSError* error)) handler NS_AVAILABLE(10_7, 5_0);
++ (void)run:(NSString *)method body:(NSDictionary *)body completionHandler:(void (^)(NSData * data, NSURLResponse * response, NSError * error))completionHandler;
 + (id)requestWithDelegate:(id)delegate;
 - (id)initWithDelegate:(id)delegate;
 - (void)run:(NSString *)method body:(NSDictionary *)body delegate:(id)thedelegate;
@@ -84,7 +84,7 @@ FOUNDATION_EXPORT NSString *const FileDownload;//文件下载
 - (void)suspend;//暂停
 - (void)cancel;//取消
 - (NSDictionary *)dicWithHTTPBody;
-- (void)run:(NSString *)method body:(NSDictionary *)body completionHandler:(void (^)(NSURLResponse* response, NSData* data, NSError* error)) handler NS_AVAILABLE(10_7, 5_0);
+- (void)run:(NSString *)method body:(NSDictionary *)body completionHandler:(void (^)(NSData * data, NSURLResponse * response, NSError * error))completionHandler;
 
 @end
 

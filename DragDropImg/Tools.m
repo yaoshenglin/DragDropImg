@@ -142,6 +142,58 @@
     return textEncodingName;
 }
 
+#pragma mark - --------其它------------------------
++ (void)duration:(NSTimeInterval)dur block:(dispatch_block_t)block
+{
+    if (block) {
+        dispatch_queue_t queue = dispatch_get_main_queue();
+        int64_t delta = (int64_t)(dur * NSEC_PER_SEC);
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, delta), queue, block);
+    }
+}
+
+/**
+ 异步
+ 
+ @param block 异步执行
+ */
++ (void)asyncWithBlock:(dispatch_block_t)block
+{
+    if (block) {
+        long identifier = DISPATCH_QUEUE_PRIORITY_DEFAULT;
+        dispatch_queue_t queue = dispatch_get_global_queue(identifier, 0);
+        //queue = dispatch_queue_create("com.icf.serialqueue", nil);//用于异步顺序执行
+        dispatch_async(queue, block);
+    }
+}
+
+/**
+ 同步
+ 
+ @param block 同步执行
+ */
++ (void)syncWithBlock:(dispatch_block_t)block
+{
+    dispatch_queue_t queue = dispatch_get_main_queue();
+    if (block) dispatch_sync(queue, block);
+}
+
+
+/**
+ 异步执行完成后，同步执行
+ 
+ @param block 异步执行
+ @param nextBlock 同步执行
+ */
++ (void)async:(dispatch_block_t)block complete:(dispatch_block_t)nextBlock
+{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
+        if (block) block();
+        dispatch_queue_t queue = dispatch_get_main_queue();
+        if (nextBlock) dispatch_async(queue, nextBlock);
+    });
+}
+
 @end
 
 @implementation NSString (NSObject)

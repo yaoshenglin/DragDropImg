@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://WebXml.com.cn/">
+    <string>广东 广州</string>
+    <string>广州</string>
+    <string>2350</string>
+    <string>2013/09/04 11:12:50</string>
+    <string>今日天气实况：气温：24℃；风向/风力：东南风 2级；湿度：99%</string>
+    <string>空气质量：优；紫外线强度：弱</string>
+    <string>穿衣指数：热，适合穿T恤、短薄外套等夏季服装。
+        过敏指数：不易发，除特殊体质，无需担心过敏问题。
+        运动指数：较不宜，有较强降水，请在室内进行休闲运动。
+        洗车指数：不宜，有雨，雨水和泥水会弄脏爱车。
+        晾晒指数：不宜，有较强降水会淋湿衣物，不适宜晾晒。
+        旅游指数：较不宜，有强降雨，建议您最好还是在室内活动。
+        路况指数：湿滑，路面湿滑，车辆易打滑，减慢车速。
+        舒适度指数：较舒适，白天有雨，闷热，早晚天气凉爽。
+        空气污染指数：优，气象条件非常有利于空气污染物扩散。
+        紫外线指数：弱，辐射较弱，涂擦SPF12-15、PA+护肤品。</string>
+    <string>9月4日 大雨</string>
+    <string>24℃/29℃</string>
+    <string>无持续风向微风</string>
+    <string>9.gif</string>
+    <string>9.gif</string>
+    <string>9月5日 阵雨转多云</string>
+    <string>24℃/30℃</string>
+    <string>无持续风向微风</string>
+    <string>3.gif</string>
+    <string>1.gif</string>
+    <string>9月6日 多云</string>
+    <string>25℃/32℃</string>
+    <string>无持续风向微风</string>
+    <string>1.gif</string>
+    <string>1.gif</string>
+    <string>9月7日 多云转晴</string>
+    <string>25℃/33℃</string>
+    <string>无持续风向微风</string>
+    <string>1.gif</string>
+    <string>0.gif</string>
+    <string>9月8日 晴</string>
+    <string>25℃/33℃</string>
+    <string>无持续风向微风</string>
+    <string>0.gif</string>
+    <string>0.gif</string>
+</ArrayOfString>
