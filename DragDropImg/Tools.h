@@ -19,7 +19,7 @@
 + (id)shareTools;
 
 + (NSAlert *)alertWithMessage:(NSString *)messageText informative:(NSString *)informativeText completionHandler:(void (^)(NSModalResponse returnCode, NSString *title))handler;
-
++ (NSString *)mainBundlePath;
 + (NSMutableDictionary *)userDefaults;
 + (void)setObject:(id)value forKey:(NSString *)defaultName;
 + (id)objectForKey:(NSString *)defaultName;
@@ -35,6 +35,8 @@
 
 + (NSStringEncoding)ConvertNSStringEncodingFromIANAChar:(NSString *)name;
 + (NSString *)ConvertIANACharFromNSStringEncoding:(NSStringEncoding)encoding;
+
++ (id)getControllerWithStoryboard:(NSString *)title identity:(NSString *)identifier;
 
 #pragma mark - --------其它------------------------
 + (void)duration:(NSTimeInterval)dur block:(dispatch_block_t)block;

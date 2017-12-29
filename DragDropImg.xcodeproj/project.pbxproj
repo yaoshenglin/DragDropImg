@@ -20,6 +20,8 @@
 		148C99FB1FF3A00C00E96CC1 /* weather.xml in Resources */ = {isa = PBXBuildFile; fileRef = 148C99FA1FF3A00C00E96CC1 /* weather.xml */; };
 		148C99FE1FF3A91800E96CC1 /* DrawImage_ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 148C99FD1FF3A91800E96CC1 /* DrawImage_ViewController.m */; };
 		14AAE66B1FD1007800321544 /* IMG_6212.PNG in Resources */ = {isa = PBXBuildFile; fileRef = 14AAE66A1FD1007800321544 /* IMG_6212.PNG */; };
+		14B5640A1FF496D300393CD0 /* CodeProtocol_ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 14B564081FF496D300393CD0 /* CodeProtocol_ViewController.m */; };
+		14B5640D1FF49DD900393CD0 /* FingerprintLockProtocol.doc in Resources */ = {isa = PBXBuildFile; fileRef = 14B5640C1FF49DD900393CD0 /* FingerprintLockProtocol.doc */; };
 		14D20EF51F678EF80061EBAA /* Tools.m in Sources */ = {isa = PBXBuildFile; fileRef = 14D20EF41F678EF80061EBAA /* Tools.m */; };
 		14DAC7541FE8E7AB00225CD8 /* GDataXMLNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 14DAC7531FE8E7AB00225CD8 /* GDataXMLNode.m */; };
 		14DAC75A1FE8E94E00225CD8 /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 14DAC7591FE8E94E00225CD8 /* libxml2.tbd */; };
@@ -60,6 +62,9 @@
 		148C99FC1FF3A91800E96CC1 /* DrawImage_ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawImage_ViewController.h; sourceTree = "<group>"; };
 		148C99FD1FF3A91800E96CC1 /* DrawImage_ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DrawImage_ViewController.m; sourceTree = "<group>"; };
 		14AAE66A1FD1007800321544 /* IMG_6212.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IMG_6212.PNG; sourceTree = "<group>"; };
+		14B564071FF496D300393CD0 /* CodeProtocol_ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeProtocol_ViewController.h; sourceTree = "<group>"; };
+		14B564081FF496D300393CD0 /* CodeProtocol_ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeProtocol_ViewController.m; sourceTree = "<group>"; };
+		14B5640C1FF49DD900393CD0 /* FingerprintLockProtocol.doc */ = {isa = PBXFileReference; lastKnownFileType = file; path = FingerprintLockProtocol.doc; sourceTree = "<group>"; };
 		14D20EF31F678EF80061EBAA /* Tools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tools.h; path = ../Tools.h; sourceTree = "<group>"; };
 		14D20EF41F678EF80061EBAA /* Tools.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Tools.m; path = ../Tools.m; sourceTree = "<group>"; };
 		14DAC7521FE8E7AB00225CD8 /* GDataXMLNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GDataXMLNode.h; sourceTree = "<group>"; };
@@ -130,6 +135,8 @@
 				1477B9211FE2090800857CE2 /* Second_ViewController.m */,
 				148C99FC1FF3A91800E96CC1 /* DrawImage_ViewController.h */,
 				148C99FD1FF3A91800E96CC1 /* DrawImage_ViewController.m */,
+				14B564071FF496D300393CD0 /* CodeProtocol_ViewController.h */,
+				14B564081FF496D300393CD0 /* CodeProtocol_ViewController.m */,
 				1445793D1E14F1A90066A9DB /* DragDropImageView.h */,
 				1445793E1E14F1A90066A9DB /* DragDropImageView.m */,
 				14F4694F1FCBB5AB00E21658 /* DrawImage.h */,
@@ -171,6 +178,7 @@
 		14F4695D1FCBF98000E21658 /* Resource */ = {
 			isa = PBXGroup;
 			children = (
+				14B5640C1FF49DD900393CD0 /* FingerprintLockProtocol.doc */,
 				14F4695E1FCBF9A400E21658 /* iface主机@2x.png */,
 				143CFF621FD13BD000BD5753 /* 配置iFace@2x.png */,
 				14AAE66A1FD1007800321544 /* IMG_6212.PNG */,
@@ -267,6 +275,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				14B5640D1FF49DD900393CD0 /* FingerprintLockProtocol.doc in Resources */,
 				148C99FB1FF3A00C00E96CC1 /* weather.xml in Resources */,
 				14F469641FCBF9A400E21658 /* msg2@2x.png in Resources */,
 				14F469631FCBF9A400E21658 /* msg1@2x.png in Resources */,
@@ -290,6 +299,7 @@
 				144579311E14F0B30066A9DB /* ViewController.m in Sources */,
 				14DAC7541FE8E7AB00225CD8 /* GDataXMLNode.m in Sources */,
 				14D20EF51F678EF80061EBAA /* Tools.m in Sources */,
+				14B5640A1FF496D300393CD0 /* CodeProtocol_ViewController.m in Sources */,
 				1445792E1E14F0B30066A9DB /* main.m in Sources */,
 				148C99FE1FF3A91800E96CC1 /* DrawImage_ViewController.m in Sources */,
 				14FF10D91FE3A5A5004DB424 /* ExportGather.m in Sources */,

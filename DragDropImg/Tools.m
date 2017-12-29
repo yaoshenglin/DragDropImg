@@ -51,6 +51,12 @@
     return path;
 }
 
++ (NSString *)mainBundlePath
+{
+    NSString *dirPath = [[[NSBundle mainBundle] resourcePath] stringByDeletingLastPathComponent];
+    return dirPath;
+}
+
 + (NSMutableDictionary *)userDefaults
 {
     NSString *path = [self getPlistPath];
@@ -140,6 +146,24 @@
     NSString *textEncodingName = (__bridge NSString *)(textEncode);
     
     return textEncodingName;
+}
+
++ (id)getControllerWithStoryboard:(NSString *)title identity:(NSString *)identifier
+{
+    NSStoryboard *storyBoard = nil;
+    if (title==NULL) {
+        //应用程序的名称和版本号等信息都保存在mainBundle的一个字典中，用下面代码可以取出来。
+        NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
+        title = [infoDict objectForKey:@"NSMainStoryboardFile"];
+    }
+    
+    storyBoard = [NSStoryboard storyboardWithName:title bundle:nil];
+    if (storyBoard == NULL) {
+        return NULL;
+    }
+    
+    NSViewController *viewController = [storyBoard instantiateControllerWithIdentifier:identifier];
+    return viewController;
 }
 
 #pragma mark - --------其它------------------------

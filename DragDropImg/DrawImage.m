@@ -48,6 +48,15 @@
                                  NSWritingDirectionAttributeName: @[@(NSWritingDirectionLeftToRight | NSTextWritingDirectionOverride)]};
     [mabstring addAttributes:attributes range:NSMakeRange(4, mabstring.length-4)];
     
+//    NSDictionary *dic = nil;
+//    NSString *path = @"/Volumes/Apple/OS工程/DragDropImg/DragDropImg/Resource/FingerprintLockProtocol.doc";
+//    NSString* encodedString = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+//    NSURL *url = [NSURL URLWithString:encodedString];
+//    NSAttributedString *string = [[NSAttributedString alloc] initWithURL:url documentAttributes:&dic];
+    if (_string) {
+        [mabstring setAttributedString:_string];
+    }
+    
     //[mabstring endEditing];
     
     //调整坐标系

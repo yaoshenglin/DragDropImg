@@ -58,6 +58,20 @@
     
     hintView.layer.cornerRadius = CGRectGetWidth(hintView.frame)/2;
     
+    NSMenu *newMenu = [[NSMenu alloc] init];
+    NSMenuItem *openItem = [[NSMenuItem alloc] initWithTitle:@"NetRequest" action:@selector(menuItemEvents:) keyEquivalent:@""];
+    openItem.target = self;
+    [newMenu addItem:openItem];
+    
+    NSMenuItem *DrawImg = [[NSMenuItem alloc] initWithTitle:@"DrawImg" action:@selector(menuItemEvents:) keyEquivalent:@""];
+    DrawImg.target = self;
+    [newMenu addItem:DrawImg];
+    
+    NSMenuItem *CodeProtocol = [[NSMenuItem alloc] initWithTitle:@"CodeProtocol" action:@selector(menuItemEvents:) keyEquivalent:@""];
+    CodeProtocol.target = self;
+    [newMenu addItem:CodeProtocol];
+    _btnNext.menu = newMenu;
+    
 //    NSDictionary *userInfo = @{@"mobile":@"18602561935",
 //                               @"token":@"301|E21CA9946944987340C1DA235AC2A73C",
 //                               @"Salt":@"a0367a36a4bf2db0"};
@@ -109,7 +123,7 @@
     NSString *title = [infoDict objectForKey:@"NSMainStoryboardFile"];
     NSStoryboard *storyBoard = [NSStoryboard storyboardWithName:title bundle:nil];
     NSViewController *Second = [storyBoard instantiateControllerWithIdentifier:@"Second"];
-    [self presentViewControllerAsSheet:Second];
+    [self presentViewControllerAsModalWindow:Second];
 }
 
 - (IBAction)ReplaceImgEvents:(NSButton *)sender
@@ -209,6 +223,24 @@
     self.view.acceptsTouchEvents = YES;
 }
 
+#pragma mark - --------右键菜单事件回调------------------------
+- (void)menuItemEvents:(NSMenuItem *)menuItem
+{
+    NSLog(@"%@",menuItem.title);
+    if ([menuItem.title isEqualToString:@"NetRequest"]) {
+        NSViewController *Second = [self.storyboard instantiateControllerWithIdentifier:@"Second"];
+        [self presentViewControllerAsModalWindow:Second];
+    }
+    else if ([menuItem.title isEqualToString:@"DrawImg"]) {
+        NSViewController *DrawImage = [self.storyboard instantiateControllerWithIdentifier:@"DrawImage"];
+        [self presentViewControllerAsModalWindow:DrawImage];
+    }
+    else if ([menuItem.title isEqualToString:@"CodeProtocol"]) {
+        NSViewController *CodeProtocol = [self.storyboard instantiateControllerWithIdentifier:@"CodeProtocol"];
+        [self presentViewControllerAsModalWindow:CodeProtocol];
+    }
+}
+
 - (void)viewDidLayout
 {
     [super viewDidLayout];
@@ -216,20 +248,6 @@
     NSRect rect = _dragImgView2.frame;
     CGFloat w = CGRectGetWidth(hintView.frame);
     hintView.frame = CGRectMake(CGRectGetMaxX(rect)+20, CGRectGetMidY(rect)-w/2, w, w);
-    
-    w = self.view.frame.size.width;
-    [_txtName1 setOriginX:45 width:w/2-80];
-    [_txtName2 setOriginX:w/2+45 width:w/2-80];
-    
-    for (NSImageView *imgView in self.view.subviews) {
-        if (imgView.tag == 3 && [imgView isKindOfClass:[NSImageView class]]) {
-            imgView.frame = self.view.bounds;
-        }
-        
-//        if ([imgView isKindOfClass:[DrawImage class]]) {
-//            imgView.frame = self.view.bounds;
-//        }
-    }
 }
 
 - (void)setRepresentedObject:(id)representedObject

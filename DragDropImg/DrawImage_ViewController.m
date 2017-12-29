@@ -22,6 +22,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [self setupSubViews];
     // Do any additional setup after loading the view.
 }
 
@@ -55,6 +56,21 @@
     [self.view addConstraintsWithFormat:@"V:|[drawView]|" views:viewsDic];
 }
 
+- (void)viewDidLayout
+{
+    [super viewDidLayout];
+    
+    for (NSImageView *imgView in self.view.subviews) {
+        if (imgView.tag == 3 && [imgView isKindOfClass:[NSImageView class]]) {
+            imgView.frame = self.view.bounds;//改变imgView视图的位置大小
+        }
+        
+        if ([imgView isKindOfClass:[DrawImage class]]) {
+            imgView.frame = self.view.bounds;
+        }
+    }
+}
+
 /*
 #pragma mark - Navigation
 
@@ -64,5 +80,10 @@
     // Pass the selected object to the new view controller.
 }
 */
+
+- (void)dealloc
+{
+    NSLog(@"%@",self.className);
+}
 
 @end

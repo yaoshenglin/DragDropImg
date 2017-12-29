@@ -17,6 +17,8 @@
 @property (weak) IBOutlet NSTextField *imgInfo2;
 @property (weak) IBOutlet NSTextField *txtName1;//图片名字
 @property (weak) IBOutlet NSTextField *txtName2;
+@property (weak) IBOutlet NSButton *btnNext;
+
 
 @end
 
