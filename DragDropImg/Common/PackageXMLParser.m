@@ -77,6 +77,9 @@
 - (void)parserDidStartDocument:(NSXMLParser *)parser
 {
     //NSLog(@"%@",[parser customDescription]);
+    if (_dataSource == nil) {
+        _dataSource = [NSMutableArray new];
+    }
 }
 
 /**
@@ -103,9 +106,8 @@
         }
     }
     
-    currentValue = [NSMutableString string];
-    if (_dataSource == nil) {
-        _dataSource = [NSMutableArray new];
+    if (!currentValue) {
+        currentValue = [NSMutableString string];
     }
     
     currentRootElement = elementName;
@@ -139,9 +141,8 @@
     if (currentValue && elementName.length) {
         NSDictionary *dic = @{elementName:currentValue};
         [_dataSource addObject:dic];
+        currentValue = nil;
     }
-    
-    currentValue = nil;
 }
 
 /**

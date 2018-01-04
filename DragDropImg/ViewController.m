@@ -70,6 +70,10 @@
     NSMenuItem *CodeProtocol = [[NSMenuItem alloc] initWithTitle:@"CodeProtocol" action:@selector(menuItemEvents:) keyEquivalent:@""];
     CodeProtocol.target = self;
     [newMenu addItem:CodeProtocol];
+    
+    NSMenuItem *MakeQrCode = [[NSMenuItem alloc] initWithTitle:@"MakeQrCode" action:@selector(menuItemEvents:) keyEquivalent:@""];
+    MakeQrCode.target = self;
+    [newMenu addItem:MakeQrCode];
     _btnNext.menu = newMenu;
     
 //    NSDictionary *userInfo = @{@"mobile":@"18602561935",
@@ -77,7 +81,7 @@
 //                               @"Salt":@"a0367a36a4bf2db0"};
 //    [Tools setObject:userInfo forKey:@"userInfo"];
     
-    NSString *path = @"/Volumes/Apple/OS工程/DragDropImg/DragDropImg/Resource/weather.xml";
+    NSString *path = @"/Users/xy/Library/Developer/Xcode/DerivedData/DragDropImg-bgyaoueutozmwweewybfgccinuzg/Build/Products/Debug/DragDropImg.app/Contents/Downloads/GetLastVersio.html";
     NSData *data = [NSData dataWithContentsOfFile:path];
     // 创建解析器
     xmlParser = [PackageXMLParser xmlWithData:data];
@@ -135,14 +139,7 @@
     if (!_dragImgView1.image || !_dragImgView2.image) {
         NSLog(@"请添加对应图片");
         
-        NSAlert *alert = [[NSAlert alloc] init];
-        alert.messageText = @"无法替换";
-        alert.informativeText = @"请添加原图片和替换图片";
-        alert.alertStyle = NSAlertStyleInformational;
-        [alert addButtonWithTitle:@"确定"];
-        alert.icon = [NSImage imageNamed:@"iface主机"];
-        NSWindow *window = [NSApplication sharedApplication].windows.firstObject;
-        [alert beginSheetModalForWindow:window completionHandler:nil];
+        [Tools alertWithMessage:@"无法替换" informative:@"请添加原图片和替换图片" sheetHandler:nil];
         
         return;
     }
@@ -237,6 +234,10 @@
     }
     else if ([menuItem.title isEqualToString:@"CodeProtocol"]) {
         NSViewController *CodeProtocol = [self.storyboard instantiateControllerWithIdentifier:@"CodeProtocol"];
+        [self presentViewControllerAsModalWindow:CodeProtocol];
+    }
+    else if ([menuItem.title isEqualToString:@"MakeQrCode"]) {
+        NSViewController *CodeProtocol = [self.storyboard instantiateControllerWithIdentifier:@"MakeQrCode"];
         [self presentViewControllerAsModalWindow:CodeProtocol];
     }
 }

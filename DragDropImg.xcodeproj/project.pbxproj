@@ -20,6 +20,7 @@
 		148C99FB1FF3A00C00E96CC1 /* weather.xml in Resources */ = {isa = PBXBuildFile; fileRef = 148C99FA1FF3A00C00E96CC1 /* weather.xml */; };
 		148C99FE1FF3A91800E96CC1 /* DrawImage_ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 148C99FD1FF3A91800E96CC1 /* DrawImage_ViewController.m */; };
 		14AAE66B1FD1007800321544 /* IMG_6212.PNG in Resources */ = {isa = PBXBuildFile; fileRef = 14AAE66A1FD1007800321544 /* IMG_6212.PNG */; };
+		14ACF4C11FFCAA1A00D60823 /* MakeQrCode_ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 14ACF4C01FFCAA1A00D60823 /* MakeQrCode_ViewController.m */; };
 		14B5640A1FF496D300393CD0 /* CodeProtocol_ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 14B564081FF496D300393CD0 /* CodeProtocol_ViewController.m */; };
 		14B5640D1FF49DD900393CD0 /* FingerprintLockProtocol.doc in Resources */ = {isa = PBXBuildFile; fileRef = 14B5640C1FF49DD900393CD0 /* FingerprintLockProtocol.doc */; };
 		14D20EF51F678EF80061EBAA /* Tools.m in Sources */ = {isa = PBXBuildFile; fileRef = 14D20EF41F678EF80061EBAA /* Tools.m */; };
@@ -27,6 +28,7 @@
 		14DAC75A1FE8E94E00225CD8 /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 14DAC7591FE8E94E00225CD8 /* libxml2.tbd */; };
 		14E0407A1FF2501F00304C34 /* PackageXMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 14E040791FF2501F00304C34 /* PackageXMLParser.m */; };
 		14E8EFF71FE7630B00A0FF4E /* UploadFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 14E8EFF61FE7630B00A0FF4E /* UploadFile.m */; };
+		14EE58541FFB23F400BCABE0 /* GetLastVersio.html in Resources */ = {isa = PBXBuildFile; fileRef = 14EE58531FFB23F400BCABE0 /* GetLastVersio.html */; };
 		14F469511FCBB5AB00E21658 /* DrawImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 14F469501FCBB5AB00E21658 /* DrawImage.m */; };
 		14F4695C1FCBF76C00E21658 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14F4695B1FCBF76C00E21658 /* QuartzCore.framework */; };
 		14F469621FCBF9A400E21658 /* iface主机@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 14F4695E1FCBF9A400E21658 /* iface主机@2x.png */; };
@@ -62,6 +64,8 @@
 		148C99FC1FF3A91800E96CC1 /* DrawImage_ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawImage_ViewController.h; sourceTree = "<group>"; };
 		148C99FD1FF3A91800E96CC1 /* DrawImage_ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DrawImage_ViewController.m; sourceTree = "<group>"; };
 		14AAE66A1FD1007800321544 /* IMG_6212.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IMG_6212.PNG; sourceTree = "<group>"; };
+		14ACF4BF1FFCAA1A00D60823 /* MakeQrCode_ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MakeQrCode_ViewController.h; sourceTree = "<group>"; };
+		14ACF4C01FFCAA1A00D60823 /* MakeQrCode_ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MakeQrCode_ViewController.m; sourceTree = "<group>"; };
 		14B564071FF496D300393CD0 /* CodeProtocol_ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeProtocol_ViewController.h; sourceTree = "<group>"; };
 		14B564081FF496D300393CD0 /* CodeProtocol_ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeProtocol_ViewController.m; sourceTree = "<group>"; };
 		14B5640C1FF49DD900393CD0 /* FingerprintLockProtocol.doc */ = {isa = PBXFileReference; lastKnownFileType = file; path = FingerprintLockProtocol.doc; sourceTree = "<group>"; };
@@ -74,6 +78,7 @@
 		14E040791FF2501F00304C34 /* PackageXMLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PackageXMLParser.m; sourceTree = "<group>"; };
 		14E8EFF51FE7630B00A0FF4E /* UploadFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UploadFile.h; sourceTree = "<group>"; };
 		14E8EFF61FE7630B00A0FF4E /* UploadFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UploadFile.m; sourceTree = "<group>"; };
+		14EE58531FFB23F400BCABE0 /* GetLastVersio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = GetLastVersio.html; sourceTree = "<group>"; };
 		14F4694F1FCBB5AB00E21658 /* DrawImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawImage.h; sourceTree = "<group>"; };
 		14F469501FCBB5AB00E21658 /* DrawImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DrawImage.m; sourceTree = "<group>"; };
 		14F4695B1FCBF76C00E21658 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -137,6 +142,8 @@
 				148C99FD1FF3A91800E96CC1 /* DrawImage_ViewController.m */,
 				14B564071FF496D300393CD0 /* CodeProtocol_ViewController.h */,
 				14B564081FF496D300393CD0 /* CodeProtocol_ViewController.m */,
+				14ACF4BF1FFCAA1A00D60823 /* MakeQrCode_ViewController.h */,
+				14ACF4C01FFCAA1A00D60823 /* MakeQrCode_ViewController.m */,
 				1445793D1E14F1A90066A9DB /* DragDropImageView.h */,
 				1445793E1E14F1A90066A9DB /* DragDropImageView.m */,
 				14F4694F1FCBB5AB00E21658 /* DrawImage.h */,
@@ -187,6 +194,7 @@
 				14F469611FCBF9A400E21658 /* 按钮点击效果.png */,
 				148772C51FD54348003C13E9 /* 47个吸引惯例.pdf */,
 				148C99FA1FF3A00C00E96CC1 /* weather.xml */,
+				14EE58531FFB23F400BCABE0 /* GetLastVersio.html */,
 			);
 			path = Resource;
 			sourceTree = "<group>";
@@ -237,7 +245,7 @@
 		1445791E1E14F0B30066A9DB /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0830;
+				LastUpgradeCheck = 0920;
 				ORGANIZATIONNAME = xy;
 				TargetAttributes = {
 					144579251E14F0B30066A9DB = {
@@ -284,6 +292,7 @@
 				148772C61FD54348003C13E9 /* 47个吸引惯例.pdf in Resources */,
 				14F469651FCBF9A400E21658 /* 按钮点击效果.png in Resources */,
 				144579361E14F0B30066A9DB /* Main.storyboard in Resources */,
+				14EE58541FFB23F400BCABE0 /* GetLastVersio.html in Resources */,
 				143CFF631FD13BD000BD5753 /* 配置iFace@2x.png in Resources */,
 				14AAE66B1FD1007800321544 /* IMG_6212.PNG in Resources */,
 			);
@@ -306,6 +315,7 @@
 				14FF10D11FE39BD2004DB424 /* UploadRequest.m in Sources */,
 				143DC8FE1FE90DC60005B43D /* FileDownloader.m in Sources */,
 				1477B9221FE2090800857CE2 /* Second_ViewController.m in Sources */,
+				14ACF4C11FFCAA1A00D60823 /* MakeQrCode_ViewController.m in Sources */,
 				14FF10CD1FE35BB6004DB424 /* HTTPRequest.m in Sources */,
 				14FF10D41FE3A353004DB424 /* GetRequestToken.m in Sources */,
 				1445792B1E14F0B30066A9DB /* AppDelegate.m in Sources */,
@@ -339,7 +349,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -347,7 +359,11 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
@@ -387,7 +403,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -395,7 +413,11 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;

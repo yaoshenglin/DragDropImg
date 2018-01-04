@@ -243,7 +243,7 @@
     NSString *errMsg = iWS.errMsg;
     NSLog(@"%@,%d,%@",iWS.method,iWS.responseStatusCode,errMsg);
     
-    if (iWS.responseStatusCode == 200 && ![iWS.dataType hasSuffix:@"/json"]) {
+    if (![iWS.dataType hasSuffix:@"/json"]) {
         NSString *fileName = iWS.response.suggestedFilename;
         NSString *dirPath = [[[NSBundle mainBundle] resourcePath] stringByDeletingLastPathComponent];
         dirPath = [dirPath stringByAppendingPathComponent:@"Downloads"];

@@ -61,12 +61,7 @@
     //NSString *dirPath = [[[NSBundle mainBundle] resourcePath] stringByDeletingLastPathComponent];
     //dirPath = [dirPath stringByAppendingPathComponent:@"Downloads"];
     //panel.directoryURL = [NSURL URLWithString:dirPath];
-    NSMutableArray *listWindows = [[NSApplication sharedApplication].windows mutableCopy];
-    NSWindow *window = listWindows.lastObject;
-    while ([window isKindOfClass:[NSOpenPanel class]]) {
-        [listWindows removeLastObject];
-        window = listWindows.lastObject;
-    }
+    NSWindow *window = [Tools getLastWindow];
     [panel beginSheetModalForWindow:window completionHandler:^(NSInteger result) {
         NSLog(@"%ld",result);
     }];
@@ -94,7 +89,6 @@
     
     drawView.hidden = NO;
     drawView.string = string;
-    [self.view addSubview:drawView];
     
     return YES;
 }

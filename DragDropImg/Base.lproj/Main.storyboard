@@ -952,6 +952,61 @@
             </objects>
             <point key="canvasLocation" x="1078" y="670"/>
         </scene>
+        <!--Make Qr Code View Controller-->
+        <scene sceneID="eis-vM-Vrx">
+            <objects>
+                <viewController storyboardIdentifier="MakeQrCode" id="CJH-pD-vQY" customClass="MakeQrCode_ViewController" sceneMemberID="viewController">
+                    <view key="view" id="Jc8-Gz-V82">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9No-rp-fjk">
+                                <rect key="frame" x="20" y="276" width="264" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="qIe-mm-GZu">
+                                    <font key="font" metaFont="system" size="10"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IZE-x7-bHq">
+                                <rect key="frame" x="20" y="39" width="203" height="203"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="ZDq-XE-huU"/>
+                            </imageView>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="e5K-sa-u9w">
+                                <rect key="frame" x="14" y="243" width="94" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="push" title="生成二维码" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Lh3-l0-TPh">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="GenerateQrCode:" target="CJH-pD-vQY" id="EVO-o9-5PV"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="imJ-Oy-wKV">
+                                <rect key="frame" x="108" y="243" width="94" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="push" title="保存图片" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ox0-SZ-Z8C">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="ButtonEvents:" target="CJH-pD-vQY" id="dN2-PF-GMu"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                    </view>
+                    <connections>
+                        <outlet property="imgViewCode" destination="IZE-x7-bHq" id="Lqn-wd-R8b"/>
+                        <outlet property="txtContent" destination="9No-rp-fjk" id="7da-Gz-Gux"/>
+                    </connections>
+                </viewController>
+                <customObject id="ich-WT-omH" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1566" y="670"/>
+        </scene>
         <!--Second View Controller-->
         <scene sceneID="yDo-2p-AT9">
             <objects>

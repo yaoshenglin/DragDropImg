@@ -208,7 +208,7 @@
         if (error) {
             NSLog(@"%@",error.localizedDescription);
             
-            [Tools alertWithMessage:@"创建文件夹失败" informative:error.localizedDescription completionHandler:^(NSModalResponse returnCode, NSString *title) {
+            [Tools alertWithMessage:@"创建文件夹失败" informative:error.localizedDescription runModalHandler:^(NSModalResponse returnCode, NSString *title) {
                 if (returnCode == NSAlertFirstButtonReturn) {
                     //响应第一个按钮被按下
                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{

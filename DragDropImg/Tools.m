@@ -24,7 +24,7 @@
     return tool;
 }
 
-+ (NSAlert *)alertWithMessage:(NSString *)messageText informative:(NSString *)informativeText completionHandler:(void (^)(NSModalResponse returnCode, NSString *title))handler
++ (NSAlert *)alertWithMessage:(NSString *)messageText informative:(NSString *)informativeText runModalHandler:(void (^)(NSModalResponse returnCode, NSString *title))handler
 {
     NSAlert *alert = [[NSAlert alloc] init];
     alert.messageText = messageText;
@@ -37,6 +37,21 @@
         NSInteger index = returnCode - NSAlertFirstButtonReturn;
         NSString *btnTitle = [alert.buttons[index] title];
         handler(returnCode,btnTitle);
+    });
+    
+    return alert;
+}
+
++ (NSAlert *)alertWithMessage:(NSString *)messageText informative:(NSString *)informativeText sheetHandler:(void (^)(NSModalResponse returnCode))handler
+{
+    NSAlert *alert = [[NSAlert alloc] init];
+    alert.messageText = messageText;
+    alert.informativeText = informativeText;
+    alert.alertStyle = NSAlertStyleInformational;
+    [alert addButtonWithTitle:@"确定"];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSWindow *window = [Tools getLastWindow];
+        [alert beginSheetModalForWindow:window completionHandler:handler];
     });
     
     return alert;
@@ -55,6 +70,18 @@
 {
     NSString *dirPath = [[[NSBundle mainBundle] resourcePath] stringByDeletingLastPathComponent];
     return dirPath;
+}
+
++ (NSWindow *)getLastWindow
+{
+    NSMutableArray *listWindows = [[NSApplication sharedApplication].windows mutableCopy];
+    NSWindow *window = listWindows.lastObject;
+    while ([window isKindOfClass:[NSPanel class]]) {
+        [listWindows removeLastObject];
+        window = listWindows.lastObject;
+    }
+    
+    return window;
 }
 
 + (NSMutableDictionary *)userDefaults
@@ -216,6 +243,62 @@
         dispatch_queue_t queue = dispatch_get_main_queue();
         if (nextBlock) dispatch_async(queue, nextBlock);
     });
+}
+
+#pragma mark 生成图片
++ (NSImage *)generateWithQRCodeData:(NSString *)imgStr frame:(CGRect)frame
+{
+    // 1、创建滤镜对象
+    CIFilter *filter = [CIFilter filterWithName:@"CIQRCodeGenerator"];
+    
+    // 恢复滤镜的默认属性
+    [filter setDefaults];
+    
+    // 2、设置数据
+    NSString *info = imgStr;
+    // 将字符串转换成
+    NSData *infoData = [info dataUsingEncoding:NSUTF8StringEncoding];
+    
+    // 通过KVC设置滤镜inputMessage数据
+    [filter setValue:infoData forKeyPath:@"inputMessage"];
+    
+    // 3、获得滤镜输出的图像
+    CIImage *outputImage = [filter outputImage];
+    
+    CGRect extent = CGRectIntegral(outputImage.extent);
+    CGSize size = frame.size;
+    //size.width = 200;
+    CGFloat scale = size.width/CGRectGetWidth(extent);//备用，可以缩放图片
+    
+    // 1.创建bitmap;
+    size_t width = CGRectGetWidth(extent) * scale;
+    size_t height = CGRectGetHeight(extent) * scale;
+    CGColorSpaceRef cs = CGColorSpaceCreateDeviceGray();
+    CGContextRef bitmapRef = CGBitmapContextCreate(nil, width, height, 8, 0, cs, (CGBitmapInfo)kCGImageAlphaNone);
+    CIContext *context = [CIContext contextWithOptions:nil];//上下文
+    
+    //    UIGraphicsPushContext((__bridge CGContextRef _Nonnull)(context));
+    //    //段落格式
+    //    NSMutableParagraphStyle *textStyle = [[NSMutableParagraphStyle defaultParagraphStyle] mutableCopy];
+    //    textStyle.lineBreakMode = NSLineBreakByWordWrapping;
+    //    textStyle.alignment = NSTextAlignmentCenter;//水平居中
+    //    /*写文字*/
+    //    //string = @"设置填充文字";
+    //    UIFont  *font = [UIFont boldSystemFontOfSize:11.0*scale];//设置
+    //    NSDictionary *attributes = @{NSFontAttributeName:font, NSParagraphStyleAttributeName:textStyle,NSForegroundColorAttributeName:[UIColor blueColor]};
+    //    [@"" drawInRect:CGRectMake(0, 0, size.width, 25*scale) withAttributes:attributes];
+    //    UIGraphicsPopContext();
+    
+    CGImageRef bitmapImage = [context createCGImage:outputImage fromRect:extent];
+    CGContextSetInterpolationQuality(bitmapRef, kCGInterpolationNone);
+    CGContextScaleCTM(bitmapRef, scale, scale);
+    CGContextDrawImage(bitmapRef, extent, bitmapImage);
+    
+    // 2.保存bitmap到图片
+    CGImageRef scaledImage = CGBitmapContextCreateImage(bitmapRef);
+    CGContextRelease(bitmapRef);
+    CGImageRelease(bitmapImage);
+    return [[NSImage alloc] initWithCGImage:scaledImage size:size];
 }
 
 @end

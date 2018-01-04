@@ -18,8 +18,10 @@
 
 + (id)shareTools;
 
-+ (NSAlert *)alertWithMessage:(NSString *)messageText informative:(NSString *)informativeText completionHandler:(void (^)(NSModalResponse returnCode, NSString *title))handler;
++ (NSAlert *)alertWithMessage:(NSString *)messageText informative:(NSString *)informativeText runModalHandler:(void (^)(NSModalResponse returnCode, NSString *title))handler;
++ (NSAlert *)alertWithMessage:(NSString *)messageText informative:(NSString *)informativeText sheetHandler:(void (^)(NSModalResponse returnCode))handler;
 + (NSString *)mainBundlePath;
++ (NSWindow *)getLastWindow;
 + (NSMutableDictionary *)userDefaults;
 + (void)setObject:(id)value forKey:(NSString *)defaultName;
 + (id)objectForKey:(NSString *)defaultName;
@@ -43,6 +45,14 @@
 + (void)asyncWithBlock:(dispatch_block_t)block;
 + (void)syncWithBlock:(dispatch_block_t)block;
 + (void)async:(dispatch_block_t)block complete:(dispatch_block_t)nextBlock;
+
+#pragma mark 生成图片
+/**
+ *  生成一张普通的二维码
+ *
+ *  @param imgStr    传入你要生成二维码的数据
+ */
++ (NSImage *)generateWithQRCodeData:(NSString *)imgStr frame:(CGRect)frame;
 
 @end
 
