@@ -38,14 +38,16 @@
     NSMutableAttributedString *mabstring = [[NSMutableAttributedString alloc] initWithString:@"This is a test of characterAttribute. 中文字符"];
     //[mabstring beginEditing];
     //设置字体属性
-    CTFontRef font = CTFontCreateWithName(CFSTR("CourierNewPS-ItalicMT"), 50, NULL);
-    [mabstring addAttribute:(id)kCTFontAttributeName value:(__bridge id)font range:NSMakeRange(0, 4)];
+    NSFont *font = [NSFont fontWithName:@"CourierNewPS-ItalicMT" size:50];
+    NSDictionary *attributes = @{NSFontAttributeName:font,
+                                 NSForegroundColorAttributeName:[NSColor redColor]};
+    [mabstring addAttributes:attributes range:NSMakeRange(0, 4)];
     //红色
-    NSDictionary *attributes = @{NSForegroundColorAttributeName:[NSColor redColor],
-                                 NSKernAttributeName: @(0.5f),
-                                 NSStrokeWidthAttributeName: @(-5),
-                                 NSFontAttributeName: [NSFont fontWithName:@"Georgia" size:37],
-                                 NSWritingDirectionAttributeName: @[@(NSWritingDirectionLeftToRight | NSTextWritingDirectionOverride)]};
+    attributes = @{NSForegroundColorAttributeName:[NSColor redColor],
+                   NSKernAttributeName: @(0.5f),
+                   NSStrokeWidthAttributeName: @(-5),
+                   NSFontAttributeName: [NSFont fontWithName:@"Georgia" size:37],
+                   NSWritingDirectionAttributeName: @[@(NSWritingDirectionLeftToRight | NSTextWritingDirectionOverride)]};
     [mabstring addAttributes:attributes range:NSMakeRange(4, mabstring.length-4)];
     
 //    NSDictionary *dic = nil;

@@ -9,6 +9,8 @@
 #import <Cocoa/Cocoa.h>
 
 @interface MakeQrCode_ViewController : NSViewController
+
+@property (weak) IBOutlet NSTextField *lblType;
 @property (weak) IBOutlet NSTextField *txtContent;
 @property (weak) IBOutlet NSImageView *imgViewCode;
 

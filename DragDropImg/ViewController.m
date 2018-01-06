@@ -81,7 +81,7 @@
 //                               @"Salt":@"a0367a36a4bf2db0"};
 //    [Tools setObject:userInfo forKey:@"userInfo"];
     
-    NSString *path = @"/Users/xy/Library/Developer/Xcode/DerivedData/DragDropImg-bgyaoueutozmwweewybfgccinuzg/Build/Products/Debug/DragDropImg.app/Contents/Downloads/GetLastVersio.html";
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"weather.xml" ofType:@""];
     NSData *data = [NSData dataWithContentsOfFile:path];
     // 创建解析器
     xmlParser = [PackageXMLParser xmlWithData:data];

@@ -14,7 +14,9 @@
     NSXMLParser *xmlParser;
     NSString *currentRootElement;
     
+    NSInteger currentLine;
     NSMutableString *currentValue;
+    NSMutableDictionary *dicElement;
 }
 
 @end
@@ -33,6 +35,7 @@
     if (self) {
         _isShowLog = NO;
         _dicData = [NSMutableDictionary dictionary];
+        dicElement = [NSMutableDictionary dictionary];
     }
     
     return self;
@@ -106,18 +109,23 @@
         }
     }
     
-    if (!currentValue) {
+    if (currentLine != parser.lineNumber || !currentValue) {
+        currentLine = parser.lineNumber;
         currentValue = [NSMutableString string];
     }
     
-    currentRootElement = elementName;
+    currentRootElement = dicElement[@(parser.lineNumber)];
+    if (!currentRootElement && elementName.length) {
+        currentRootElement = elementName;
+        [dicElement setObject:elementName forKey:@(parser.lineNumber)];
+    }
 }
 
 // 当解析器找到开始标记和结束标记之间的字符时，调用这个方法解析当前节点的所有字符
 - (void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string
 {
     if (_isShowLog) {
-        NSLog(@"foundCharacters, %@",string);
+        NSLog(@"foundCharacters, %@,%ld,%ld",string,parser.lineNumber,parser.columnNumber);
     }
     if (string.length) {
         [currentValue appendString:string];
@@ -134,14 +142,20 @@
     if (_isShowLog) {
         NSLog(@"didEndElement: %@",elementName);
     }
+    
+    if (currentLine != parser.lineNumber) {
+        currentValue = nil;
+    }
+    
     if (namespaceURI.length || qName.length) {
         //NSLog(@"namespaceURI = %@,qName = %@",namespaceURI,qName);
     }
     
-    if (currentValue && elementName.length) {
-        NSDictionary *dic = @{elementName:currentValue};
-        [_dataSource addObject:dic];
-        currentValue = nil;
+    if (currentValue.length && currentRootElement.length) {
+        NSDictionary *dic = @{currentRootElement:currentValue};
+        if (![_dataSource containsObject:dic]) {
+            [_dataSource addObject:dic];
+        }
     }
 }
 

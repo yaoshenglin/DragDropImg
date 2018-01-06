@@ -11,6 +11,12 @@
 #import "Tools.h"
 
 @interface MakeQrCode_ViewController ()
+{
+    NSArray *listTitle;
+    NSInteger index;
+    
+    NSString *stringValue;
+}
 
 @end
 
@@ -25,21 +31,81 @@
 
 - (void)initCapacity
 {
+    index = 0;
     _txtContent.stringValue = @"d:code;k:039d02f45e3a72ce;m:188****5377;t:1;";
+    
+    listTitle = @[@"文本",@"主机",@"开关",@"插座",@"门锁",@"车位锁",@"雾化窗玻",@"分控器",@"电动窗帘"];
+    NSMenu *newMenu = [[NSMenu alloc] init];
+    for (NSString *title in listTitle) {
+        NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:title action:@selector(menuItemEvents:) keyEquivalent:@""];
+        item.target = self;
+        [newMenu addItem:item];
+    }
+    
+    _lblType.menu = newMenu;
+}
+
+#pragma mark - --------右键菜单事件回调------------------------
+- (void)menuItemEvents:(NSMenuItem *)menuItem
+{
+    NSLog(@"%@",menuItem.title);
+    _lblType.stringValue = menuItem.title;
+    index = [listTitle indexOfObject:menuItem.title];
 }
 
 - (IBAction)GenerateQrCode:(NSButton *)button
 {
-    NSString *stringValue = _txtContent.stringValue;
+    stringValue = _txtContent.stringValue;
     if (stringValue.length <= 0) {
         [Tools alertWithMessage:@"文本错误" informative:@"输入内容不能为空" sheetHandler:nil];
         return;
     }
     
-    NSImage *image = [Tools generateWithQRCodeData:stringValue frame:_imgViewCode.frame];
+    switch (index) {
+        case 1:
+            //主机
+            stringValue = [NSString stringWithFormat:@"device:host;content:%@;tag:4;m:SW01;t:0;ver:2.0",stringValue];
+            break;
+        case 2:
+            //开关(3目)
+            stringValue = [NSString stringWithFormat:@"device:switch;id:%@;tag:3;m:CS23;t:0;ver:2.0",stringValue];
+            break;
+        case 3:
+            //插座
+            stringValue = [NSString stringWithFormat:@"device:plug;id:%@;m:CP11;t:0;ver:2.0",stringValue];
+            break;
+        case 4:
+            //门锁
+            stringValue = [NSString stringWithFormat:@"device:plug;id:%@;tag:1;m:DL32;t:0;ver:2.0",stringValue];
+            break;
+        case 5:
+            //车位锁
+            stringValue = [NSString stringWithFormat:@"device:parklock;id:%@;m:PL41;t:0;ver:2.0",stringValue];
+            break;
+        case 6:
+            //雾化窗玻
+            stringValue = [NSString stringWithFormat:@"device:fogglass;id:%@;m:FG51;t:0;ver:2.0",stringValue];
+            break;
+        case 7:
+            //分控器
+            stringValue = [NSString stringWithFormat:@"device:irrelay;id:%@;tag:1;m:IF53;t:0;ver:2.0",stringValue];
+            break;
+        case 8:
+            //电动窗帘
+            stringValue = [NSString stringWithFormat:@"device:curtain;id:%@;tag:0;m:CT61;t:0;ver:2.0",stringValue];
+            break;
+            
+        default:
+            break;
+    }
+    
+    NSImage *image = [Tools generateWithQRCodeData:stringValue title:_txtContent.stringValue frame:_imgViewCode.frame];
+    image.name = _txtContent.stringValue;
     _imgViewCode.image = image;
     
     button = [self.view subviewWithClass:[NSButton class] tag:2];
+    button.enabled = YES;
+    button = [self.view subviewWithClass:[NSButton class] tag:3];
     button.enabled = YES;
 }
 
@@ -64,6 +130,28 @@
                 }
             } else {
                 NSLog(@"操作取消");
+            }
+        }];
+    }
+    else if (button.tag == 3) {
+        
+        NSTextField *textField = [[NSTextField alloc] initWithFrame:CGRectMake(0, 0, 200, 38)];
+        textField.stringValue = _imgViewCode.image.name;
+        textField.textColor = [NSColor redColor];
+        
+        NSAlert *alert = [[NSAlert alloc] init];
+        alert.messageText = @"保存错误";
+        alert.informativeText = @"图片保存失败";
+        alert.alertStyle = NSAlertStyleInformational;
+        [alert addButtonWithTitle:@"确定"];
+        [alert addButtonWithTitle:@"取消"];
+        alert.accessoryView = textField;
+        NSWindow *window = [Tools getLastWindow];
+        [alert beginSheetModalForWindow:window completionHandler:^(NSModalResponse returnCode) {
+            if (returnCode == NSAlertFirstButtonReturn) {
+                NSImage *image = [Tools generateWithQRCodeData:stringValue title:textField.stringValue frame:_imgViewCode.frame];
+                image.name = textField.stringValue;
+                _imgViewCode.image = image;
             }
         }];
     }

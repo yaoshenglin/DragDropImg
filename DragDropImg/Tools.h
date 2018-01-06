@@ -52,7 +52,7 @@
  *
  *  @param imgStr    传入你要生成二维码的数据
  */
-+ (NSImage *)generateWithQRCodeData:(NSString *)imgStr frame:(CGRect)frame;
++ (NSImage *)generateWithQRCodeData:(NSString *)imgStr title:(NSString *)title frame:(CGRect)frame;
 
 @end
 

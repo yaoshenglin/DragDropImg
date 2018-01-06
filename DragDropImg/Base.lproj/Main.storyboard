@@ -962,7 +962,7 @@
                         <subviews>
                             <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9No-rp-fjk">
                                 <rect key="frame" x="20" y="276" width="264" height="18"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="qIe-mm-GZu">
                                     <font key="font" metaFont="system" size="10"/>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -970,9 +970,9 @@
                                 </textFieldCell>
                             </textField>
                             <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IZE-x7-bHq">
-                                <rect key="frame" x="20" y="39" width="203" height="203"/>
+                                <rect key="frame" x="17" y="17" width="228" height="228"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="ZDq-XE-huU"/>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" imageFrameStyle="photo" id="ZDq-XE-huU"/>
                             </imageView>
                             <button verticalHuggingPriority="750" fixedFrame="YES" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="e5K-sa-u9w">
                                 <rect key="frame" x="14" y="243" width="94" height="32"/>
@@ -996,10 +996,31 @@
                                     <action selector="ButtonEvents:" target="CJH-pD-vQY" id="dN2-PF-GMu"/>
                                 </connections>
                             </button>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iYp-YQ-i79">
+                                <rect key="frame" x="303" y="276" width="108" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="文本" id="6Ma-J5-hAo">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" tag="3" translatesAutoresizingMaskIntoConstraints="NO" id="TpL-Rd-1dx">
+                                <rect key="frame" x="366" y="265" width="90" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="push" title="更改标题" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="gXr-Dd-N0a">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="ButtonEvents:" target="CJH-pD-vQY" id="cXx-QX-Hnr"/>
+                                </connections>
+                            </button>
                         </subviews>
                     </view>
                     <connections>
                         <outlet property="imgViewCode" destination="IZE-x7-bHq" id="Lqn-wd-R8b"/>
+                        <outlet property="lblType" destination="iYp-YQ-i79" id="QqC-Cp-PnB"/>
                         <outlet property="txtContent" destination="9No-rp-fjk" id="7da-Gz-Gux"/>
                     </connections>
                 </viewController>

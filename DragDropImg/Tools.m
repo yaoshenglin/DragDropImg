@@ -246,7 +246,7 @@
 }
 
 #pragma mark 生成图片
-+ (NSImage *)generateWithQRCodeData:(NSString *)imgStr frame:(CGRect)frame
++ (NSImage *)generateWithQRCodeData:(NSString *)imgStr title:(NSString *)title frame:(CGRect)frame
 {
     // 1、创建滤镜对象
     CIFilter *filter = [CIFilter filterWithName:@"CIQRCodeGenerator"];
@@ -267,38 +267,56 @@
     
     CGRect extent = CGRectIntegral(outputImage.extent);
     CGSize size = frame.size;
-    //size.width = 200;
     CGFloat scale = size.width/CGRectGetWidth(extent);//备用，可以缩放图片
     
     // 1.创建bitmap;
-    size_t width = CGRectGetWidth(extent) * scale;
-    size_t height = CGRectGetHeight(extent) * scale;
-    CGColorSpaceRef cs = CGColorSpaceCreateDeviceGray();
-    CGContextRef bitmapRef = CGBitmapContextCreate(nil, width, height, 8, 0, cs, (CGBitmapInfo)kCGImageAlphaNone);
-    CIContext *context = [CIContext contextWithOptions:nil];//上下文
+    size_t width = size.width * scale;
+    size_t height = size.height * scale;
+    CGColorSpaceRef cs = CGColorSpaceCreateDeviceRGB();
+    CGContextRef bitmapRef = CGBitmapContextCreate(nil, width, height, 8, 0, cs, (CGBitmapInfo)kCGImageAlphaPremultipliedFirst);
     
-    //    UIGraphicsPushContext((__bridge CGContextRef _Nonnull)(context));
-    //    //段落格式
-    //    NSMutableParagraphStyle *textStyle = [[NSMutableParagraphStyle defaultParagraphStyle] mutableCopy];
-    //    textStyle.lineBreakMode = NSLineBreakByWordWrapping;
-    //    textStyle.alignment = NSTextAlignmentCenter;//水平居中
-    //    /*写文字*/
-    //    //string = @"设置填充文字";
-    //    UIFont  *font = [UIFont boldSystemFontOfSize:11.0*scale];//设置
-    //    NSDictionary *attributes = @{NSFontAttributeName:font, NSParagraphStyleAttributeName:textStyle,NSForegroundColorAttributeName:[UIColor blueColor]};
-    //    [@"" drawInRect:CGRectMake(0, 0, size.width, 25*scale) withAttributes:attributes];
-    //    UIGraphicsPopContext();
-    
+    CGFloat s = 20;
+    CIContext *context = [CIContext context];//上下文
     CGImageRef bitmapImage = [context createCGImage:outputImage fromRect:extent];
+    //bitmapImage = outputImage.CGImage;
+    [context clearCaches];
     CGContextSetInterpolationQuality(bitmapRef, kCGInterpolationNone);
     CGContextScaleCTM(bitmapRef, scale, scale);
-    CGContextDrawImage(bitmapRef, extent, bitmapImage);
+    CGContextDrawImage(bitmapRef, CGRectMake(s, s, size.width-s*2, size.height-s*2), bitmapImage);
+    CGContextSaveGState(bitmapRef);
+    
+    //字体在CoreGraphics中被废除了,移入CoreText框架中,以后再详细讨论.
+    //char *aChar = "Helvetica-Bold";
+    //段落格式
+    NSMutableParagraphStyle *textStyle = [[NSMutableParagraphStyle defaultParagraphStyle] mutableCopy];
+    textStyle.lineBreakMode = NSLineBreakByWordWrapping;
+    textStyle.alignment = NSTextAlignmentCenter;//水平居中
+    //设置字体属性
+    NSFont *font = [NSFont fontWithName:@"Helvetica-Bold" size:13];
+    NSDictionary *attributes = @{NSFontAttributeName:font,
+                                 NSForegroundColorAttributeName:[NSColor redColor],
+                                 NSParagraphStyleAttributeName:textStyle};
+    title = title ?: @"";
+    NSMutableAttributedString *mabstring = [[NSMutableAttributedString alloc] initWithString:title attributes:attributes];
+    
+    CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)mabstring);
+    CGMutablePathRef Path = CGPathCreateMutable();
+    CGPathAddRect(Path, NULL ,CGRectMake(0 , frame.size.height-s ,frame.size.width , s));
+    //CGContextSetTextMatrix(bitmapRef , CGAffineTransformIdentity);
+    //保存现在得上下文图形状态。不管后续对context上绘制什么都不会影响真正得屏幕。
+    //CGContextSaveGState(bitmapRef);
+    //CGContextSetTextMatrix (bitmapRef, CGAffineTransformMakeTranslation(-1, -1));
+    //CGContextSetTextMatrix (bitmapRef, CGAffineTransformMakeRotation(M_PI)); // 纯文字偏移角度
+    CTFrameRef frameRef = CTFramesetterCreateFrame(framesetter, CFRangeMake(0, 0), Path, NULL);
+    CTFrameDraw(frameRef,bitmapRef);
+    CGPathRelease(Path);
+    CFRelease(framesetter);
     
     // 2.保存bitmap到图片
     CGImageRef scaledImage = CGBitmapContextCreateImage(bitmapRef);
     CGContextRelease(bitmapRef);
     CGImageRelease(bitmapImage);
-    return [[NSImage alloc] initWithCGImage:scaledImage size:size];
+    return [[NSImage alloc] initWithCGImage:scaledImage size:frame.size];
 }
 
 @end
