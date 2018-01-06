@@ -82,11 +82,11 @@
 //    [Tools setObject:userInfo forKey:@"userInfo"];
     
     //GetLastVersio.html,weather.xml,video.xml
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"video.xml" ofType:@""];
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"GetLastVersio.html" ofType:@""];
     NSData *data = [NSData dataWithContentsOfFile:path];
     // 创建解析器
     xmlParser = [PackageXMLParser xmlWithData:data];
-//    xmlParser.isShowLog = YES;
+    xmlParser.isShowLog = YES;
 }
 
 - (void)setOldData:(NSData *)oldData

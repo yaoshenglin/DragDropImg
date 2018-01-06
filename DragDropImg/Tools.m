@@ -345,7 +345,8 @@
 
 - (NSString *)stringForFormat
 {
-    NSString *str = [self.description stringForFormat];
+    NSString *str = [NSString stringWithFormat:@"%@",self];
+    str = [str stringForFormat];
     
     return str;
 }
@@ -510,6 +511,9 @@
 {
     if ([self isKindOfClass:[NSDictionary class]]) {
         return [(NSDictionary *)self stringForFormat];
+    }
+    else if ([self isKindOfClass:[NSString class]]) {
+        return [(NSString *)self stringForFormat];
     }
     NSMutableDictionary *dic = [NSMutableDictionary dictionary];
     unsigned int propsCount;

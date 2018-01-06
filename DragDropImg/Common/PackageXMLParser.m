@@ -76,7 +76,9 @@
 #pragma mark - --------NSXMLParser delegate------------------------
 
 /**
- *  解析到文档的开头时会调用
+ *  开始解析进行回调的Delegate Function
+ *
+ *  @param parser 执行回调方法的NSXMLParser方法
  */
 - (void)parserDidStartDocument:(NSXMLParser *)parser
 {
@@ -88,10 +90,14 @@
 }
 
 /**
- *  解析到一个元素的开始就会调用
+ *  准备解析结点进行的回调
+ *  在此处可以获取每个xml结点所传递的信息，如(xmlns--类似命名空间)
  *
- *  @param elementName   元素名称
- *  @param attributeDict 属性字典
+ *  @param parser        执行回调方法的NSXMLParser对象
+ *  @param elementName   结点的字符串描述(如name..)
+ *  @param namespaceURI  命名空间的统一资源标志符字符串描述
+ *  @param qName         命名空间的字符串描述
+ *  @param attributeDict 参数字典
  */
 - (void)parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName attributes:(NSDictionary *)attributeDict
 {
@@ -129,13 +135,24 @@
     }
 }
 
-// 当解析器找到开始标记和结束标记之间的字符时，调用这个方法解析当前节点的所有字符
+/**
+ *  获得首尾结点间内容信息的内容
+ *
+ *  @param parser 执行回调方法的NSXMLParse对象
+ *  @param string 结点间的内容
+ *  如果结点之间的内容是结点段，那么返回的string首字符为unichar类型的‘\n’
+ *  如果不是结点段，那么直接返回之间的信息内容
+ */
 - (void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string
 {
     if (_isShowLog) {
         long lineNumber = parser.lineNumber;
         long columnNumber = parser.columnNumber;
         NSLog(@"foundCharacters, %@,%ld,%ld",string,lineNumber,columnNumber);
+        
+        if ([string characterAtIndex:0] != '\n') {
+            NSLog(@"-----包含其他结点的结点-----");
+        }
     }
     if (string.length) {
         [currentValue appendString:string];//累加
@@ -143,9 +160,12 @@
 }
 
 /**
- *  解析到一个元素的结束就会调用
+ *  某个结点解析完毕进行的回调
  *
- *  @param elementName   元素名称
+ *  @param parser       执行回调方法的NSXMLParse对象
+ *  @param elementName  结点的字符串描述(如name..)
+ *  @param namespaceURI 命名空间的统一资源标志符字符串描述
+ *  @param qName        命名空间的字符串描述
  */
 - (void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName
 {
@@ -170,7 +190,9 @@
 }
 
 /**
- *  解析到文档的结尾时会调用（解析结束）
+ *  XML解析完成进行的回调
+ *
+ *  @param parser 执行回调方法的NSXMLParse对象
  */
 - (void)parserDidEndDocument:(NSXMLParser *)parser
 {
@@ -180,6 +202,9 @@
 
 /**
  *  解析出现错误的时候调用
+ *
+ *  @param parser       执行回调方法的NSXMLParse对象
+ *  @param parseError   错误描述
  */
 - (void)parser:(NSXMLParser *)parser parseErrorOccurred:(NSError *)parseError
 {
