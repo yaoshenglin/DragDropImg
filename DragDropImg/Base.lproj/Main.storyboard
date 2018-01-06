@@ -1089,7 +1089,6 @@
                                 </buttonCell>
                                 <connections>
                                     <action selector="requestTask:" target="YpH-8C-k2b" id="vbw-su-bpL"/>
-                                    <binding destination="YpH-8C-k2b" name="argument" keyPath="self.txtDown" id="bNI-SO-fr9"/>
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="xGq-dk-gQM">

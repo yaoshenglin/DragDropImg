@@ -16,6 +16,9 @@
 		144579361E14F0B30066A9DB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 144579341E14F0B30066A9DB /* Main.storyboard */; };
 		1445793F1E14F1A90066A9DB /* DragDropImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1445793E1E14F1A90066A9DB /* DragDropImageView.m */; };
 		1477B9221FE2090800857CE2 /* Second_ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1477B9211FE2090800857CE2 /* Second_ViewController.m */; };
+		147FDB402000787B00A8B9FF /* error.html in Resources */ = {isa = PBXBuildFile; fileRef = 147FDB3F2000787B00A8B9FF /* error.html */; };
+		147FDB4220007AB400A8B9FF /* baidu.html in Resources */ = {isa = PBXBuildFile; fileRef = 147FDB4120007AB400A8B9FF /* baidu.html */; };
+		147FDB4720009F0100A8B9FF /* video.xml in Resources */ = {isa = PBXBuildFile; fileRef = 147FDB4620009F0100A8B9FF /* video.xml */; };
 		148772C61FD54348003C13E9 /* 47个吸引惯例.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 148772C51FD54348003C13E9 /* 47个吸引惯例.pdf */; };
 		148C99FB1FF3A00C00E96CC1 /* weather.xml in Resources */ = {isa = PBXBuildFile; fileRef = 148C99FA1FF3A00C00E96CC1 /* weather.xml */; };
 		148C99FE1FF3A91800E96CC1 /* DrawImage_ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 148C99FD1FF3A91800E96CC1 /* DrawImage_ViewController.m */; };
@@ -59,6 +62,9 @@
 		1445793E1E14F1A90066A9DB /* DragDropImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DragDropImageView.m; sourceTree = "<group>"; };
 		1477B9201FE2090800857CE2 /* Second_ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Second_ViewController.h; sourceTree = "<group>"; };
 		1477B9211FE2090800857CE2 /* Second_ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Second_ViewController.m; sourceTree = "<group>"; };
+		147FDB3F2000787B00A8B9FF /* error.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = error.html; sourceTree = "<group>"; };
+		147FDB4120007AB400A8B9FF /* baidu.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = baidu.html; sourceTree = "<group>"; };
+		147FDB4620009F0100A8B9FF /* video.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = video.xml; sourceTree = "<group>"; };
 		148772C51FD54348003C13E9 /* 47个吸引惯例.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "47个吸引惯例.pdf"; sourceTree = "<group>"; };
 		148C99FA1FF3A00C00E96CC1 /* weather.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = weather.xml; sourceTree = "<group>"; };
 		148C99FC1FF3A91800E96CC1 /* DrawImage_ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawImage_ViewController.h; sourceTree = "<group>"; };
@@ -193,6 +199,9 @@
 				14F469601FCBF9A400E21658 /* msg2@2x.png */,
 				14F469611FCBF9A400E21658 /* 按钮点击效果.png */,
 				148772C51FD54348003C13E9 /* 47个吸引惯例.pdf */,
+				147FDB3F2000787B00A8B9FF /* error.html */,
+				147FDB4620009F0100A8B9FF /* video.xml */,
+				147FDB4120007AB400A8B9FF /* baidu.html */,
 				148C99FA1FF3A00C00E96CC1 /* weather.xml */,
 				14EE58531FFB23F400BCABE0 /* GetLastVersio.html */,
 			);
@@ -285,6 +294,7 @@
 			files = (
 				14B5640D1FF49DD900393CD0 /* FingerprintLockProtocol.doc in Resources */,
 				148C99FB1FF3A00C00E96CC1 /* weather.xml in Resources */,
+				147FDB4220007AB400A8B9FF /* baidu.html in Resources */,
 				14F469641FCBF9A400E21658 /* msg2@2x.png in Resources */,
 				14F469631FCBF9A400E21658 /* msg1@2x.png in Resources */,
 				14F469621FCBF9A400E21658 /* iface主机@2x.png in Resources */,
@@ -295,6 +305,8 @@
 				14EE58541FFB23F400BCABE0 /* GetLastVersio.html in Resources */,
 				143CFF631FD13BD000BD5753 /* 配置iFace@2x.png in Resources */,
 				14AAE66B1FD1007800321544 /* IMG_6212.PNG in Resources */,
+				147FDB4720009F0100A8B9FF /* video.xml in Resources */,
+				147FDB402000787B00A8B9FF /* error.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

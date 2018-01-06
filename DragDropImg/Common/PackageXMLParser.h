@@ -13,6 +13,8 @@
 @property (nonatomic, weak) id delegate;
 @property (nonatomic, retain) NSData *data;
 @property (nonatomic, assign) BOOL isShowLog;
+@property (nonatomic, assign) BOOL isShowResult;
+@property (nonatomic, retain) NSMutableArray *dataAttributeDict;
 @property (nonatomic, retain) NSMutableArray *dataSource;
 @property (nonatomic, retain) NSMutableDictionary *dicData;
 @property (nonatomic, retain) NSDictionary *userInfo;
@@ -21,5 +23,13 @@
 - (id)initWithDelegate:(id)delegate;
 - (id)initWithData:(NSData *)data;
 - (void)parse;
+
+@end
+
+@interface PackageXMLParser (Extension)
+
++ (NSString *)getBodyWithData:(NSData *)data;
++ (NSString *)getBodyWithData:(NSData *)data encoding:(NSStringEncoding)encoding;
++ (NSString *)getBodyWithString:(NSString *)string;
 
 @end

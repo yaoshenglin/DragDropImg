@@ -34,6 +34,7 @@
     self = [super init];
     if (self) {
         _isShowLog = NO;
+        _isShowResult = YES;
         _dicData = [NSMutableDictionary dictionary];
         dicElement = [NSMutableDictionary dictionary];
     }
@@ -81,7 +82,8 @@
 {
     //NSLog(@"%@",[parser customDescription]);
     if (_dataSource == nil) {
-        _dataSource = [NSMutableArray new];
+        _dataSource = [NSMutableArray array];
+        _dataAttributeDict = [NSMutableArray array];
     }
 }
 
@@ -100,6 +102,10 @@
         }
     }
     
+    if (elementName && attributeDict) {
+        [_dataAttributeDict addObject:@{elementName:attributeDict}];//头部区域
+    }
+    
     NSString *httpEquiv = attributeDict[@"http-equiv"];
     httpEquiv = [httpEquiv lowercaseString];
     if ([httpEquiv isEqualToString:@"content-type"]) {
@@ -109,15 +115,17 @@
         }
     }
     
+    //不同行的分别存储
     if (currentLine != parser.lineNumber || !currentValue) {
         currentLine = parser.lineNumber;
         currentValue = [NSMutableString string];
     }
     
-    currentRootElement = dicElement[@(parser.lineNumber)];
+    currentRootElement = dicElement[@(parser.lineNumber)];//获取当前行的解析关键字
     if (!currentRootElement && elementName.length) {
+        //如果是新的行数
         currentRootElement = elementName;
-        [dicElement setObject:elementName forKey:@(parser.lineNumber)];
+        [dicElement setObject:elementName forKey:@(parser.lineNumber)];//对应行数和关键字
     }
 }
 
@@ -125,10 +133,12 @@
 - (void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string
 {
     if (_isShowLog) {
-        NSLog(@"foundCharacters, %@,%ld,%ld",string,parser.lineNumber,parser.columnNumber);
+        long lineNumber = parser.lineNumber;
+        long columnNumber = parser.columnNumber;
+        NSLog(@"foundCharacters, %@,%ld,%ld",string,lineNumber,columnNumber);
     }
     if (string.length) {
-        [currentValue appendString:string];
+        [currentValue appendString:string];//累加
     }
 }
 
@@ -143,10 +153,6 @@
         NSLog(@"didEndElement: %@",elementName);
     }
     
-    if (currentLine != parser.lineNumber) {
-        currentValue = nil;
-    }
-    
     if (namespaceURI.length || qName.length) {
         //NSLog(@"namespaceURI = %@,qName = %@",namespaceURI,qName);
     }
@@ -156,6 +162,10 @@
         if (![_dataSource containsObject:dic]) {
             [_dataSource addObject:dic];
         }
+    }
+    
+    if (currentLine != parser.lineNumber) {
+        currentValue = nil;//行数已经改变时置空
     }
 }
 
@@ -179,16 +189,60 @@
 
 - (void)logWithData
 {
-    NSLog(@"%ld",(long)_dataSource.count);
+    NSArray *list = _dataSource;
+    if (!list.count) {
+        list = _dataAttributeDict;
+    }
+    NSLog(@"%ld",(long)list.count);
     NSMutableString *string = [NSMutableString string];
-    for (NSDictionary *dic in _dataSource) {
+    for (NSDictionary *dic in list) {
         NSString *key = dic.allKeys.firstObject;
         NSString *value = dic[key];
-        [string appendFormat:@"\n%@ = %@",key,value];
+        [string appendFormat:@"\n%@ = %@",key,[value customDescription]];
         [_dicData setObject:value forKey:key];
     }
     
-    NSLog(@"%@",string);
+    if (_isShowResult) {
+        NSLog(@"%@",string);
+    }
+}
+
+@end
+
+@implementation PackageXMLParser (Extension)
+
++ (NSString *)getBodyWithData:(NSData *)data
+{
+    // 创建解析器
+    PackageXMLParser *xmlParser = [PackageXMLParser xmlWithData:data];
+    //xmlParser.isShowLog = YES;
+    [xmlParser parse];
+    
+    NSString *result = [xmlParser.dataSource.lastObject allValues].firstObject;
+    return result;
+}
+
++ (NSString *)getBodyWithData:(NSData *)data encoding:(NSStringEncoding)encoding
+{
+    NSString *string = [[NSString alloc] initWithData:data encoding:encoding];
+    data = [string dataUsingEncoding:NSUTF8StringEncoding];
+    PackageXMLParser *xmlParser = [PackageXMLParser xmlWithData:data];
+    //xmlParser.isShowLog = YES;
+    [xmlParser parse];
+    
+    NSString *result = [xmlParser.dataSource.lastObject allValues].firstObject;
+    return result;
+}
+
++ (NSString *)getBodyWithString:(NSString *)string
+{
+    NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
+    PackageXMLParser *xmlParser = [PackageXMLParser xmlWithData:data];
+    //xmlParser.isShowLog = YES;
+    [xmlParser parse];
+    
+    NSString *result = [xmlParser.dataSource.lastObject allValues].firstObject;
+    return result;
 }
 
 @end

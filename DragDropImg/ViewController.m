@@ -81,11 +81,12 @@
 //                               @"Salt":@"a0367a36a4bf2db0"};
 //    [Tools setObject:userInfo forKey:@"userInfo"];
     
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"weather.xml" ofType:@""];
+    //GetLastVersio.html,weather.xml,video.xml
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"video.xml" ofType:@""];
     NSData *data = [NSData dataWithContentsOfFile:path];
     // 创建解析器
     xmlParser = [PackageXMLParser xmlWithData:data];
-    xmlParser.isShowLog = YES;
+//    xmlParser.isShowLog = YES;
 }
 
 - (void)setOldData:(NSData *)oldData
@@ -134,7 +135,7 @@
 {
     // 开始解析
     [xmlParser parse];
-    NSLog(@"title = %@",[xmlParser.dicData stringForKey:@"title"]);
+//    NSLog(@"%@",[xmlParser.dicData customDescription]);
     
     if (!_dragImgView1.image || !_dragImgView2.image) {
         NSLog(@"请添加对应图片");
