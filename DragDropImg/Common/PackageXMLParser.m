@@ -148,7 +148,7 @@
     if (_isShowLog) {
         long lineNumber = parser.lineNumber;
         long columnNumber = parser.columnNumber;
-        NSLog(@"foundCharacters, %@,%ld,%ld",string,lineNumber,columnNumber);
+        NSLog(@"foundCharacters, %@,%ld,%ld,%@",string,lineNumber,columnNumber,currentRootElement);
         
         if ([string characterAtIndex:0] != '\n') {
             NSLog(@"-----包含其他结点的结点-----");
