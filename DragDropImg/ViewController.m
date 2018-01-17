@@ -16,8 +16,6 @@
     NSString *path2;//图片2路径
     
     NSView *hintView;
-    
-    PackageXMLParser *xmlParser;
 }
 
 @property (nonatomic, retain) NSData *oldData;
@@ -80,13 +78,6 @@
 //                               @"token":@"301|E21CA9946944987340C1DA235AC2A73C",
 //                               @"Salt":@"a0367a36a4bf2db0"};
 //    [Tools setObject:userInfo forKey:@"userInfo"];
-    
-    //GetLastVersio.html,weather.xml,video.xml
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"GetLastVersio.html" ofType:@""];
-    NSData *data = [NSData dataWithContentsOfFile:path];
-    // 创建解析器
-    xmlParser = [PackageXMLParser xmlWithData:data];
-    xmlParser.isShowLog = YES;
 }
 
 - (void)setOldData:(NSData *)oldData
@@ -133,6 +124,12 @@
 
 - (IBAction)ReplaceImgEvents:(NSButton *)sender
 {
+    //GetLastVersio.html,weather.xml,video.xml
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"video.xml" ofType:@""];
+    NSData *data = [NSData dataWithContentsOfFile:path];
+    // 创建解析器
+    PackageXMLParser *xmlParser = [PackageXMLParser xmlWithData:data];
+    xmlParser.isShowLog = YES;
     // 开始解析
     [xmlParser parse];
 //    NSLog(@"%@",[xmlParser.dicData customDescription]);
@@ -140,7 +137,7 @@
     if (!_dragImgView1.image || !_dragImgView2.image) {
         NSLog(@"请添加对应图片");
         
-        [Tools alertWithMessage:@"无法替换" informative:@"请添加原图片和替换图片" sheetHandler:nil];
+//        [Tools alertWithMessage:@"无法替换" informative:@"请添加原图片和替换图片" sheetHandler:nil];
         
         return;
     }

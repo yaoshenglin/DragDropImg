@@ -515,6 +515,11 @@
     else if ([self isKindOfClass:[NSString class]]) {
         return [(NSString *)self stringForFormat];
     }
+    else if ([self isKindOfClass:[NSArray class]]) {
+        NSString *value = [NSString stringWithFormat:@"%@",self];
+        value = [value stringForFormat];
+        return value;
+    }
     NSMutableDictionary *dic = [NSMutableDictionary dictionary];
     unsigned int propsCount;
     objc_property_t *props = class_copyPropertyList([self class], &propsCount);

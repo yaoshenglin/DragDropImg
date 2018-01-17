@@ -200,8 +200,8 @@
 				14F469611FCBF9A400E21658 /* 按钮点击效果.png */,
 				148772C51FD54348003C13E9 /* 47个吸引惯例.pdf */,
 				147FDB3F2000787B00A8B9FF /* error.html */,
-				147FDB4620009F0100A8B9FF /* video.xml */,
 				147FDB4120007AB400A8B9FF /* baidu.html */,
+				147FDB4620009F0100A8B9FF /* video.xml */,
 				148C99FA1FF3A00C00E96CC1 /* weather.xml */,
 				14EE58531FFB23F400BCABE0 /* GetLastVersio.html */,
 			);

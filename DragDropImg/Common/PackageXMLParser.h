@@ -14,8 +14,8 @@
 @property (nonatomic, retain) NSData *data;
 @property (nonatomic, assign) BOOL isShowLog;
 @property (nonatomic, assign) BOOL isShowResult;
-@property (nonatomic, retain) NSMutableArray *dataAttributeDict;
-@property (nonatomic, retain) NSMutableArray *dataSource;
+@property (nonatomic, retain) NSMutableArray *dataAttributeDict;//头部区域
+@property (nonatomic, retain) NSMutableArray *dataSource;//数据区
 @property (nonatomic, retain) NSMutableDictionary *dicData;
 @property (nonatomic, retain) NSDictionary *userInfo;
 
