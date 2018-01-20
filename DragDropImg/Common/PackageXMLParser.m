@@ -11,20 +11,18 @@
 
 @interface PackageXMLParser ()<NSXMLParserDelegate>
 {
-    NSXMLParser *xmlParser;
+    NSXMLParser *xmlParser;//
     
-    BOOL isUseList;
-    int operationType;
-    NSInteger currentLine;
-    NSMutableDictionary *dicLineElement;
-    NSDictionary *dicLineValue;
-    NSMutableArray *listElement;
-    NSMutableArray *listValue;
-    NSString *lastRootElement;
-    NSString *currentRootElement;
-    NSMutableString *currentValue;
-    NSMutableDictionary *lastDic;
-    NSMutableDictionary *currentDic;
+    BOOL isUseList;//使用数组
+    BOOL isNextNode;
+    int operationType;//操作类型
+    NSInteger currentLine;//当前行
+    NSMutableArray *listElement;//关键字集合
+    NSMutableArray *listValue;//内容集合
+    NSString *lastRootElement;//上一个关键字
+    NSString *currentRootElement;//当前关键字
+    NSMutableString *currentValue;//当前内容
+    NSMutableDictionary *lastDic;//最后一个可用字典
 }
 
 @end
@@ -44,7 +42,6 @@
         _isShowLog = NO;
         _isShowResult = YES;
         _dicData = [NSMutableDictionary dictionary];
-        dicLineElement = [NSMutableDictionary dictionary];
         listElement = [NSMutableArray array];
         listValue = [NSMutableArray array];
     }
@@ -112,40 +109,62 @@
 - (void)parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName attributes:(NSDictionary *)attributeDict
 {
     long lineNumber = parser.lineNumber;
+    long columnNumber = parser.columnNumber;
     if (_isShowLog) {
-        NSLog(@"开始标签  %@,%ld,%@", elementName,lineNumber,[attributeDict customDescription]);
+        NSLog(@"开始标签  %@,%ld,%ld,%@", elementName,lineNumber,columnNumber,[attributeDict customDescription]);
         if (namespaceURI.length || qName.length) {
             NSLog(@"namespaceURI = %@,qName = %@",namespaceURI,qName);
         }
     }
     
-    if (elementName && attributeDict) {
+    if (!elementName) {
+        return;//节点关键字为空(一般不存在)
+    }
+    
+    if (attributeDict) {
         [_dataAttributeDict addObject:@{elementName:attributeDict}];//头部区域
     }
     
     NSString *httpEquiv = attributeDict[@"http-equiv"];
     httpEquiv = [httpEquiv lowercaseString];
     if ([httpEquiv isEqualToString:@"content-type"]) {
-        NSString *content = attributeDict[@"content"];//数据类型、编码
+        NSString *content = attributeDict[@"content"];//数据类型、编码0
         if (content.length > 0) {
             _userInfo = @{httpEquiv:content};
         }
     }
     
+    if (isNextNode && operationType == 2) {
+        //当该结点的内容还没有结束时
+        isNextNode = NO;
+        operationType = 1;
+        return;
+    }
+    
     //不同行的分别存储
-    if (currentLine != parser.lineNumber) {
-        currentLine = parser.lineNumber;
-        currentValue = [[NSMutableString alloc] init];
-        
-        [dicLineElement setObject:elementName forKey:@(currentLine)];
-        
-        if (![currentRootElement isEqualToString:elementName]) {
-            [listElement addObject:elementName];
-            if (!isUseList && [listElement containsObject:currentRootElement]) {
-                lastRootElement = currentRootElement;
-            }
-            currentRootElement = elementName;
-        }
+    currentLine = parser.lineNumber;
+    currentValue = [[NSMutableString alloc] init];
+    
+    [listElement addObject:elementName];
+    
+    if (!isUseList && [listElement containsObject:currentRootElement]) {
+        lastRootElement = currentRootElement;
+    }
+    
+    currentRootElement = elementName;//开始
+    id obj = [lastDic objectForKey:lastRootElement];
+    if (!obj) {
+        obj = [@{elementName:[NSMutableDictionary dictionary]} mutableCopy];
+        _dicData = obj;
+        lastDic = obj;
+        [listValue addObject:obj];
+    }
+    else if ([obj isKindOfClass:[NSArray class]]) {
+    }
+    else if ([obj isKindOfClass:[NSDictionary class]]) {
+        NSMutableDictionary *dicValue = obj;
+        [dicValue setObject:[NSMutableDictionary dictionary] forKey:elementName];
+        [listValue addObject:dicValue];
     }
     
     operationType = 1;
@@ -162,65 +181,38 @@
 - (void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string
 {
     BOOL isList = [string characterAtIndex:0] != '\n';
+    isNextNode = isList;
     if (_isShowLog) {
         long lineNumber = parser.lineNumber;
         long columnNumber = parser.columnNumber;
         long len = string.length;
-        NSString *value = [dicLineElement objectForKey:@(parser.lineNumber)];
+        NSString *value = currentLine == lineNumber ? currentRootElement : @"下一行";
         NSLog(@"foundCharacters, %@,%ld,%ld,%@,len=%ld",string,lineNumber,columnNumber,value,len);
         
         if (isList) {
             NSLog(@"-----包含其他结点的结点-----");
         }
     }
-    if (string.length) {
-        [currentValue appendString:string];//累加
-    }
     
-    if (operationType != 1) {
-        operationType = 2;//过滤从结束状态过来的
-        return;
-    }
-    
-    if (lastRootElement && ![listElement containsObject:lastRootElement]) {
-        return;
-    }
-    
-    currentDic = currentDic ?: _dicData;
     if (isList) {
         isUseList = YES;
+        if (string.length) {
+            [currentValue appendString:string];//累加
+        }
         NSMutableArray *list = [lastDic objectForKey:lastRootElement];
-        if (!list || [list isKindOfClass:[NSNull class]]) {
+        if (![list isKindOfClass:[NSArray class]]) {
             list = [NSMutableArray array];
             [lastDic setObject:list forKey:lastRootElement];
+            [listValue removeLastObject];
         }
         
-        dicLineValue = @{@(currentLine):list};
+        if (![list containsObject:@{currentRootElement:currentValue}]) {
+            [list addObject:@{currentRootElement:currentValue}];
+        }
+        
     }else{
-        NSMutableDictionary *dic = [lastDic objectForKey:lastRootElement];
-        if (!dic) {
-            dic = [NSMutableDictionary dictionary];
-            [dic setObject:[NSNull null] forKey:currentRootElement];
-            if (lastRootElement) {
-                [currentDic setObject:dic forKey:lastRootElement];
-            }else{
-                currentDic = dic;
-                _dicData = dic;
-            }
-            lastDic = dic;
-            dicLineValue = @{@(currentLine):dic};
-            [listValue addObject:dic];
-        }
-        else if ([dic isKindOfClass:[NSNull class]]) {
-            dic = [NSMutableDictionary dictionary];
-            [dic setObject:[NSNull null] forKey:currentRootElement];
-            [currentDic setObject:dic forKey:lastRootElement];
-            lastDic = dic;
-            dicLineValue = @{@(currentLine):dic};
-            [listValue addObject:dic];
-        }
-        else if ([dic isKindOfClass:[NSDictionary class]]) {
-            currentDic = dic;
+        if (lastRootElement && operationType == 1) {
+            lastDic = [lastDic objectForKey:lastRootElement];
         }
     }
     
@@ -238,16 +230,35 @@
 - (void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName
 {
     if (_isShowLog) {
-        NSLog(@"didEndElement: %@",elementName);
+        NSLog(@"didEndElement: %@",elementName);//结束
     }
     
     if (namespaceURI.length || qName.length) {
         //NSLog(@"namespaceURI = %@,qName = %@",namespaceURI,qName);
     }
     
-    id obj = [dicLineValue objectForKey:@(currentLine)];
+    if (operationType == 1) {
+        isUseList = YES;
+        NSMutableArray *list = [lastDic objectForKey:lastRootElement];
+        if (![list isKindOfClass:[NSArray class]]) {
+            list = [NSMutableArray array];
+            [lastDic removeObjectForKey:currentRootElement];
+            [lastDic setObject:list forKey:lastRootElement];
+            //[listValue addObject:list];
+            [listValue removeLastObject];
+        }
+        
+        if (currentValue.length && ![list containsObject:@{currentRootElement:currentValue}]) {
+            [list addObject:@{currentRootElement:currentValue}];
+        }
+    }
+    
+    id obj = [lastDic objectForKey:lastRootElement];
     if (currentValue.length && currentRootElement.length) {
         NSDictionary *dic = @{currentRootElement:currentValue};
+        if (operationType == 1) {
+            dic = _dataAttributeDict.lastObject;
+        }
         
         if ([obj isKindOfClass:[NSArray class]]) {
             NSMutableArray *list = obj;
@@ -258,6 +269,20 @@
         else if ([obj isKindOfClass:[NSDictionary class]]) {
             NSMutableDictionary *dictionary = obj;
             [dictionary setObject:dic forKey:currentRootElement];
+        }
+    }else{
+        if (operationType == 1) {
+            NSDictionary *dic = _dataAttributeDict.lastObject;
+            if ([obj isKindOfClass:[NSArray class]]) {
+                NSMutableArray *list = obj;
+                if (![list containsObject:dic]) {
+                    [list addObject:dic];
+                }
+            }
+            else if ([obj isKindOfClass:[NSDictionary class]]) {
+                NSMutableDictionary *dictionary = obj;
+                [dictionary setObject:dic forKey:currentRootElement];
+            }
         }
     }
     
@@ -271,17 +296,17 @@
     
     if (elementName && [listElement containsObject:elementName]) {
         [listElement removeObject:elementName];
-        lastRootElement = listElement.lastObject;
+        if (!isUseList) {
+            lastRootElement = listElement.lastObject;
+        }
         
         NSDictionary *dic = listValue.lastObject;
-        if ([dic isKindOfClass:[NSDictionary class]]) {
-            if ([dic.allKeys containsObject:elementName]) {
-                [listValue removeLastObject];
-            }
-        }
-        for (id obj in listValue) {
-            if ([obj isKindOfClass:[NSDictionary class]]) {
-                lastDic = obj;
+        if ([dic.allKeys containsObject:elementName]) {
+            [listValue removeLastObject];
+            for (id obj in listValue) {
+                if ([obj isKindOfClass:[NSDictionary class]]) {
+                    lastDic = obj;
+                }
             }
         }
     }
@@ -319,7 +344,6 @@
     
     if (_isShowResult) {
         NSLog(@"%@",string);
-        NSLog(@"%@",dicLineElement);
     }
 }
 

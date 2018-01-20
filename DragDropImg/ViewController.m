@@ -132,12 +132,12 @@
     xmlParser.isShowLog = YES;
     // 开始解析
     [xmlParser parse];
-//    NSLog(@"%@",[xmlParser.dicData customDescription]);
+    //NSLog(@"%@",[xmlParser.dicData customDescription]);
     
     if (!_dragImgView1.image || !_dragImgView2.image) {
         NSLog(@"请添加对应图片");
         
-//        [Tools alertWithMessage:@"无法替换" informative:@"请添加原图片和替换图片" sheetHandler:nil];
+        //[Tools alertWithMessage:@"无法替换" informative:@"请添加原图片和替换图片" sheetHandler:nil];
         
         return;
     }
