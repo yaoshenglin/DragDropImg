@@ -29,6 +29,7 @@
 @interface PackageXMLParser (Extension)
 
 + (NSString *)getBodyWithData:(NSData *)data;
++ (NSString *)getBodyWithData:(NSData *)data forKey:(NSString *)key;
 + (NSString *)getBodyWithData:(NSData *)data encoding:(NSStringEncoding)encoding;
 + (NSString *)getBodyWithString:(NSString *)string;
 

@@ -8,7 +8,7 @@
 
 #import "FileDownloader.h"
 #import "Tools.h"
-#import "GDataXMLNode.h"
+#import "PackageXMLParser.h"
 
 @interface FileDownloader ()<NSURLSessionDelegate>
 
@@ -244,7 +244,7 @@
             if ([obj respondsToSelector:@selector(downLoadFail:)]) {
                 _errMsg = NSLocalizedString(@"DownLoadFail",@"文件下载失败");//文件下载失败
                 if (string) {
-                    _errMsg = [GDataXMLNode getBody:string];
+                    _errMsg = [PackageXMLParser getBodyWithString:string];
                 }
                 [delegate downLoadFail:self];
             }

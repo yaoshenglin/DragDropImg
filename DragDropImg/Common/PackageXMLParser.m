@@ -291,7 +291,11 @@
     }
     
     if ([lastRootElement isEqualToString:elementName]) {
-        isUseList = NO;
+        isUseList = NO;//结束标志出现时结束数组状态
+    }
+    
+    if (currentValue && ![_dataSource containsObject:currentValue]) {
+        [_dataSource addObject:currentValue];//有效值储存到集合中来
     }
     
     if (elementName && [listElement containsObject:elementName]) {
@@ -339,12 +343,73 @@
 
 - (void)logWithData
 {
-    NSLog(@"%ld",(long)_dicData.count);
-    NSString *string = [_dicData customDescription];
+    NSDictionary *dicHtml = _dicData.allValues.firstObject;
+    if (_dicData.count > 1 || ![dicHtml isKindOfClass:[NSDictionary class]]) {
+        dicHtml = _dicData;
+    }
+    NSLog(@"%ld",(long)dicHtml.count);
+    NSString *string = [dicHtml customDescription];
     
     if (_isShowResult) {
         NSLog(@"%@",string);
     }
+}
+
+- (id)parseData:(id)obj forKey:(NSString *)key
+{
+    if ([obj isKindOfClass:[NSDictionary class]]) {
+        NSDictionary *dic = obj;
+        if (dic[key]) {
+            return dic[key];
+        }
+        for (NSString *key1 in dic) {
+            id value = dic[key1];
+            if (![value isKindOfClass:[NSString class]]) {
+                id obj2 = [self parseData:value forKey:key];
+                if (obj2) {
+                    return obj2;
+                }
+            }else{
+                continue;
+            }
+        }
+    }
+    else if ([obj isKindOfClass:[NSArray class]]) {
+        NSArray *list = obj;
+        for (id obj1 in list) {
+            if (![obj1 isKindOfClass:[NSString class]]) {
+                id obj2 = [self parseData:obj1 forKey:key];
+                if (obj2) {
+                    return obj2;
+                }
+            }else{
+                continue;
+            }
+        }
+    }
+    return nil;
+}
+
+- (id)parseData:(id)obj string:(NSMutableString *)string
+{
+    string = string ?: [NSMutableString string];
+    if ([obj isKindOfClass:[NSDictionary class]]) {
+        NSDictionary *dic = obj;
+        for (NSString *key1 in dic) {
+            id value = dic[key1];
+            [self parseData:value string:string];
+        }
+    }
+    else if ([obj isKindOfClass:[NSArray class]]) {
+        NSArray *list = obj;
+        for (id obj1 in list) {
+            [self parseData:obj1 string:string];
+        }
+    }
+    else if ([obj isKindOfClass:[NSString class]]) {
+        [string appendString:obj];
+    }
+    return string;
 }
 
 @end
@@ -353,12 +418,21 @@
 
 + (NSString *)getBodyWithData:(NSData *)data
 {
+    NSString *result = [self getBodyWithData:data forKey:@"body"];
+    
+    return result;
+}
+
++ (NSString *)getBodyWithData:(NSData *)data forKey:(NSString *)key
+{
     // 创建解析器
     PackageXMLParser *xmlParser = [PackageXMLParser xmlWithData:data];
     //xmlParser.isShowLog = YES;
     [xmlParser parse];
     
-    NSString *result = [xmlParser.dataSource.lastObject allValues].firstObject;
+    id obj = [xmlParser parseData:xmlParser.dicData forKey:key];
+    NSString *result = [xmlParser parseData:obj string:nil];
+    
     return result;
 }
 
@@ -366,22 +440,16 @@
 {
     NSString *string = [[NSString alloc] initWithData:data encoding:encoding];
     data = [string dataUsingEncoding:NSUTF8StringEncoding];
-    PackageXMLParser *xmlParser = [PackageXMLParser xmlWithData:data];
-    //xmlParser.isShowLog = YES;
-    [xmlParser parse];
     
-    NSString *result = [xmlParser.dataSource.lastObject allValues].firstObject;
+    NSString *result = [self getBodyWithData:data];
     return result;
 }
 
 + (NSString *)getBodyWithString:(NSString *)string
 {
     NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
-    PackageXMLParser *xmlParser = [PackageXMLParser xmlWithData:data];
-    //xmlParser.isShowLog = YES;
-    [xmlParser parse];
+    NSString *result = [self getBodyWithData:data];
     
-    NSString *result = [xmlParser.dataSource.lastObject allValues].firstObject;
     return result;
 }
 

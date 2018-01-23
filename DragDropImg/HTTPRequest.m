@@ -8,7 +8,7 @@
 
 #import "HTTPRequest.h"
 #import <AppKit/AppKit.h>
-#import "GDataXMLNode.h"
+#import "PackageXMLParser.h"
 #import "Tools.h"
 
 NSString *const FileDownload = @"fileDownload";
@@ -621,7 +621,7 @@ NSString *const FileDownload = @"fileDownload";
             }
         }else{
             NSString *msg = nil;
-            msg = [GDataXMLNode getBody:stringL];
+            msg = [PackageXMLParser getBodyWithString:stringL];
             msg = msg.length ? msg : @"服务暂时不可用";//服务暂时不可用
             _errMsg = msg;
             [self wsFailedWithDelegate:_delegate];

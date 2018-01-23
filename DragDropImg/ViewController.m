@@ -9,6 +9,7 @@
 #import "ViewController.h"
 #import "Tools.h"
 #import "PackageXMLParser.h"
+#import "GDataXMLNode.h"
 
 @interface ViewController ()<NSXMLParserDelegate>
 {
@@ -26,7 +27,6 @@
 @implementation ViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
@@ -125,14 +125,15 @@
 - (IBAction)ReplaceImgEvents:(NSButton *)sender
 {
     //GetLastVersio.html,weather.xml,video.xml
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"video.xml" ofType:@""];
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"GetLastVersio.html" ofType:@""];
     NSData *data = [NSData dataWithContentsOfFile:path];
     // 创建解析器
-    PackageXMLParser *xmlParser = [PackageXMLParser xmlWithData:data];
-    xmlParser.isShowLog = YES;
+//    PackageXMLParser *xmlParser = [PackageXMLParser xmlWithData:data];
+//    xmlParser.isShowLog = YES;
     // 开始解析
-    [xmlParser parse];
-    //NSLog(@"%@",[xmlParser.dicData customDescription]);
+//    [xmlParser parse];
+    NSString *content = [PackageXMLParser getBodyWithData:data];
+    NSLog(@"%@",content);
     
     if (!_dragImgView1.image || !_dragImgView2.image) {
         NSLog(@"请添加对应图片");

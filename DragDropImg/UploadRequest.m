@@ -13,7 +13,7 @@
 #import "ExportGather.h"
 #import "EnumTypes.h"
 #import "Tools.h"
-//#import "GDataXMLNode.h"
+#import "PackageXMLParser.h"
 
 @interface UploadRequest ()<NSURLSessionDelegate,NSStreamDelegate>
 {
@@ -294,8 +294,7 @@
                 NSLog(@"%@",[dictionary customDescription]);
             }
             else if (error) {
-                NSString *string = [[NSString alloc] initWithData:vData encoding:NSUTF8StringEncoding];
-                //string = [GDataXMLNode getBody:string];
+                NSString *string = [PackageXMLParser getBodyWithData:vData];
                 NSLog(@"%@",string);
             }
         }
