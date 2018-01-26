@@ -19,6 +19,7 @@
 + (id)shareTools;
 
 + (NSAlert *)alertWithMessage:(NSString *)messageText informative:(NSString *)informativeText runModalHandler:(void (^)(NSModalResponse returnCode, NSString *title))handler;
++ (NSAlert *)alertWithMessage:(NSString *)messageText informative:(NSString *)informativeText;
 + (NSAlert *)alertWithMessage:(NSString *)messageText informative:(NSString *)informativeText sheetHandler:(void (^)(NSModalResponse returnCode))handler;
 + (NSString *)mainBundlePath;
 + (NSWindow *)getLastWindow;
@@ -56,13 +57,14 @@
 
 @end
 
-@interface NSString (NSObject)
+@interface NSString (NSExtends)
 
 - (NSString *)stringForFormat;
+- (NSString *)replaceString:(NSString *)target withString:(NSString *)replacement;
 
 @end
 
-@interface NSDictionary (NSObject)
+@interface NSDictionary (NSExtends)
 
 #pragma mark 根据关键字获取对应数据
 - (BOOL)existsForKey:(id)key;
@@ -86,14 +88,18 @@
 
 @end
 
-@interface NSObject (NSObject)
+@interface NSObject (NSExtends)
 
 - (NSString *)customDescription;
+
+#pragma mark - 通过对象获取全部属性
+- (NSArray *)getObjectPropertyList;
+- (NSArray *)getObjectIvarList;
 
 @end
 
 #pragma mark - UIView
-@interface NSView (NSObject)
+@interface NSView (NSExtends)
 
 - (void)setOriginX:(CGFloat)x;
 - (void)setOriginY:(CGFloat)y;
@@ -122,6 +128,7 @@
 - (id)viewWithClass:(Class)aClass tag:(NSInteger)tag;
 - (NSArray *)viewsWithClass:(Class)aClass;//该类的合集
 - (id)subviewWithClass:(Class)aClass;
+- (NSArray *)allSubviewWithClass:(Class)aClass array:(NSMutableArray *)list;
 - (id)subviewWithClass:(Class)aClass tag:(NSInteger)tag;//遍历子视图
 
 //添加视图约束
@@ -150,5 +157,6 @@ CGContextRef MyCreateBitmapContext (int pixelsWide, int pixelsHigh);
 #pragma mark 获取UIView上某个点的颜色
 - (NSColor *)colorOfPoint:(CGPoint)point;
 - (void)printAllSubViews;
+- (void)logAllSubViews;
 
 @end

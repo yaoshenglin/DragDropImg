@@ -20,7 +20,7 @@
 }
 
 @property (nonatomic, retain) NSData *oldData;
-@property(nonatomic,strong) NSString *currentString;
+@property (nonatomic, strong) NSString *currentString;
 
 @end
 
@@ -56,22 +56,14 @@
     
     hintView.layer.cornerRadius = CGRectGetWidth(hintView.frame)/2;
     
+    NSArray *listTitle = @[@"NetRequest",@"DrawImg",@"CodeProtocol",@"MakeQrCode",@"ParseData"];
     NSMenu *newMenu = [[NSMenu alloc] init];
-    NSMenuItem *openItem = [[NSMenuItem alloc] initWithTitle:@"NetRequest" action:@selector(menuItemEvents:) keyEquivalent:@""];
-    openItem.target = self;
-    [newMenu addItem:openItem];
+    for (NSString *title in listTitle) {
+        NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:title action:@selector(menuItemEvents:) keyEquivalent:@""];
+        item.target = self;
+        [newMenu addItem:item];
+    }
     
-    NSMenuItem *DrawImg = [[NSMenuItem alloc] initWithTitle:@"DrawImg" action:@selector(menuItemEvents:) keyEquivalent:@""];
-    DrawImg.target = self;
-    [newMenu addItem:DrawImg];
-    
-    NSMenuItem *CodeProtocol = [[NSMenuItem alloc] initWithTitle:@"CodeProtocol" action:@selector(menuItemEvents:) keyEquivalent:@""];
-    CodeProtocol.target = self;
-    [newMenu addItem:CodeProtocol];
-    
-    NSMenuItem *MakeQrCode = [[NSMenuItem alloc] initWithTitle:@"MakeQrCode" action:@selector(menuItemEvents:) keyEquivalent:@""];
-    MakeQrCode.target = self;
-    [newMenu addItem:MakeQrCode];
     _btnNext.menu = newMenu;
     
 //    NSDictionary *userInfo = @{@"mobile":@"18602561935",
@@ -115,30 +107,29 @@
 
 - (IBAction)NextButtonEvents:(NSButton *)sender
 {
-    NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
-    NSString *title = [infoDict objectForKey:@"NSMainStoryboardFile"];
-    NSStoryboard *storyBoard = [NSStoryboard storyboardWithName:title bundle:nil];
-    NSViewController *Second = [storyBoard instantiateControllerWithIdentifier:@"Second"];
-    [self presentViewControllerAsModalWindow:Second];
+//    NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
+//    NSString *title = [infoDict objectForKey:@"NSMainStoryboardFile"];
+//    NSStoryboard *storyBoard = [NSStoryboard storyboardWithName:title bundle:nil];
+//    NSViewController *Second = [storyBoard instantiateControllerWithIdentifier:@"Second"];
+//    [self presentViewControllerAsModalWindow:Second];
+    
+    NSViewController *ParseData = [self.storyboard instantiateControllerWithIdentifier:@"ParseData"];
+    [self presentViewControllerAsModalWindow:ParseData];
 }
 
 - (IBAction)ReplaceImgEvents:(NSButton *)sender
 {
     //GetLastVersio.html,weather.xml,video.xml
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"GetLastVersio.html" ofType:@""];
-    NSData *data = [NSData dataWithContentsOfFile:path];
+    //NSString *path = [[NSBundle mainBundle] pathForResource:@"GetLastVersio.html" ofType:@""];
+    //NSData *data = [NSData dataWithContentsOfFile:path];
     // 创建解析器
-//    PackageXMLParser *xmlParser = [PackageXMLParser xmlWithData:data];
-//    xmlParser.isShowLog = YES;
-    // 开始解析
-//    [xmlParser parse];
-    NSString *content = [PackageXMLParser getBodyWithData:data];
-    NSLog(@"%@",content);
+    //NSString *content = [PackageXMLParser getBodyWithData:data];
+    //NSLog(@"%@",content);
     
     if (!_dragImgView1.image || !_dragImgView2.image) {
         NSLog(@"请添加对应图片");
         
-        //[Tools alertWithMessage:@"无法替换" informative:@"请添加原图片和替换图片" sheetHandler:nil];
+        [Tools alertWithMessage:@"无法替换" informative:@"请添加原图片和替换图片" sheetHandler:nil];
         
         return;
     }
@@ -238,6 +229,10 @@
     else if ([menuItem.title isEqualToString:@"MakeQrCode"]) {
         NSViewController *CodeProtocol = [self.storyboard instantiateControllerWithIdentifier:@"MakeQrCode"];
         [self presentViewControllerAsModalWindow:CodeProtocol];
+    }
+    else if ([menuItem.title isEqualToString:@"ParseData"]) {
+        NSViewController *ParseData = [self.storyboard instantiateControllerWithIdentifier:@"ParseData"];
+        [self presentViewControllerAsModalWindow:ParseData];
     }
 }
 

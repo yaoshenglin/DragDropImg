@@ -42,6 +42,11 @@
     return alert;
 }
 
++ (NSAlert *)alertWithMessage:(NSString *)messageText informative:(NSString *)informativeText
+{
+    return [self alertWithMessage:messageText informative:informativeText sheetHandler:nil];
+}
+
 + (NSAlert *)alertWithMessage:(NSString *)messageText informative:(NSString *)informativeText sheetHandler:(void (^)(NSModalResponse returnCode))handler
 {
     NSAlert *alert = [[NSAlert alloc] init];
@@ -321,7 +326,9 @@
 
 @end
 
-@implementation NSString (NSObject)
+#pragma mark - --------NSExtends------------------------
+#pragma mark --------NSString------------------------
+@implementation NSString (NSExtends)
 
 - (NSString *)stringForFormat
 {
@@ -339,9 +346,16 @@
     return str;
 }
 
+- (NSString *)replaceString:(NSString *)target withString:(NSString *)replacement
+{
+    NSString *result = [self stringByReplacingOccurrencesOfString:target withString:replacement];
+    return result;
+}
+
 @end
 
-@implementation NSDictionary (NSObject)
+#pragma mark - --------NSDictionary------------------------
+@implementation NSDictionary (NSExtends)
 
 - (NSString *)stringForFormat
 {
@@ -458,6 +472,7 @@
 
 @end
 
+#pragma mark - --------NSData------------------------
 @implementation NSData (NSExt)
 
 //判断数据对应文件类型
@@ -505,7 +520,51 @@
 
 @end
 
-@implementation NSObject (NSObject)
+#pragma mark - --------NSObject------------------------
+@implementation NSObject (NSExtends)
+
+#pragma mark - 通过对象获取全部属性
+- (NSArray *)getObjectPropertyList
+{
+    //纯property
+    NSArray *list = nil;
+    unsigned int propsCount;
+    objc_property_t *props = class_copyPropertyList([self class], &propsCount);
+    list = propsCount>0 ? @[] : nil;
+    for(int i = 0;i < propsCount; i++)
+    {
+        objc_property_t prop = props[i];
+        
+        const char *name = property_getName(prop);
+        NSString *propName = [NSString stringWithUTF8String:name];
+        propName = [propName replaceString:@"_" withString:@""];
+        list = [list arrayByAddingObject:propName];
+    }
+    
+    free(props);
+    
+    return list;
+}
+
+- (NSArray *)getObjectIvarList
+{
+    //包括property
+    NSArray *list = nil;
+    unsigned int propsCount;
+    Ivar *ivar = class_copyIvarList([self class], &propsCount);
+    list = propsCount>0 ? @[] : nil;
+    for(int i = 0;i < propsCount; i++) {
+        Ivar var = ivar[i];
+        const char *name = ivar_getName(var);
+        NSString *propName = [NSString stringWithUTF8String:name];
+        propName = [propName replaceString:@"_" withString:@""];
+        list = [list arrayByAddingObject:propName];
+    }
+    
+    free(ivar);
+    
+    return list;
+}
 
 - (NSString *)customDescription
 {
@@ -543,7 +602,7 @@
 @end
 
 #pragma mark - --------NSView------------------------
-@implementation NSView (NSObject)
+@implementation NSView (NSExtends)
 
 - (void)setOriginX:(CGFloat)x
 {
@@ -725,6 +784,25 @@
     }
     
     return list.firstObject;
+}
+
+- (NSArray *)allSubviewWithClass:(Class)aClass array:(NSMutableArray *)list
+{
+    NSArray *listView = self.subviews;
+    list = list ?: [NSMutableArray array];
+    for (NSView *v in listView) {
+        if (v.subviews > 0) {
+            [v allSubviewWithClass:aClass array:list];
+        }
+        
+        if ([v isKindOfClass:[aClass class]]) {
+            [list addObject:v];
+        }
+        
+        //NSLog(@"%@",v);
+    }
+    
+    return list;
 }
 
 - (id)subviewWithClass:(Class)aClass tag:(NSInteger)tag
@@ -1006,6 +1084,22 @@ CGContextRef MyCreateBitmapContext (int pixelsWide, int pixelsHigh)
     id (*func)(id, SEL) = (void *)imp;
     id obj = func(self, action);
     NSLog(@"%@ recursive description:\n\n%@\n\n", self.className, obj);
+}
+
+- (void)logAllSubViews
+{
+    NSArray *list = self.subviews;
+    for (NSView *view in list) {
+        if ([view respondsToSelector:@selector(subviews)] && view.subviews) {
+            [view logAllSubViews];
+        }else{
+            NSLog(@"%@",view);
+        }
+    }
+    
+    if (!list.count) {
+        NSLog(@"%@",self);
+    }
 }
 
 @end
