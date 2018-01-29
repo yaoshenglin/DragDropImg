@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		14082871201F20CF009DA1AD /* 主机协议.plist in Resources */ = {isa = PBXBuildFile; fileRef = 14082870201F20CF009DA1AD /* 主机协议.plist */; };
 		143CFF631FD13BD000BD5753 /* 配置iFace@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 143CFF621FD13BD000BD5753 /* 配置iFace@2x.png */; };
 		143DC8FE1FE90DC60005B43D /* FileDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 143DC8FD1FE90DC60005B43D /* FileDownloader.m */; };
 		1445792B1E14F0B30066A9DB /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1445792A1E14F0B30066A9DB /* AppDelegate.m */; };
@@ -47,6 +48,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		14082870201F20CF009DA1AD /* 主机协议.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "主机协议.plist"; sourceTree = "<group>"; };
 		140DFC631FE12BDA00166C5B /* DragDropImg.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = DragDropImg.entitlements; sourceTree = "<group>"; };
 		143CFF621FD13BD000BD5753 /* 配置iFace@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "配置iFace@2x.png"; sourceTree = "<group>"; };
 		143DC8FC1FE90DC60005B43D /* FileDownloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileDownloader.h; sourceTree = "<group>"; };
@@ -220,6 +222,7 @@
 				147FDB4620009F0100A8B9FF /* video.xml */,
 				148C99FA1FF3A00C00E96CC1 /* weather.xml */,
 				14EE58531FFB23F400BCABE0 /* GetLastVersio.html */,
+				14082870201F20CF009DA1AD /* 主机协议.plist */,
 			);
 			path = Resource;
 			sourceTree = "<group>";
@@ -316,6 +319,7 @@
 				14F469641FCBF9A400E21658 /* msg2@2x.png in Resources */,
 				14F469631FCBF9A400E21658 /* msg1@2x.png in Resources */,
 				14F469621FCBF9A400E21658 /* iface主机@2x.png in Resources */,
+				14082871201F20CF009DA1AD /* 主机协议.plist in Resources */,
 				144579331E14F0B30066A9DB /* Assets.xcassets in Resources */,
 				148772C61FD54348003C13E9 /* 47个吸引惯例.pdf in Resources */,
 				14F469651FCBF9A400E21658 /* 按钮点击效果.png in Resources */,

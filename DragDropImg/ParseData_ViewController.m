@@ -177,17 +177,55 @@
 - (IBAction)ButtonEvents:(NSButton *)sender
 {
     NSTextView *text = _txtContent.documentView;
+    text.textColor = [NSColor blackColor];
     NSString *content = text.string;
     if (content.length < 2) {
         [Tools alertWithMessage:@"解析错误" informative:@"请输入有效的数据" sheetHandler:nil];
         return;
     }
-    if (sender.tag == 1) {
-        [self dataReceiveParse:content];
+    
+    [listContent removeAllObjects];
+    [listTitle removeAllObjects];
+    
+    NSString *head = [content substringToIndex:2];
+    
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"主机协议.plist" ofType:@""];
+    NSDictionary *dic = [NSDictionary dictionaryWithContentsOfFile:path];
+    NSArray *list = [dic objectForKey:head];
+    int len = 0;
+    for (NSDictionary *dic1 in list) {
+        int currentLen = [dic1.allValues.lastObject intValue];
+        if (currentLen < 0) {
+            currentLen = -currentLen;
+        }
+        len = len + currentLen;
     }
-    else if (sender.tag == 2) {
-        _btnParse.tag = 2;
-        [self dataSendParse:content];
+    
+    int totalLen = len;
+    if (content.length < totalLen) {
+        [Tools alertWithMessage:@"数据错误" informative:@"请输入正确的数据"];
+        return;
+    }
+    
+    //NSLog(@"%@",[[dic objectForKey:@"A0"] customDescription]);
+    //NSLog(@"%d",len);
+    
+    len = 0;
+    for (NSDictionary *dic1 in list) {
+        int currentLen = [dic1.allValues.lastObject intValue];
+        NSString *value = dic1.allKeys.lastObject;
+        if (currentLen == 0) {
+            currentLen = totalLen - len;
+        }
+        else if (currentLen < 0) {
+            len = (int)content.length + currentLen;
+            currentLen = -currentLen;
+        }
+        NSString *ptHead = [content substringWithRange:NSMakeRange(len, currentLen)];
+        [listContent addObject:ptHead];
+        [listTitle addObject:value];
+        
+        len = len + currentLen;
     }
     
     [myTableView reloadData];
@@ -263,24 +301,195 @@
         [listContent addObject:host];
         [listTitle addObject:@"主机ID"];
         
-        NSString *slave = [content substringWithRange:NSMakeRange(14, 8)];
-        [listContent addObject:slave];
-        [listTitle addObject:@"从机ID"];
-        
         if ([content hasPrefix:@"D3"]) {
             if (content.length < 34) {
                 [Tools alertWithMessage:@"数据错误" informative:@"请输入正确的数据"];
                 return;
             }
             
+            NSString *slave = [content substringWithRange:NSMakeRange(14, 8)];
+            [listContent addObject:slave];
+            [listTitle addObject:@"从机ID"];
+            
             NSString *ErrType = [content substringWithRange:NSMakeRange(22, 2)];
             [listContent addObject:ErrType];
             [listTitle addObject:@"错误类型"];
-            
-            NSString *CRC = [content substringWithRange:NSMakeRange(content.length-4, 4)];
-            [listContent addObject:CRC];
-            [listTitle addObject:@"校验码"];
         }
+        else if ([content hasPrefix:@"E0"]) {
+            NSString *slave = [content substringWithRange:NSMakeRange(14, 8)];
+            [listContent addObject:slave];
+            [listTitle addObject:@"从机ID"];
+            
+            NSString *index = [content substringWithRange:NSMakeRange(22, 2)];
+            [listContent addObject:index];
+            [listTitle addObject:@"从机开关索引"];
+        }
+        else if ([content hasPrefix:@"E1"]) {
+            NSString *slave = [content substringWithRange:NSMakeRange(14, 8)];
+            [listContent addObject:slave];
+            [listTitle addObject:@"从机ID"];
+            
+            NSString *index = [content substringWithRange:NSMakeRange(22, 2)];
+            [listContent addObject:index];
+            [listTitle addObject:@"从机开关索引"];
+            
+            NSString *action = [content substringWithRange:NSMakeRange(28, 2)];
+            [listContent addObject:action];
+            [listTitle addObject:@"动作标记"];
+            
+            NSString *range = [content substringWithRange:NSMakeRange(36, 4)];
+            [listContent addObject:range];
+            [listTitle addObject:@"总动作量程"];
+            
+            NSString *per = [content substringWithRange:NSMakeRange(40, 2)];
+            [listContent addObject:per];
+            [listTitle addObject:@"百分值"];
+        }
+        else if ([content hasPrefix:@"E4"] && content.length == 46) {
+            NSString *slave = [content substringWithRange:NSMakeRange(14, 8)];
+            [listContent addObject:slave];
+            [listTitle addObject:@"从机ID"];
+            
+            NSString *index = [content substringWithRange:NSMakeRange(22, 6)];
+            [listContent addObject:index];
+            [listTitle addObject:@"从机开关索引"];
+            
+            NSString *type = [content substringWithRange:NSMakeRange(28, 2)];
+            [listContent addObject:type];
+            [listTitle addObject:@"动作标记"];
+            
+            NSString *Version = [content substringWithRange:NSMakeRange(30, 4)];
+            [listContent addObject:Version];
+            [listTitle addObject:@"固件版本号"];
+            
+            NSString *range = [content substringWithRange:NSMakeRange(36, 4)];
+            [listContent addObject:range];
+            [listTitle addObject:@"总动作量程"];
+            
+            NSString *per = [content substringWithRange:NSMakeRange(40, 2)];
+            [listContent addObject:per];
+            [listTitle addObject:@"百分值"];
+        }
+        else if ([content hasPrefix:@"E4"] && content.length == 34) {
+            //读取门锁信息
+            NSString *slave = [content substringWithRange:NSMakeRange(14, 8)];
+            [listContent addObject:slave];
+            [listTitle addObject:@"从机ID"];
+            
+            NSString *power = [content substringWithRange:NSMakeRange(22, 2)];
+            [listContent addObject:power];
+            [listTitle addObject:@"电量值"];
+            
+            NSString *type = [content substringWithRange:NSMakeRange(28, 2)];
+            [listContent addObject:type];
+            [listTitle addObject:@"动作标记"];
+            
+            NSString *Version = [content substringWithRange:NSMakeRange(30, 4)];
+            [listContent addObject:Version];
+            [listTitle addObject:@"固件版本号"];
+        }
+        else if ([content hasPrefix:@"E3"]) {
+            //开锁
+            NSString *slave = [content substringWithRange:NSMakeRange(14, 8)];
+            [listContent addObject:slave];
+            [listTitle addObject:@"从机ID"];
+            
+            NSString *power = [content substringWithRange:NSMakeRange(22, 2)];
+            [listContent addObject:power];
+            [listTitle addObject:@"电量值"];
+            
+            NSString *type = [content substringWithRange:NSMakeRange(24, 2)];
+            [listContent addObject:type];
+            [listTitle addObject:@"动作标记"];
+            
+            NSString *Version = [content substringWithRange:NSMakeRange(26, 4)];
+            [listContent addObject:Version];
+            [listTitle addObject:@"固件版本号"];
+            
+            NSString *safeCode = [content substringWithRange:NSMakeRange(30, 6)];
+            [listContent addObject:safeCode];
+            [listTitle addObject:@"安全码"];
+        }
+        else if ([content hasPrefix:@"E6"]) {
+            //主机操作指令
+            NSString *HostName = [content substringWithRange:NSMakeRange(14, 4)];
+            [listContent addObject:HostName];
+            [listTitle addObject:@"主机类型代号"];
+            
+            NSString *HardWareVersion = [content substringWithRange:NSMakeRange(18, 4)];
+            [listContent addObject:HardWareVersion];
+            [listTitle addObject:@"硬件固件内部版本号"];
+            
+            NSString *SoftWareVersion = [content substringWithRange:NSMakeRange(22, 4)];
+            [listContent addObject:SoftWareVersion];
+            [listTitle addObject:@"硬件固件显示版本号"];
+            
+            NSString *WorkTime = [content substringWithRange:NSMakeRange(26, 4)];
+            [listContent addObject:WorkTime];
+            [listTitle addObject:@"主机工作时长"];
+            
+            NSString *IP = [content substringWithRange:NSMakeRange(30, 8)];
+            [listContent addObject:IP];
+            [listTitle addObject:@"远程IP地址"];
+            
+            NSString *Port = [content substringWithRange:NSMakeRange(38, 4)];
+            [listContent addObject:Port];
+            [listTitle addObject:@"远程端口"];
+            
+            NSString *ViewModelName = [content substringWithRange:NSMakeRange(42, 20)];
+            [listContent addObject:ViewModelName];
+            [listTitle addObject:@"主机型号名称"];
+            
+            NSString *SubType = [content substringWithRange:NSMakeRange(62, 4)];
+            [listContent addObject:SubType];
+            [listTitle addObject:@"从属类型"];
+        }
+        else if ([content hasPrefix:@"EC"]) {
+            //读取主机温度
+            NSString *tempData = [content substringWithRange:NSMakeRange(14, 4)];
+            [listContent addObject:tempData];
+            [listTitle addObject:@"主机温度"];
+        }
+        else if ([content hasPrefix:@"D8"]) {
+            //下发学习指令成功
+            NSString *other = [content substringWithRange:NSMakeRange(14, 8)];
+            [listContent addObject:other];
+            [listTitle addObject:@"下发学习指令成功"];
+        }
+        else if ([content hasPrefix:@"E8"]) {
+            //收到学习到的数据
+            NSString *data = [content substringWithRange:NSMakeRange(14, content.length-18)];
+            [listContent addObject:data];
+            [listTitle addObject:@"收到学习到的数据"];
+        }
+        else if ([content hasPrefix:@"D9"]) {
+            //执行学习到的红外码成功
+            NSString *other = [content substringWithRange:NSMakeRange(14, 8)];
+            [listContent addObject:other];
+            [listTitle addObject:@"执行学习到的红外码成功"];
+        }
+        else if ([content hasPrefix:@"EF"]) {
+            //红外码库数据发射指令
+            NSString *other = [content substringWithRange:NSMakeRange(14, 8)];
+            [listContent addObject:other];
+            [listTitle addObject:@"执行红外码库数据发射指令成功"];
+        }
+        else if ([content hasPrefix:@"D5"]) {
+            //下发红外配置指令返回成功
+            NSString *other = [content substringWithRange:NSMakeRange(14, 8)];
+            [listContent addObject:other];
+            [listTitle addObject:@"下发指令返回成功"];
+        }
+        else if ([content hasPrefix:@"E5"]) {
+            //收到红外智能匹配数据
+            NSString *other = [content substringWithRange:NSMakeRange(14, content.length-4)];
+            [listContent addObject:other];
+            [listTitle addObject:@"收到红外智能匹配数据"];
+        }
+        
+        NSString *CRC = [content substringWithRange:NSMakeRange(content.length-4, 4)];
+        [listContent addObject:CRC];
+        [listTitle addObject:@"校验码"];
     }
 }
 
@@ -354,24 +563,143 @@
         [listContent addObject:host];
         [listTitle addObject:@"主机ID"];
         
-        NSString *slave = [content substringWithRange:NSMakeRange(14, 8)];
-        [listContent addObject:slave];
-        [listTitle addObject:@"从机ID"];
-        
-        if ([content hasPrefix:@"D3"]) {
-            if (content.length < 34) {
-                [Tools alertWithMessage:@"数据错误" informative:@"请输入正确的数据"];
-                return;
-            }
+        if ([content hasPrefix:@"A4"] && content.length == 32) {
+            NSString *slave = [content substringWithRange:NSMakeRange(14, 8)];
+            [listContent addObject:slave];
+            [listTitle addObject:@"从机ID"];
             
-            NSString *ErrType = [content substringWithRange:NSMakeRange(22, 2)];
-            [listContent addObject:ErrType];
-            [listTitle addObject:@"错误类型"];
-            
-            NSString *CRC = [content substringWithRange:NSMakeRange(content.length-4, 4)];
-            [listContent addObject:CRC];
-            [listTitle addObject:@"校验码"];
+            NSString *safeCode = [content substringWithRange:NSMakeRange(22, 2)];
+            [listContent addObject:safeCode];
+            [listTitle addObject:@"安全码"];
         }
+        else if ([content hasPrefix:@"A0"] || [content hasPrefix:@"A4"]) {
+            NSString *slave = [content substringWithRange:NSMakeRange(14, 8)];
+            [listContent addObject:slave];
+            [listTitle addObject:@"从机ID"];
+            
+            NSString *Flag = [content substringWithRange:NSMakeRange(22, 2)];
+            [listContent addObject:Flag];
+            [listTitle addObject:@"是否跳转"];
+            
+            NSString *index = [content substringWithRange:NSMakeRange(24, 2)];
+            [listContent addObject:index];
+            [listTitle addObject:@"从机开关索引"];
+            
+            NSString *ForwardID = [content substringWithRange:NSMakeRange(26, 8)];
+            [listContent addObject:ForwardID];
+            [listTitle addObject:@"转发从机ID"];
+        }
+        else if ([content hasPrefix:@"A1"]) {
+            NSString *slave = [content substringWithRange:NSMakeRange(14, 8)];
+            [listContent addObject:slave];
+            [listTitle addObject:@"从机ID"];
+            
+            NSString *Flag = [content substringWithRange:NSMakeRange(22, 2)];
+            [listContent addObject:Flag];
+            [listTitle addObject:@"是否跳转"];
+            
+            NSString *index = [content substringWithRange:NSMakeRange(24, 2)];
+            [listContent addObject:index];
+            [listTitle addObject:@"从机开关索引"];
+            
+            NSString *ForwardID = [content substringWithRange:NSMakeRange(26, 8)];
+            [listContent addObject:ForwardID];
+            [listTitle addObject:@"转发从机ID"];
+            
+            NSString *action = [content substringWithRange:NSMakeRange(36, 2)];
+            [listContent addObject:action];
+            [listTitle addObject:@"动作标记"];
+            
+            NSString *per = [content substringWithRange:NSMakeRange(36, 2)];
+            [listContent addObject:per];
+            [listTitle addObject:@"百分值"];
+        }
+        else if ([content hasPrefix:@"A3"]) {
+            //开锁
+            NSString *slave = [content substringWithRange:NSMakeRange(14, 8)];
+            [listContent addObject:slave];
+            [listTitle addObject:@"从机ID"];
+            
+            NSString *safeCode = [content substringWithRange:NSMakeRange(22, 6)];
+            [listContent addObject:safeCode];
+            [listTitle addObject:@"安全码"];
+            
+            NSString *type = [content substringWithRange:NSMakeRange(28, 8)];
+            [listContent addObject:type];
+            [listTitle addObject:@"用户ID"];
+        }
+        else if ([content hasPrefix:@"A6"]) {
+            //主机操作指令
+            NSString *other = [content substringWithRange:NSMakeRange(14, 8)];
+            [listContent addObject:other];
+            [listTitle addObject:@"读取主机ID号码"];
+        }
+        else if ([content hasPrefix:@"AB"]) {
+            //设置主机型号显示名称、主机从属项目类型标识
+            NSString *ViewModelName = [content substringWithRange:NSMakeRange(14, 20)];
+            [listContent addObject:ViewModelName];
+            [listTitle addObject:@"主机显示名字"];
+            
+            NSString *SubType = [content substringWithRange:NSMakeRange(34, 4)];
+            [listContent addObject:SubType];
+            [listTitle addObject:@"从属类型"];
+        }
+        else if ([content hasPrefix:@"AC"]) {
+            //读取主机温度
+            NSString *other = [content substringWithRange:NSMakeRange(14, 8)];
+            [listContent addObject:other];
+            [listTitle addObject:@"读取主机温度"];
+        }
+        else if ([content hasPrefix:@"A8"]) {
+            //执行学习红外指令
+            NSString *other = [content substringWithRange:NSMakeRange(14, 8)];
+            [listContent addObject:other];
+            [listTitle addObject:@"执行学习红外指令"];
+        }
+        else if ([content hasPrefix:@"C8"]) {
+            //取消正在等待学习的指令
+            NSString *other = [content substringWithRange:NSMakeRange(14, 8)];
+            [listContent addObject:other];
+            [listTitle addObject:@"取消红外学习指令"];
+        }
+        else if ([content hasPrefix:@"A9"]) {
+            //执行学习到的红外码
+            NSString *Flag = [content substringWithRange:NSMakeRange(14, 2)];
+            [listContent addObject:Flag];
+            [listTitle addObject:@"是否跳转"];
+            
+            NSString *ForwardID = [content substringWithRange:NSMakeRange(16, 8)];
+            [listContent addObject:ForwardID];
+            [listTitle addObject:@"转发从机ID"];
+            
+            NSString *data = [content substringWithRange:NSMakeRange(24, content.length-28)];
+            [listContent addObject:data];
+            [listTitle addObject:@"学习的红外数据"];
+        }
+        else if ([content hasPrefix:@"DF"]) {
+            //红外码库数据发射指令
+            NSString *Flag = [content substringWithRange:NSMakeRange(14, 2)];
+            [listContent addObject:Flag];
+            [listTitle addObject:@"是否跳转"];
+            
+            NSString *ForwardID = [content substringWithRange:NSMakeRange(16, 8)];
+            [listContent addObject:ForwardID];
+            [listTitle addObject:@"转发从机ID"];
+            
+            NSString *data = [content substringWithRange:NSMakeRange(24, content.length-28)];
+            [listContent addObject:data];
+            [listTitle addObject:@"码库数据"];
+        }
+        else if ([content hasPrefix:@"A5"]) {
+            //红外智能配置数据指令
+            NSString *other = [content substringWithRange:NSMakeRange(14, 8)];
+            [listContent addObject:other];
+            [listTitle addObject:@"红外智能匹配指令"];
+        }
+        
+        NSString *CRC = [content substringWithRange:NSMakeRange(content.length-4, 4)];
+        [listContent addObject:CRC];
+        [listTitle addObject:@"校验码"];
     }
 }
 
