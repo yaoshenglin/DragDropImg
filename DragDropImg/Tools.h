@@ -83,6 +83,8 @@
 
 @interface NSData (NSExt)
 
+- (id)unarchiveData;
+
 //判断数据对应文件类型
 - (NSString *)getDtataType;
 
@@ -90,6 +92,7 @@
 
 @interface NSObject (NSExtends)
 
+- (NSData *)archivedData;
 - (NSString *)customDescription;
 
 #pragma mark - 通过对象获取全部属性

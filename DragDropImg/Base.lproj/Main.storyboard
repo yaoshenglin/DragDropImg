@@ -1176,8 +1176,8 @@
                                 </scroller>
                             </scrollView>
                             <button verticalHuggingPriority="750" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="qmH-CK-kVb">
-                                <rect key="frame" x="22" y="185" width="120" height="32"/>
-                                <buttonCell key="cell" type="push" title="解析接收信息" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sb5-gE-BSO">
+                                <rect key="frame" x="22" y="185" width="94" height="32"/>
+                                <buttonCell key="cell" type="push" title="解析数据" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sb5-gE-BSO">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
@@ -1241,6 +1241,15 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableHeaderView>
                             </scrollView>
+                            <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="l18-Lr-yqn">
+                                <rect key="frame" x="141" y="192" width="128" height="22"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="yfH-UE-cTf">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                         <constraints>
                             <constraint firstItem="qmH-CK-kVb" firstAttribute="leading" secondItem="y2X-Lj-x33" secondAttribute="leading" constant="28" id="3Cn-oK-mID"/>
@@ -1261,6 +1270,7 @@
                         <outlet property="btnParse" destination="qmH-CK-kVb" id="N7e-0o-XEg"/>
                         <outlet property="iTableView" destination="cSx-Kg-ngC" id="122-CE-N2F"/>
                         <outlet property="txtContent" destination="XGb-E3-MOE" id="Sfe-jB-epT"/>
+                        <outlet property="txtLen" destination="l18-Lr-yqn" id="8Yb-UN-aja"/>
                     </connections>
                 </viewController>
                 <customObject id="zxR-Ho-n69" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

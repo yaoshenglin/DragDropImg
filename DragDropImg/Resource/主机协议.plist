@@ -56,6 +56,10 @@
 			<integer>8</integer>
 		</dict>
 		<dict>
+			<key>填充</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
 			<key>动作标记</key>
 			<integer>2</integer>
 		</dict>
@@ -95,7 +99,7 @@
 			<integer>-4</integer>
 		</dict>
 	</array>
-	<key>A4-32</key>
+	<key>A4-40</key>
 	<array>
 		<dict>
 			<key>指令头</key>
@@ -118,7 +122,7 @@
 			<integer>-4</integer>
 		</dict>
 	</array>
-	<key>A4-36</key>
+	<key>A4-38</key>
 	<array>
 		<dict>
 			<key>指令头</key>
@@ -131,6 +135,10 @@
 		<dict>
 			<key>从机ID</key>
 			<integer>8</integer>
+		</dict>
+		<dict>
+			<key>是否跳转</key>
+			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>从机开关索引</key>
@@ -328,6 +336,162 @@
 			<integer>-4</integer>
 		</dict>
 	</array>
+	<key>DD</key>
+	<array>
+		<dict>
+			<key>PT指令头</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>PT模式</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>PT主机ID</key>
+			<integer>12</integer>
+		</dict>
+		<dict>
+			<key>content</key>
+			<string>{16, -18}</string>
+		</dict>
+		<dict>
+			<key>PT校验码</key>
+			<integer>-2</integer>
+		</dict>
+	</array>
+	<key>Lock</key>
+	<dict>
+		<key>E2</key>
+		<array>
+			<dict>
+				<key>指令帧头</key>
+				<integer>2</integer>
+			</dict>
+			<dict>
+				<key>门锁ID</key>
+				<integer>8</integer>
+			</dict>
+			<dict>
+				<key>安全码</key>
+				<integer>6</integer>
+			</dict>
+			<dict>
+				<key>指令类型</key>
+				<integer>2</integer>
+			</dict>
+			<dict>
+				<key>0F</key>
+				<array>
+					<dict>
+						<key>管理员权限</key>
+						<integer>2</integer>
+					</dict>
+				</array>
+				<key>03</key>
+				<array>
+					<dict>
+						<key>当前索引号</key>
+						<integer>2</integer>
+					</dict>
+					<dict>
+						<key>用户总数</key>
+						<integer>2</integer>
+					</dict>
+					<dict>
+						<key>用户索引序号</key>
+						<integer>2</integer>
+					</dict>
+					<dict>
+						<key>绑定的用户ID</key>
+						<integer>8</integer>
+					</dict>
+				</array>
+				<key>04</key>
+				<array>
+					<dict>
+						<key>开锁认证方式</key>
+						<integer>2</integer>
+					</dict>
+					<dict>
+						<key>门锁功能开关</key>
+						<integer>2</integer>
+					</dict>
+					<dict>
+						<key>系统电量管理模式</key>
+						<integer>2</integer>
+					</dict>
+					<dict>
+						<key>访客密码有效状态</key>
+						<integer>2</integer>
+					</dict>
+					<dict>
+						<key>最大用户数</key>
+						<integer>2</integer>
+					</dict>
+				</array>
+			</dict>
+			<dict>
+				<key>配置参数</key>
+				<integer>8</integer>
+			</dict>
+			<dict>
+				<key>校验码</key>
+				<integer>-4</integer>
+			</dict>
+		</array>
+		<key>A2</key>
+		<array>
+			<dict>
+				<key>指令帧头</key>
+				<integer>2</integer>
+			</dict>
+			<dict>
+				<key>门锁ID</key>
+				<integer>8</integer>
+			</dict>
+			<dict>
+				<key>安全码</key>
+				<integer>6</integer>
+			</dict>
+			<dict>
+				<key>指令类型</key>
+				<integer>2</integer>
+			</dict>
+			<dict>
+				<key>04</key>
+				<array>
+					<dict>
+						<key>开锁认证方式</key>
+						<integer>2</integer>
+					</dict>
+					<dict>
+						<key>门锁功能开关</key>
+						<integer>2</integer>
+					</dict>
+					<dict>
+						<key>系统电量管理模式</key>
+						<integer>2</integer>
+					</dict>
+					<dict>
+						<key>访客密码有效状态</key>
+						<integer>2</integer>
+					</dict>
+					<dict>
+						<key>最大用户数</key>
+						<integer>2</integer>
+					</dict>
+				</array>
+			</dict>
+			<dict>
+				<key>配置参数</key>
+				<integer>8</integer>
+			</dict>
+			<dict>
+				<key>校验码</key>
+				<integer>-4</integer>
+			</dict>
+		</array>
+	</dict>
 	<key>D8</key>
 	<array>
 		<dict>
@@ -470,7 +634,7 @@
 			<integer>2</integer>
 		</dict>
 		<dict>
-			<key>动作标记</key>
+			<key>门锁类型</key>
 			<integer>2</integer>
 		</dict>
 		<dict>
@@ -506,6 +670,37 @@
 		</dict>
 		<dict>
 			<key>动作标记</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>固件版本号</key>
+			<integer>4</integer>
+		</dict>
+		<dict>
+			<key>校验码</key>
+			<integer>-4</integer>
+		</dict>
+	</array>
+	<key>E4-38</key>
+	<array>
+		<dict>
+			<key>指令头</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>主机ID</key>
+			<integer>12</integer>
+		</dict>
+		<dict>
+			<key>从机ID</key>
+			<integer>8</integer>
+		</dict>
+		<dict>
+			<key>从机索引</key>
+			<integer>6</integer>
+		</dict>
+		<dict>
+			<key>固件类型</key>
 			<integer>2</integer>
 		</dict>
 		<dict>

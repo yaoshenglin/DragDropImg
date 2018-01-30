@@ -475,6 +475,12 @@
 #pragma mark - --------NSData------------------------
 @implementation NSData (NSExt)
 
+- (id)unarchiveData
+{
+    id obj = [NSKeyedUnarchiver unarchiveObjectWithData:self];
+    return obj;
+}
+
 //判断数据对应文件类型
 - (NSString *)getDtataType
 {
@@ -523,6 +529,45 @@
 #pragma mark - --------NSObject------------------------
 @implementation NSObject (NSExtends)
 
+- (NSData *)archivedData
+{
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self];
+    return data;
+}
+
+- (NSString *)customDescription
+{
+    if ([self isKindOfClass:[NSDictionary class]]) {
+        return [(NSDictionary *)self stringForFormat];
+    }
+    else if ([self isKindOfClass:[NSString class]]) {
+        return [(NSString *)self stringForFormat];
+    }
+    else if ([self isKindOfClass:[NSArray class]]) {
+        NSString *value = [NSString stringWithFormat:@"%@",self];
+        value = [value stringForFormat];
+        return value;
+    }
+    NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+    unsigned int propsCount;
+    objc_property_t *props = class_copyPropertyList([self class], &propsCount);
+    for(int i = 0;i < propsCount; i++)
+    {
+        objc_property_t prop = props[i];
+        
+        NSString *propName = [NSString stringWithUTF8String:property_getName(prop)];
+        id value = [self valueForKey:propName];
+        if(value == nil)
+        {
+            value = [NSNull null];
+        }
+        
+        [dic setObject:value forKey:propName];
+    }
+    NSString *content = [dic stringForFormat];
+    return content;
+}
+
 #pragma mark - 通过对象获取全部属性
 - (NSArray *)getObjectPropertyList
 {
@@ -564,39 +609,6 @@
     free(ivar);
     
     return list;
-}
-
-- (NSString *)customDescription
-{
-    if ([self isKindOfClass:[NSDictionary class]]) {
-        return [(NSDictionary *)self stringForFormat];
-    }
-    else if ([self isKindOfClass:[NSString class]]) {
-        return [(NSString *)self stringForFormat];
-    }
-    else if ([self isKindOfClass:[NSArray class]]) {
-        NSString *value = [NSString stringWithFormat:@"%@",self];
-        value = [value stringForFormat];
-        return value;
-    }
-    NSMutableDictionary *dic = [NSMutableDictionary dictionary];
-    unsigned int propsCount;
-    objc_property_t *props = class_copyPropertyList([self class], &propsCount);
-    for(int i = 0;i < propsCount; i++)
-    {
-        objc_property_t prop = props[i];
-        
-        NSString *propName = [NSString stringWithUTF8String:property_getName(prop)];
-        id value = [self valueForKey:propName];
-        if(value == nil)
-        {
-            value = [NSNull null];
-        }
-        
-        [dic setObject:value forKey:propName];
-    }
-    NSString *content = [dic stringForFormat];
-    return content;
 }
 
 @end

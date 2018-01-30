@@ -12,6 +12,7 @@
 
 @property (weak) IBOutlet NSButton *btnParse;
 @property (weak) IBOutlet NSScrollView *txtContent;
+@property (weak) IBOutlet NSTextField *txtLen;
 @property (weak) IBOutlet NSScrollView *iTableView;
 
 @end
