@@ -172,6 +172,7 @@
     int totalLen = (int)content.length;
     int len = 0;
     
+    NSArray *listLockHead = @[@"A2",@"E2",@"EB",@"ED",@"EE",@"EF",@"FE"];
     NSString *head = [content substringToIndex:2];
     if ([head hasPrefix:@"DD"]) {
         NSArray *list = [dic objectForKey:head];
@@ -207,6 +208,10 @@
         
         [listContent addObject:SumCRC];
         [listTitle addObject:@"PT校验码"];
+    }
+    else if ([listLockHead containsObject:head]) {
+        NSDictionary *dicLock = [dic objectForKey:@"Lock"];
+        [self dataLockParse:content mode:dicLock];
     }else{
         [self dataParse:content mode:dic];
     }

@@ -76,7 +76,7 @@
             break;
         case 4:
             //门锁
-            stringValue = [NSString stringWithFormat:@"device:plug;id:%@;tag:1;m:DL32;t:0;ver:2.0",stringValue];
+            stringValue = [NSString stringWithFormat:@"device:doorlock;id:%@;tag:2;m:DL32;t:0;ver:2.0",stringValue];
             break;
         case 5:
             //车位锁
@@ -113,7 +113,16 @@
 {
     if (button.tag == 2) {
         NSImage *image = _imgViewCode.image;
-        NSData *data = [image TIFFRepresentation];
+        [image lockFocus];
+        //先设置 下面一个实例
+        NSBitmapImageRep *bits = [[NSBitmapImageRep alloc] initWithFocusedViewRect:_imgViewCode.frame];        //138.32为图片的长和宽
+        [image unlockFocus];
+        //再设置后面要用到得 props属性
+        NSDictionary *imageProps = @{NSImageCompressionFactor:@(0.98)};//压缩率
+        
+        //之后 转化为NSData 以便存到文件中
+        NSData *data = [bits representationUsingType:NSPNGFileType properties:imageProps];
+        //NSData *data = [image TIFFRepresentation];
         NSSavePanel *savePanel = [NSSavePanel savePanel];
         NSArray *listTypes = @[@"png",@"jpg"];
         [savePanel setAllowedFileTypes:listTypes];

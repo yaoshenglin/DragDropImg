@@ -290,6 +290,7 @@
     CGContextDrawImage(bitmapRef, CGRectMake(s, s, size.width-s*2, size.height-s*2), bitmapImage);
     CGContextSaveGState(bitmapRef);
     
+    //-----------------------------
     //字体在CoreGraphics中被废除了,移入CoreText框架中,以后再详细讨论.
     //char *aChar = "Helvetica-Bold";
     //段落格式
@@ -316,6 +317,7 @@
     CTFrameDraw(frameRef,bitmapRef);
     CGPathRelease(Path);
     CFRelease(framesetter);
+    //-----------------------------
     
     // 2.保存bitmap到图片
     CGImageRef scaledImage = CGBitmapContextCreateImage(bitmapRef);
