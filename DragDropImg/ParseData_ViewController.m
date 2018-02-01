@@ -277,12 +277,18 @@
     NSString *sHead = @"";//二级指令类型
     for (NSDictionary *dicValue in list) {
         int currentLen = 0;
-        NSString *key = dicValue.allKeys.firstObject;
-        if ([key isEqualToString:@"指令类型"]) {
-            currentLen = [dicValue.allValues.lastObject intValue];
+        NSArray *keys = dicValue.allKeys;
+        NSString *key = @"";
+        if (keys.count == 1) {
+            key = keys.firstObject;
+        }
+        id firstObject = dicValue.allValues.firstObject;
+        if ([keys containsObject:@"指令类型"]) {
+            currentLen = [firstObject intValue];
             sHead = [content substringWithRange:NSMakeRange(len, currentLen)];
         }
-        else if ([key isEqualToString:sHead]) {
+        else if ([keys containsObject:sHead]) {
+            key = sHead;
             NSArray *sList = [dicValue arrayForKey:sHead];
             for (NSDictionary *sDicValue in sList) {
                 currentLen = [sDicValue.allValues.lastObject intValue];
@@ -296,7 +302,9 @@
             }
             continue;
         }else{
-            currentLen = [dicValue.allValues.lastObject intValue];
+            if ([firstObject respondsToSelector:@selector(intValue)]) {
+                currentLen = [firstObject intValue];
+            }
         }
         
         if (currentLen < 0) {
@@ -309,72 +317,6 @@
         [listTitle addObject:key];
         
         len = len + currentLen;
-    }
-}
-
-- (void)dataSendParse:(NSString *)content
-{
-    [listContent removeAllObjects];
-    [listTitle removeAllObjects];
-    
-    if (content.length < 22) {
-        [Tools alertWithMessage:@"数据错误" informative:@"请输入正确的数据"];
-        return;
-    }
-    
-    if ([content hasPrefix:@"DD"]) {
-        NSString *ptHead = [content substringToIndex:2];
-        [listContent addObject:ptHead];
-        [listTitle addObject:@"透传指令头"];
-        
-        NSString *targetFlag = [content substringWithRange:NSMakeRange(2, 2)];
-        [listContent addObject:targetFlag];
-        [listTitle addObject:@"透传模式"];
-        
-        NSString *host = [content substringWithRange:NSMakeRange(4, 12)];
-        [listContent addObject:host];
-        [listTitle addObject:@"透传主机ID"];
-        
-        content = [content substringFromIndex:16];
-        if ([content hasPrefix:@"A2"]) {
-            NSString *head = [content substringToIndex:2];
-            [listContent addObject:head];
-            [listTitle addObject:@"指令帧头"];
-            
-            NSString *slave = [content substringWithRange:NSMakeRange(2, 8)];
-            [listContent addObject:slave];
-            [listTitle addObject:@"门锁ID"];
-            
-            NSString *safeCode = [content substringWithRange:NSMakeRange(10, 6)];
-            [listContent addObject:safeCode];
-            [listTitle addObject:@"安全码"];
-            
-            NSString *type = [content substringWithRange:NSMakeRange(16, 2)];
-            [listContent addObject:type];
-            [listTitle addObject:@"指令类型"];
-            
-            NSArray *titles = @[@"开锁认证方式",@"门锁功能开关",@"系统电量管理模式",@"访客密码有效状态",@"最大用户数"];
-            for (int i=0; i<titles.count; i++) {
-                NSString *title = [titles objectAtIndex:i];
-                NSString *CM = [content substringWithRange:NSMakeRange(18+i*2, 2)];
-                [listContent addObject:CM];
-                [listTitle addObject:title];
-            }
-            
-            NSString *ConfigParms = [content substringWithRange:NSMakeRange(28, 8)];
-            [listContent addObject:ConfigParms];
-            [listTitle addObject:@"配置参数"];
-            
-            NSString *CRC = [content substringWithRange:NSMakeRange(content.length-6, 4)];
-            [listContent addObject:CRC];
-            [listTitle addObject:@"校验码"];
-        }
-        
-        NSString *SumCRC = [content substringWithRange:NSMakeRange(content.length-2, 2)];
-        [listContent addObject:SumCRC];
-        [listTitle addObject:@"透传校验码"];
-    }else{
-        
     }
 }
 
