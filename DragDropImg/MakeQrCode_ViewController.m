@@ -115,7 +115,7 @@
         NSImage *image = _imgViewCode.image;
         [image lockFocus];
         //先设置 下面一个实例
-        NSBitmapImageRep *bits = [[NSBitmapImageRep alloc] initWithFocusedViewRect:_imgViewCode.frame];        //138.32为图片的长和宽
+        NSBitmapImageRep *bits = [[NSBitmapImageRep alloc] initWithFocusedViewRect:_imgViewCode.frame];
         [image unlockFocus];
         //再设置后面要用到得 props属性
         NSDictionary *imageProps = @{NSImageCompressionFactor:@(0.98)};//压缩率
