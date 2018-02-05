@@ -133,6 +133,17 @@
     return YES;
 }
 
+#pragma mark - --------获取主机协议------------------------
+- (NSDictionary *)getHostProtocol
+{
+    NSString *dirPath = [[[NSBundle mainBundle] resourcePath] stringByDeletingLastPathComponent];
+    dirPath = [dirPath stringByAppendingPathComponent:@"Downloads"];
+    NSString *path = [dirPath stringByAppendingPathComponent:@"主机协议.plist"];
+    NSDictionary *dic = [NSDictionary dictionaryWithContentsOfFile:path];
+    
+    return dic;
+}
+
 #pragma mark - --------右键菜单事件回调------------------------
 - (void)menuItemEvents:(NSMenuItem *)menuItem
 {
@@ -154,28 +165,31 @@
     NSString *content = text.string;
     content = [content uppercaseString];
     content = [content replaceString:@" " withString:@""];
+    text.string = content;
     if (content.length < 2) {
         [Tools alertWithMessage:@"解析错误" informative:@"请输入有效的数据" sheetHandler:nil];
         return;
     }
     
+    NSString *head = [content substringToIndex:2];
+    
+    NSDictionary *dicHostProtocol = [self getHostProtocol];
+    
     _txtLen.stringValue = [NSString stringWithFormat:@"%02ld",(long)content.length];
+    NSDictionary *dicInstruction = [dicHostProtocol objectForKey:@"0-Instruction"];
+    NSDictionary *dicExplained = [dicInstruction dictionaryForKey:head];
+    NSString *explained = [dicExplained stringForKey:@"type"] ?: @"";
+    _txtLen.stringValue = [NSString stringWithFormat:@"%@,字符数：%@",explained,_txtLen.stringValue];
     
     [listContent removeAllObjects];
     [listTitle removeAllObjects];
     
-    NSString *dirPath = [[[NSBundle mainBundle] resourcePath] stringByDeletingLastPathComponent];
-    dirPath = [dirPath stringByAppendingPathComponent:@"Downloads"];
-    NSString *path = [dirPath stringByAppendingPathComponent:@"主机协议.plist"];
-    NSDictionary *dic = [NSDictionary dictionaryWithContentsOfFile:path];
-    
     int totalLen = (int)content.length;
     int len = 0;
     
-    NSArray *listLockHead = @[@"A2",@"E2",@"EB",@"ED",@"EE",@"EF",@"FE"];
-    NSString *head = [content substringToIndex:2];
+    NSArray *listLockHead = [dicHostProtocol objectForKey:@"LockHead"];
     if ([head hasPrefix:@"DD"]) {
-        NSArray *list = [dic objectForKey:head];
+        NSArray *list = [dicHostProtocol objectForKey:head];
         NSString *SumCRC = nil;
         for (NSDictionary *dic1 in list) {
             NSString *key = dic1.allKeys.lastObject;
@@ -203,30 +217,30 @@
             len = len + currentLen;
         }
         
-        NSDictionary *dicLock = [dic objectForKey:@"Lock"];
+        NSDictionary *dicLock = [dicHostProtocol objectForKey:@"Lock"];
         [self dataLockParse:content mode:dicLock];
         
         [listContent addObject:SumCRC];
         [listTitle addObject:@"PT校验码"];
     }
     else if ([listLockHead containsObject:head]) {
-        NSDictionary *dicLock = [dic objectForKey:@"Lock"];
+        NSDictionary *dicLock = [dicHostProtocol objectForKey:@"Lock"];
         [self dataLockParse:content mode:dicLock];
     }else{
-        [self dataParse:content mode:dic];
+        [self dataParse:content mode:dicHostProtocol];
     }
     
     [myTableView reloadData];
 }
 
-- (void)dataParse:(NSString *)content mode:(NSDictionary *)dic
+- (void)dataParse:(NSString *)content mode:(NSDictionary *)dicHostProtocol
 {
     NSString *head = [content substringToIndex:2];
     if ([head hasPrefix:@"A4"] || [head hasPrefix:@"E4"]) {
         head = [head stringByAppendingFormat:@"-%ld",content.length];
     }
     
-    NSArray *list = [dic objectForKey:head];
+    NSArray *list = [dicHostProtocol objectForKey:head];
     int len = 0;
     for (NSDictionary *dicValue in list) {
         int currentLen = [dicValue.allValues.lastObject intValue];
@@ -269,11 +283,11 @@
     }
 }
 
-- (void)dataLockParse:(NSString *)content mode:(NSDictionary *)dic
+- (void)dataLockParse:(NSString *)content mode:(NSDictionary *)dicLock
 {
     int len = 0;
     NSString *head = [content substringToIndex:2];
-    NSArray *list = [dic arrayForKey:head];
+    NSArray *list = [dicLock arrayForKey:head];
     NSString *sHead = @"";//二级指令类型
     for (NSDictionary *dicValue in list) {
         int currentLen = 0;
@@ -286,6 +300,18 @@
         if ([keys containsObject:@"指令类型"]) {
             currentLen = [firstObject intValue];
             sHead = [content substringWithRange:NSMakeRange(len, currentLen)];
+            
+            if (sHead.length > 0) {
+                NSDictionary *dicHostProtocol = [self getHostProtocol];
+                NSDictionary *dicInstruction = [dicHostProtocol dictionaryForKey:@"0-Instruction"];
+                NSDictionary *dicExplained = [dicInstruction dictionaryForKey:head];
+                dicExplained = [dicExplained dictionaryForKey:@"sCommand"];
+                NSString *explained = [dicExplained stringForKey:sHead];
+                if (explained.length > 0) {
+                    NSTextView *text = _txtContent.documentView;
+                    _txtLen.stringValue = [NSString stringWithFormat:@"%@,字符数：%ld",explained,(long)text.string.length];
+                }
+            }
         }
         else if ([keys containsObject:sHead]) {
             key = sHead;

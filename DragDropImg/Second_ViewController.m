@@ -46,7 +46,8 @@
     _txtURL.refusesFirstResponder = YES;
     _txtFile.stringValue = @"/Users/xy/Library/Developer/Xcode/DerivedData/DragDropImg-bgyaoueutozmwweewybfgccinuzg/Build/Products/Debug/DragDropImg.app/Contents/Downloads/20171221172629561.jpg";
     _txtFile.maximumNumberOfLines = 1;
-    _txtDown.stringValue = @"http://dldir1.qq.com/qqfile/QQforMac/QQ_V6.2.0.dmg";
+    _txtDown.stringValue = @"http://dldir1.qq.com/qqfile/QQforMac/QQ_V6.3.0.dmg";
+    
     _txtDown.maximumNumberOfLines = 1;
     _txtDown.refusesFirstResponder = YES;
 }
