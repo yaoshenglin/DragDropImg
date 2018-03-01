@@ -81,14 +81,16 @@
     NSLog(@"path = %@",url.path);
     //选定后并点击打开的文件
     NSDictionary *dic = nil;
-    NSAttributedString *string = [[NSAttributedString alloc] initWithURL:url documentAttributes:&dic];
+    NSAttributedString *attString = [[NSAttributedString alloc] initWithURL:url documentAttributes:&dic];
     //NSLog(@"%@",string.string);
-    NSTextView *textView =  _infoView.documentView;
-    textView.string = string.string;
-    [textView insertText:string replacementRange:NSMakeRange(0, string.length)];
-    
-    drawView.hidden = NO;
-    drawView.string = string;
+    if (attString) {
+        NSTextView *textView =  _infoView.documentView;
+        textView.string = attString.string;
+        [textView insertText:attString replacementRange:NSMakeRange(0, attString.length)];
+        
+        drawView.hidden = NO;
+        drawView.string = attString;
+    }
     
     return YES;
 }

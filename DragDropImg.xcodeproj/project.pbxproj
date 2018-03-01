@@ -26,6 +26,7 @@
 		14ACF4C11FFCAA1A00D60823 /* MakeQrCode_ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 14ACF4C01FFCAA1A00D60823 /* MakeQrCode_ViewController.m */; };
 		14B5640A1FF496D300393CD0 /* CodeProtocol_ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 14B564081FF496D300393CD0 /* CodeProtocol_ViewController.m */; };
 		14B5640D1FF49DD900393CD0 /* FingerprintLockProtocol.doc in Resources */ = {isa = PBXBuildFile; fileRef = 14B5640C1FF49DD900393CD0 /* FingerprintLockProtocol.doc */; };
+		14BF7D1B20478D9C00D01709 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14BF7D1A20478D9C00D01709 /* Python.framework */; };
 		14D20EF51F678EF80061EBAA /* Tools.m in Sources */ = {isa = PBXBuildFile; fileRef = 14D20EF41F678EF80061EBAA /* Tools.m */; };
 		14D40CA02019C0B2009C0234 /* HTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 14D40C9F2019C0B2009C0234 /* HTTPRequest.m */; };
 		14D40CAB2019C0BE009C0234 /* DragDropImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 14D40CA22019C0BE009C0234 /* DragDropImageView.m */; };
@@ -38,6 +39,7 @@
 		14DAC75A1FE8E94E00225CD8 /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 14DAC7591FE8E94E00225CD8 /* libxml2.tbd */; };
 		14E0407A1FF2501F00304C34 /* PackageXMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 14E040791FF2501F00304C34 /* PackageXMLParser.m */; };
 		14E8EFF71FE7630B00A0FF4E /* UploadFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 14E8EFF61FE7630B00A0FF4E /* UploadFile.m */; };
+		14EC696B2047A4F000D5F887 /* get-pip.py in Resources */ = {isa = PBXBuildFile; fileRef = 14EC696A2047A4F000D5F887 /* get-pip.py */; };
 		14EE58541FFB23F400BCABE0 /* GetLastVersio.html in Resources */ = {isa = PBXBuildFile; fileRef = 14EE58531FFB23F400BCABE0 /* GetLastVersio.html */; };
 		14F4695C1FCBF76C00E21658 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14F4695B1FCBF76C00E21658 /* QuartzCore.framework */; };
 		14F469621FCBF9A400E21658 /* iface主机@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 14F4695E1FCBF9A400E21658 /* iface主机@2x.png */; };
@@ -77,6 +79,7 @@
 		14B564071FF496D300393CD0 /* CodeProtocol_ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeProtocol_ViewController.h; sourceTree = "<group>"; };
 		14B564081FF496D300393CD0 /* CodeProtocol_ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeProtocol_ViewController.m; sourceTree = "<group>"; };
 		14B5640C1FF49DD900393CD0 /* FingerprintLockProtocol.doc */ = {isa = PBXFileReference; lastKnownFileType = file; path = FingerprintLockProtocol.doc; sourceTree = "<group>"; };
+		14BF7D1A20478D9C00D01709 /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = System/Library/Frameworks/Python.framework; sourceTree = SDKROOT; };
 		14D20EF31F678EF80061EBAA /* Tools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tools.h; path = ../Tools.h; sourceTree = "<group>"; };
 		14D20EF41F678EF80061EBAA /* Tools.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Tools.m; path = ../Tools.m; sourceTree = "<group>"; };
 		14D40C9E2019C0B2009C0234 /* HTTPRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPRequest.h; sourceTree = "<group>"; };
@@ -100,6 +103,7 @@
 		14E040791FF2501F00304C34 /* PackageXMLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PackageXMLParser.m; sourceTree = "<group>"; };
 		14E8EFF51FE7630B00A0FF4E /* UploadFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UploadFile.h; sourceTree = "<group>"; };
 		14E8EFF61FE7630B00A0FF4E /* UploadFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UploadFile.m; sourceTree = "<group>"; };
+		14EC696A2047A4F000D5F887 /* get-pip.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "get-pip.py"; sourceTree = "<group>"; };
 		14EE58531FFB23F400BCABE0 /* GetLastVersio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = GetLastVersio.html; sourceTree = "<group>"; };
 		14F4695B1FCBF76C00E21658 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		14F4695E1FCBF9A400E21658 /* iface主机@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iface主机@2x.png"; sourceTree = "<group>"; };
@@ -117,6 +121,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				14BF7D1B20478D9C00D01709 /* Python.framework in Frameworks */,
 				14DAC75A1FE8E94E00225CD8 /* libxml2.tbd in Frameworks */,
 				14F4695C1FCBF76C00E21658 /* QuartzCore.framework in Frameworks */,
 			);
@@ -173,6 +178,7 @@
 			children = (
 				1445792D1E14F0B30066A9DB /* main.m */,
 				144579371E14F0B30066A9DB /* Info.plist */,
+				14EC696A2047A4F000D5F887 /* get-pip.py */,
 				14FF10CE1FE35BEA004DB424 /* PrefixHeader.pch */,
 				144579321E14F0B30066A9DB /* Assets.xcassets */,
 				144579341E14F0B30066A9DB /* Main.storyboard */,
@@ -200,6 +206,7 @@
 		14F4695A1FCBF72E00E21658 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				14BF7D1A20478D9C00D01709 /* Python.framework */,
 				14DAC7591FE8E94E00225CD8 /* libxml2.tbd */,
 				14F4695B1FCBF76C00E21658 /* QuartzCore.framework */,
 			);
@@ -322,6 +329,7 @@
 				14082871201F20CF009DA1AD /* 主机协议.plist in Resources */,
 				144579331E14F0B30066A9DB /* Assets.xcassets in Resources */,
 				148772C61FD54348003C13E9 /* 47个吸引惯例.pdf in Resources */,
+				14EC696B2047A4F000D5F887 /* get-pip.py in Resources */,
 				14F469651FCBF9A400E21658 /* 按钮点击效果.png in Resources */,
 				144579361E14F0B30066A9DB /* Main.storyboard in Resources */,
 				14EE58541FFB23F400BCABE0 /* GetLastVersio.html in Resources */,

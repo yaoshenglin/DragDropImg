@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16G1114" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16G1212" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12121"/>
         <capability name="Alignment constraints to the first baseline" minToolsVersion="6.0"/>
@@ -681,7 +681,7 @@
         <!--Delegate-->
         <scene sceneID="hIz-AP-VOD">
             <objects>
-                <viewController title="主视图" id="XfG-lQ-9wD" customClass="ViewController" sceneMemberID="viewController">
+                <viewController title="MainView" id="XfG-lQ-9wD" customClass="ViewController" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" focusRingType="exterior" id="m2S-Jp-Qdl">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -843,10 +843,10 @@
             </objects>
             <point key="canvasLocation" x="75" y="655"/>
         </scene>
-        <!--Draw Image View Controller-->
+        <!--DrawImage-->
         <scene sceneID="6Ri-2i-9YM">
             <objects>
-                <viewController storyboardIdentifier="DrawImage" id="5xb-CS-HmP" customClass="DrawImage_ViewController" sceneMemberID="viewController">
+                <viewController title="DrawImage" storyboardIdentifier="DrawImage" id="5xb-CS-HmP" customClass="DrawImage_ViewController" sceneMemberID="viewController">
                     <view key="view" id="DzZ-yH-Eus">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -856,10 +856,10 @@
             </objects>
             <point key="canvasLocation" x="592" y="670"/>
         </scene>
-        <!--Code Protocol View Controller-->
+        <!--CodeProtocol-->
         <scene sceneID="pOY-Jh-bbA">
             <objects>
-                <viewController storyboardIdentifier="CodeProtocol" id="JYm-i8-hDL" customClass="CodeProtocol_ViewController" sceneMemberID="viewController">
+                <viewController title="CodeProtocol" storyboardIdentifier="CodeProtocol" id="JYm-i8-hDL" customClass="CodeProtocol_ViewController" sceneMemberID="viewController">
                     <view key="view" id="T4O-Jr-mkv">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -952,10 +952,10 @@
             </objects>
             <point key="canvasLocation" x="1078" y="670"/>
         </scene>
-        <!--Make Qr Code View Controller-->
+        <!--MakeQrCode-->
         <scene sceneID="eis-vM-Vrx">
             <objects>
-                <viewController storyboardIdentifier="MakeQrCode" id="CJH-pD-vQY" customClass="MakeQrCode_ViewController" sceneMemberID="viewController">
+                <viewController title="MakeQrCode" storyboardIdentifier="MakeQrCode" id="CJH-pD-vQY" customClass="MakeQrCode_ViewController" sceneMemberID="viewController">
                     <view key="view" id="Jc8-Gz-V82">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -1028,10 +1028,10 @@
             </objects>
             <point key="canvasLocation" x="1566" y="670"/>
         </scene>
-        <!--Second View Controller-->
+        <!--NetRequest-->
         <scene sceneID="yDo-2p-AT9">
             <objects>
-                <viewController storyboardIdentifier="Second" id="YpH-8C-k2b" customClass="Second_ViewController" sceneMemberID="viewController">
+                <viewController title="NetRequest" storyboardIdentifier="Second" id="YpH-8C-k2b" customClass="Second_ViewController" sceneMemberID="viewController">
                     <view key="view" id="Zka-Li-3RW">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -1141,10 +1141,10 @@
             </objects>
             <point key="canvasLocation" x="60" y="1056"/>
         </scene>
-        <!--Parse Data View Controller-->
+        <!--ParseData-->
         <scene sceneID="OoC-lJ-nSK">
             <objects>
-                <viewController storyboardIdentifier="ParseData" id="mGz-01-Kh5" customClass="ParseData_ViewController" sceneMemberID="viewController">
+                <viewController title="ParseData" storyboardIdentifier="ParseData" id="mGz-01-Kh5" customClass="ParseData_ViewController" sceneMemberID="viewController">
                     <view key="view" id="y2X-Lj-x33">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>

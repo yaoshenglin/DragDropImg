@@ -346,4 +346,9 @@
     }
 }
 
+- (void)dealloc
+{
+    NSLog(@"%@",self.className);
+}
+
 @end
